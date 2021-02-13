@@ -1,0 +1,32 @@
+{
+  "extends": [
+    "react-app",
+    "react-app/jest",
+    "airbnb",
+    "plugin:react-hooks/recommended"
+  ],
+  "plugins": ["react", "react-hooks"],
+  "rules": {
+    "semi": "off",
+    "comma-dangle": "off",
+    "no-use-before-define": "off",
+    "object-curly-newline": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-filename-extension": [
+      1,
+      { "extensions": ["jsx", ".ts", ".tsx"] }
+    ],
+    "import/extensions": "off"
+  },
+  "settings": {
+    "import/extensions": [".js", ".jsx", ".tsx", ".ts"],
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".tsx", ".ts"]
+      }
+    }
+  }
+}
