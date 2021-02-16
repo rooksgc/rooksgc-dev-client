@@ -19,6 +19,7 @@
       1,
       { "extensions": ["jsx", ".ts", ".tsx"] }
     ],
+    "react/jsx-props-no-spreading": "off",
     "import/extensions": "off"
   },
   "settings": {
