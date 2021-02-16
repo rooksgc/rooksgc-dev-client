@@ -16,7 +16,7 @@ const Register = () => {
     <div className="card-container">
       <Card style={{ width: 500, margin: '0 auto' }} title="Регистрация">
         <Form
-          name="basic"
+          name="register"
           initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
