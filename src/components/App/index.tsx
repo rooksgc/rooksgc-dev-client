@@ -9,6 +9,7 @@ import Chat from '../Chat'
 import Login from '../Login'
 import Register from '../Register'
 import Recover from '../Recover'
+import ChangePassword from '../ChangePassword'
 
 const { Header, Content, Footer, Sider } = Layout
 
@@ -54,6 +55,9 @@ const App: FC = () => {
                 </Route>
                 <Route path="/auth/recover">
                   <Recover />
+                </Route>
+                <Route path="/auth/change-password">
+                  <ChangePassword />
                 </Route>
                 <Route path="/chat">
                   <Chat />
