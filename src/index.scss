@@ -1,4 +1,4 @@
-@import '~antd/dist/antd.dark.css';
+@import '~antd/dist/antd.min.css';
 
 body {
   margin: 0;
@@ -12,6 +12,12 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.site-layout {
+  &-background {
+    background: #fff;
+  }
 }
 
 .card-container {

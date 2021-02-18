@@ -23,9 +23,13 @@ const App: FC = () => {
   return (
     <>
       <Layout style={{ minHeight: '100vh' }}>
-        <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-          <div className="logo" />
-          <Menu theme="dark" mode="inline">
+        <Sider
+          theme="light"
+          collapsible
+          collapsed={collapsed}
+          onCollapse={onCollapse}
+        >
+          <Menu mode="inline">
             <Menu.Item key="1" icon={<DesktopOutlined />}>
               Комната 1
             </Menu.Item>
@@ -35,14 +39,11 @@ const App: FC = () => {
           </Menu>
         </Sider>
         <Layout className="site-layout">
-          <Header className="header">
+          <Header className="site-layout-background">
             <MainMenu />
           </Header>
           <Content style={{ margin: '0 16px' }}>
-            <div
-              className="site-layout-background"
-              style={{ padding: 24, minHeight: 360 }}
-            >
+            <div style={{ padding: 24, minHeight: 360 }}>
               <Switch>
                 <Route path="/" exact>
                   <Home />

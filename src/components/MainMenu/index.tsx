@@ -38,7 +38,6 @@ const MainMenu: FC = () => {
   return (
     <Menu
       style={{ float: 'right' }}
-      theme="dark"
       mode="horizontal"
       selectedKeys={[selectedKey]}
       onClick={onClickMenu}

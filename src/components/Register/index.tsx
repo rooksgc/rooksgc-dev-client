@@ -54,8 +54,17 @@ const Register = () => {
 
           <Form.Item
             name="confirm-password"
+            dependencies={['password']}
             rules={[
-              { required: true, message: 'Введите подтверждение пароля!' }
+              { required: true, message: 'Введите подтверждение пароля!' },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('password') === value) {
+                    return Promise.resolve()
+                  }
+                  return Promise.reject(new Error('Пароли должны совпадать!'))
+                }
+              })
             ]}
           >
             <Input.Password
