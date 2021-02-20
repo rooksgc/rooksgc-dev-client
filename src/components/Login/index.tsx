@@ -10,12 +10,12 @@ const Login = () => {
 
   const onFinishFailed = (errorInfo: any) => {
     // eslint-disable-next-line no-console
-    console.log('Failed:', errorInfo)
+    console.log(errorInfo)
   }
 
   return (
-    <div className="card-container">
-      <Card className="card-centered" title="Войти">
+    <div className="flex-center">
+      <Card className="card" title="Войти">
         <Form
           name="login"
           className="login-form"
@@ -24,12 +24,13 @@ const Login = () => {
           onFinishFailed={onFinishFailed}
         >
           <Form.Item
-            name="username"
+            name="email"
             rules={[
               {
                 required: true,
+                type: 'email',
                 min: 4,
-                message: 'Минимум 4 символа'
+                message: 'Некорректный email'
               }
             ]}
           >

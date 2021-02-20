@@ -20,15 +20,23 @@ code {
   }
 }
 
-.card-container {
+.header {
+  padding-left: 0;
+}
+
+.flex-center {
   display: flex;
   height: 80vh;
   align-items: center;
   justify-content: center;
 }
 
-.card-centered {
-  width: 500px;
+.flex-column {
+  flex-direction: column;
+}
+
+.card {
+  width: 400px;
 }
 
 .link-recover {
@@ -42,4 +50,26 @@ code {
 
 .submit-button {
   margin-top: 16px;
+}
+
+.alert {
+  margin: 0 0 24px;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.trigger {
+  padding: 0 24px;
+  font-size: 18px;
+  line-height: 64px;
+  cursor: pointer;
+  transition: color 0.3s;
+
+  &:hover {
+    color: #1890ff;
+  }
 }

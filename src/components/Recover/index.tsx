@@ -14,8 +14,8 @@ const Recover: FC = () => {
   }
 
   return (
-    <div className="card-container">
-      <Card className="card-centered" title="Восстановление пароля">
+    <div className="flex-center">
+      <Card className="card" title="Восстановление пароля">
         <p>
           Укажите email, указанный при регистрации и мы вышлем на него ссылку
           для восстановления пароля.
@@ -26,10 +26,13 @@ const Recover: FC = () => {
           initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
+          validateTrigger="onBlur"
         >
           <Form.Item
             name="email"
-            rules={[{ required: true, message: 'Введите Email!' }]}
+            rules={[
+              { required: true, type: 'email', message: 'Некорректный email!' }
+            ]}
           >
             <Input prefix={<MailOutlined />} placeholder="Email" size="large" />
           </Form.Item>

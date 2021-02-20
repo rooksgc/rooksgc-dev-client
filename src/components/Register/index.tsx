@@ -1,33 +1,63 @@
-import { Form, Input, Button, Card } from 'antd'
-import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons'
+import { Form, Input, Button, Card, Alert, Spin } from 'antd'
+import {
+  UserOutlined,
+  LockOutlined,
+  MailOutlined,
+  LoadingOutlined
+} from '@ant-design/icons'
+import { FC, useState } from 'react'
+import authService from '../../services/auth'
 
-const Register = () => {
-  const onFinish = (values: any) => {
-    // eslint-disable-next-line no-console
-    console.log('Success:', values)
-  }
+const Register: FC = () => {
+  const [form] = Form.useForm()
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const onFinishFailed = (errorInfo: any) => {
-    // eslint-disable-next-line no-console
-    console.log('Failed:', errorInfo)
+  const onFinish = async (values: any) => {
+    setLoading(true)
+    const { name, email, password } = values
+    const response = await authService.create({ name, email, password })
+
+    if ('error' in response) {
+      setError(response.error)
+      setSuccess('')
+      setLoading(false)
+      return
+    }
+
+    setError('')
+    setSuccess(`
+      Пользователь создан. Активируйте свой аккаунт, выполнив
+      переход по ссылке из письма, которое выслано на адрес: ${email}`)
+    form.resetFields()
+    setLoading(false)
   }
 
   return (
-    <div className="card-container">
-      <Card style={{ width: 500, margin: '0 auto' }} title="Регистрация">
+    <div className="flex-center">
+      <Card className="card" title="Регистрация">
+        {error && (
+          <Alert className="alert" closable message={error} type="error" />
+        )}
+        {success && (
+          <Alert className="alert" closable message={success} type="success" />
+        )}
         <Form
+          form={form}
           name="register"
           initialValues={{ remember: true }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+          validateTrigger="onBlur"
         >
           <Form.Item
-            name="username"
+            name="name"
             rules={[
               {
                 required: true,
-                message: 'Введите имя пользователя (минимум 4 символа)',
-                min: 4
+                message:
+                  "Имя должно содержать минимум 4 символа английского или русского алфавита, допустимы цифры и знаки '- _'",
+                pattern: /^[a-zA-Zа-яА-ЯёЁ0-9-_\s]{4,}$/
               }
             ]}
           >
@@ -36,7 +66,9 @@ const Register = () => {
 
           <Form.Item
             name="email"
-            rules={[{ required: true, message: 'Введите Ваш Email!' }]}
+            rules={[
+              { required: true, type: 'email', message: 'Некорректный email' }
+            ]}
           >
             <Input prefix={<MailOutlined />} placeholder="Email" size="large" />
           </Form.Item>
@@ -73,6 +105,14 @@ const Register = () => {
               size="large"
             />
           </Form.Item>
+
+          {loading && (
+            <Spin
+              className="center"
+              indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+              delay={500}
+            />
+          )}
 
           <Button
             className="submit-button"

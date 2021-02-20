@@ -13,8 +13,8 @@ const ChangePassword = () => {
   }
 
   return (
-    <div className="card-container">
-      <Card style={{ width: 500, margin: '0 auto' }} title="Изменение пароля">
+    <div className="flex-center">
+      <Card className="card" title="Изменение пароля">
         <p>Придумайте новый пароль</p>
         <Form
           name="change-password"

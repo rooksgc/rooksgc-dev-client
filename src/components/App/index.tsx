@@ -1,7 +1,11 @@
 import React, { FC, useState } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { Layout, Menu } from 'antd'
-import { DesktopOutlined } from '@ant-design/icons'
+import {
+  DesktopOutlined,
+  MenuUnfoldOutlined,
+  MenuFoldOutlined
+} from '@ant-design/icons'
 
 import Home from '../Home'
 import MainMenu from '../MainMenu'
@@ -16,19 +20,15 @@ const { Header, Content, Footer, Sider } = Layout
 const App: FC = () => {
   const [collapsed, setCollapsed] = useState(false)
 
-  const onCollapse = (isCollapsed: boolean) => {
-    setCollapsed(isCollapsed)
+  const toggle = (event): void => {
+    event.preventDefault()
+    setCollapsed(!collapsed)
   }
 
   return (
     <>
       <Layout style={{ minHeight: '100vh' }}>
-        <Sider
-          theme="light"
-          collapsible
-          collapsed={collapsed}
-          onCollapse={onCollapse}
-        >
+        <Sider theme="light" collapsible trigger={null} collapsed={collapsed}>
           <Menu mode="inline">
             <Menu.Item key="1" icon={<DesktopOutlined />}>
               Комната 1
@@ -39,7 +39,12 @@ const App: FC = () => {
           </Menu>
         </Sider>
         <Layout className="site-layout">
-          <Header className="site-layout-background">
+          <Header className="header site-layout-background">
+            {collapsed ? (
+              <MenuUnfoldOutlined className="trigger" onClick={toggle} />
+            ) : (
+              <MenuFoldOutlined className="trigger" onClick={toggle} />
+            )}
             <MainMenu />
           </Header>
           <Content style={{ margin: '0 16px' }}>
