@@ -15,23 +15,32 @@ const Register: FC = () => {
   const [loading, setLoading] = useState(false)
 
   const onFinish = async (values: any) => {
-    setLoading(true)
-    const { name, email, password } = values
-    const response = await authService.create({ name, email, password })
+    try {
+      setError('')
+      setLoading(true)
 
-    if ('error' in response) {
-      setError(response.error)
-      setSuccess('')
+      const { name, email, password } = values
+      const response = await authService.create({ name, email, password })
+
+      if ('error' in response) {
+        setError(response.error)
+        setSuccess('')
+        setLoading(false)
+        return
+      }
+
+      setError('')
+      setSuccess(`
+        Пользователь создан. Активируйте свой аккаунт, выполнив
+        переход по ссылке из письма, которое выслано на адрес: ${email}`)
+      form.resetFields()
       setLoading(false)
-      return
+    } catch (e) {
+      setLoading(false)
+      setError(
+        'Сервер не отвечает или временно недоступен. Повторите попытку позже.'
+      )
     }
-
-    setError('')
-    setSuccess(`
-      Пользователь создан. Активируйте свой аккаунт, выполнив
-      переход по ссылке из письма, которое выслано на адрес: ${email}`)
-    form.resetFields()
-    setLoading(false)
   }
 
   return (
@@ -75,7 +84,13 @@ const Register: FC = () => {
 
           <Form.Item
             name="password"
-            rules={[{ required: true, message: 'Введите пароль!' }]}
+            rules={[
+              {
+                required: true,
+                message: 'Введите пароль! Минимум 6 символов.',
+                min: 6
+              }
+            ]}
           >
             <Input.Password
               placeholder="Пароль"
@@ -88,7 +103,11 @@ const Register: FC = () => {
             name="confirm-password"
             dependencies={['password']}
             rules={[
-              { required: true, message: 'Введите подтверждение пароля!' },
+              {
+                required: true,
+                message: 'Введите подтверждение пароля! Минимум 6 символов.',
+                min: 6
+              },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || getFieldValue('password') === value) {
