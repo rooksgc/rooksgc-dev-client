@@ -1,4 +1,4 @@
-import React from 'react'
+import { StrictMode } from 'react'
 import { render } from 'react-dom'
 import './index.scss'
 import { BrowserRouter } from 'react-router-dom'
@@ -6,11 +6,11 @@ import App from './components/App'
 import reportWebVitals from './reportWebVitals'
 
 render(
-  <React.StrictMode>
+  <StrictMode>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </React.StrictMode>,
+  </StrictMode>,
   document.getElementById('root')
 )
 

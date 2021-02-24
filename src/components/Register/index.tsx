@@ -1,3 +1,4 @@
+import { FC, useState } from 'react'
 import { Form, Input, Button, Card, Alert, Spin } from 'antd'
 import {
   UserOutlined,
@@ -5,52 +6,55 @@ import {
   MailOutlined,
   LoadingOutlined
 } from '@ant-design/icons'
-import { FC, useState } from 'react'
 import authService from '../../services/auth'
 
+interface FormValues {
+  name: string
+  email: string
+  password: string
+}
+
 const Register: FC = () => {
+  const emptyMessage = { type: '', message: '' }
   const [form] = Form.useForm()
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  const [alert, setAlert] = useState(emptyMessage)
   const [loading, setLoading] = useState(false)
 
-  const onFinish = async (values: any) => {
+  const onFinish = async (values: FormValues) => {
     try {
-      setError('')
+      setAlert(emptyMessage)
       setLoading(true)
 
       const { name, email, password } = values
-      const response = await authService.create({ name, email, password })
+      const { type, message } = await authService.create({
+        name,
+        email,
+        password
+      })
 
-      if ('error' in response) {
-        setError(response.error)
-        setSuccess('')
+      if (message) {
+        setAlert({ type, message })
         setLoading(false)
-        return
+        if (type === 'error') return
       }
 
-      setError('')
-      setSuccess(`
-        Пользователь создан. Активируйте свой аккаунт, выполнив
-        переход по ссылке из письма, которое выслано на адрес: ${email}`)
       form.resetFields()
       setLoading(false)
-    } catch (e) {
+    } catch (error) {
+      setAlert(error)
       setLoading(false)
-      setError(
-        'Сервер не отвечает или временно недоступен. Повторите попытку позже.'
-      )
     }
   }
 
   return (
     <div className="flex-center">
       <Card className="card" title="Регистрация">
-        {error && (
-          <Alert className="alert" closable message={error} type="error" />
-        )}
-        {success && (
-          <Alert className="alert" closable message={success} type="success" />
+        {alert.message && (
+          <Alert
+            className="alert"
+            message={alert.message}
+            type={alert.type as any}
+          />
         )}
         <Form
           form={form}

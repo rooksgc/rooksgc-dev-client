@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import { FC, SyntheticEvent, useState } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { Layout, Menu } from 'antd'
 import {
@@ -14,13 +14,14 @@ import Login from '../Login'
 import Register from '../Register'
 import Recover from '../Recover'
 import ChangePassword from '../ChangePassword'
+import Activation from '../Activation'
 
 const { Header, Content, Footer, Sider } = Layout
 
 const App: FC = () => {
   const [collapsed, setCollapsed] = useState(false)
 
-  const toggle = (event): void => {
+  const toggle = (event: SyntheticEvent): void => {
     event.preventDefault()
     setCollapsed(!collapsed)
   }
@@ -47,34 +48,35 @@ const App: FC = () => {
             )}
             <MainMenu />
           </Header>
-          <Content style={{ margin: '0 16px' }}>
-            <div style={{ padding: 24, minHeight: 360 }}>
-              <Switch>
-                <Route path="/" exact>
-                  <Home />
-                </Route>
-                <Route path="/auth/login">
-                  <Login />
-                </Route>
-                <Route path="/auth/register">
-                  <Register />
-                </Route>
-                <Route path="/auth/recover">
-                  <Recover />
-                </Route>
-                <Route path="/auth/change-password">
-                  <ChangePassword />
-                </Route>
-                <Route path="/chat">
-                  <Chat />
-                </Route>
-                <Route path="*">
-                  <Redirect to="/auth/login" />
-                </Route>
-              </Switch>
-            </div>
+          <Content className="content">
+            <Switch>
+              <Route path="/" exact>
+                <Home />
+              </Route>
+              <Route path="/auth/login">
+                <Login />
+              </Route>
+              <Route path="/auth/register">
+                <Register />
+              </Route>
+              <Route path="/auth/activation/:code">
+                <Activation />
+              </Route>
+              <Route path="/auth/recover">
+                <Recover />
+              </Route>
+              <Route path="/auth/change-password">
+                <ChangePassword />
+              </Route>
+              <Route path="/chat">
+                <Chat />
+              </Route>
+              <Route path="*">
+                <Redirect to="/auth/login" />
+              </Route>
+            </Switch>
           </Content>
-          <Footer style={{ textAlign: 'center' }}>Ant Design ©2021</Footer>
+          <Footer style={{ textAlign: 'center' }}>© [Пишем чатик]</Footer>
         </Layout>
       </Layout>
     </>

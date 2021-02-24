@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useCallback } from 'react'
+import { FC, useState, useEffect, useCallback } from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
 import { PieChartOutlined } from '@ant-design/icons'
 import { Menu } from 'antd'
