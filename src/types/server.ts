@@ -3,4 +3,5 @@ export interface ServerResponse {
   message?: string
   data?: any
   errors?: string[]
+  token?: string
 }
