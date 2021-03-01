@@ -32,8 +32,16 @@ const ChangePassword: FC = () => {
         setSecretError(true)
       }
     }
-    if (code) {
+
+    if (
+      code.match(
+        /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
+      )
+    ) {
       checkSecretcode()
+    } else {
+      setAlert({ type: 'error', message: 'Неверный секретный код!' })
+      setSecretError(true)
     }
   }, [code])
 
