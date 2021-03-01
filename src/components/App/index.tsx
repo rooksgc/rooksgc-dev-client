@@ -65,7 +65,7 @@ const App: FC = () => {
               <Route path="/auth/recover">
                 <Recover />
               </Route>
-              <Route path="/auth/change-password">
+              <Route path="/auth/change-password/:code">
                 <ChangePassword />
               </Route>
               <Route path="/chat">

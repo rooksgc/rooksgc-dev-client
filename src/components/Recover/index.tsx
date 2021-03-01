@@ -1,46 +1,103 @@
-import { FC } from 'react'
-import { Form, Input, Button, Card } from 'antd'
-import { MailOutlined } from '@ant-design/icons'
+import { FC, useState } from 'react'
+import { Form, Input, Button, Card, Alert, Spin } from 'antd'
+import { MailOutlined, LoadingOutlined } from '@ant-design/icons'
+import authService from '../../services/auth'
+
+interface FormValues {
+  email: string
+}
 
 const Recover: FC = () => {
-  const onFinish = (values: any) => {
-    // eslint-disable-next-line no-console
-    console.log('Success:', values)
-  }
+  const emptyMessage = { type: '', message: '' }
+  const [form] = Form.useForm()
+  const [alert, setAlert] = useState(emptyMessage)
+  const [loading, setLoading] = useState(false)
 
-  const onFinishFailed = (errorInfo: any) => {
-    // eslint-disable-next-line no-console
-    console.log('Failed:', errorInfo)
+  const onFinish = async (values: FormValues) => {
+    try {
+      setAlert(emptyMessage)
+      setLoading(true)
+
+      const { email } = values
+      const { type, message } = await authService.recover({
+        email
+      })
+
+      if (message) {
+        setAlert({ type, message })
+        setLoading(false)
+        if (type === 'error') return
+      }
+
+      form.resetFields()
+      setLoading(false)
+    } catch (error) {
+      setAlert(error)
+      setLoading(false)
+    }
   }
 
   return (
     <div className="flex-center">
       <Card className="card" title="Восстановление пароля">
-        <p>
-          Укажите email, указанный при регистрации и мы вышлем на него ссылку
-          для восстановления пароля.
-        </p>
-        <Form
-          name="recover"
-          className="login-form"
-          initialValues={{ remember: true }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          validateTrigger="onBlur"
-        >
-          <Form.Item
-            name="email"
-            rules={[
-              { required: true, type: 'email', message: 'Некорректный email!' }
-            ]}
-          >
-            <Input prefix={<MailOutlined />} placeholder="Email" size="large" />
-          </Form.Item>
+        {alert.message && (
+          <Alert
+            className="alert"
+            message={alert.message}
+            type={alert.type as any}
+          />
+        )}
+        {alert.type !== 'success' && (
+          <>
+            <p>
+              Укажите email, указанный при регистрации и мы вышлем на него
+              ссылку для восстановления пароля.
+            </p>
+            <Form
+              form={form}
+              name="recover"
+              className="login-form"
+              initialValues={{ remember: true }}
+              onFinish={onFinish}
+              validateTrigger="onBlur"
+            >
+              <Form.Item
+                name="email"
+                rules={[
+                  {
+                    required: true,
+                    type: 'email',
+                    message: 'Некорректный email!'
+                  }
+                ]}
+              >
+                <Input
+                  prefix={<MailOutlined />}
+                  placeholder="Email"
+                  size="large"
+                />
+              </Form.Item>
 
-          <Button size="large" type="primary" htmlType="submit" block>
-            Восстановить пароль
-          </Button>
-        </Form>
+              {loading && (
+                <Spin
+                  className="center"
+                  indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+                  delay={500}
+                />
+              )}
+
+              <Button
+                size="large"
+                type="primary"
+                htmlType="submit"
+                block
+                disabled={loading}
+              >
+                Восстановить пароль
+              </Button>
+            </Form>
+          </>
+        )}
       </Card>
     </div>
   )

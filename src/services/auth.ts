@@ -17,7 +17,20 @@ export interface UserDTO {
   name: string
   email: string
   role: string
-  is_active: boolean
+}
+
+export interface UserRecoverPasswordRequestDTO {
+  email: string
+}
+
+export interface CheckSecretCodeRequestDTO {
+  code: string
+  secretType: string
+}
+
+export interface ChangePasswordRequestDTO {
+  code: string
+  password: string
 }
 
 const SERVER_UNAVAILABLE =
@@ -37,27 +50,69 @@ const makeError = (error): ServerResponse => {
 
 // todo Методы абсолютно одинаковы, следует вынести логику в одно место
 const AuthService = {
-  create: async (payload: UserCreateRequestDTO): Promise<ServerResponse> => {
+  /** Регистрация нового пользователя */
+  register: async (payload: UserCreateRequestDTO): Promise<ServerResponse> => {
     try {
-      const response = await axios.post('/api/v1/user/create', payload)
+      const response = await axios.post('/api/v1/auth/register', payload)
       return response.data
     } catch (error) {
       return makeError(error)
     }
   },
 
+  /** Активация пользователя по коду из письма */
   activate: async (code: string): Promise<ServerResponse> => {
     try {
-      const response = await axios.patch(`/api/v1/user/activate/${code}`)
+      const response = await axios.patch(`/api/v1/auth/activate/${code}`)
       return response.data
     } catch (error) {
       return makeError(error)
     }
   },
 
+  /** Вход пользователя в систему и полуение токена */
   login: async (payload: UserLoginRequestDTO): Promise<ServerResponse> => {
     try {
-      const response = await axios.post('/api/v1/user/login', payload)
+      const response = await axios.post('/api/v1/auth/login', payload)
+      return response.data
+    } catch (error) {
+      return makeError(error)
+    }
+  },
+
+  /** Запрос на изменение пароля, отправка письма со ссылкой на email */
+  recover: async (
+    payload: UserRecoverPasswordRequestDTO
+  ): Promise<ServerResponse> => {
+    try {
+      const response = await axios.post('/api/v1/auth/recover', payload)
+      return response.data
+    } catch (error) {
+      return makeError(error)
+    }
+  },
+
+  /** Проверка секретного ключа для доступа к форме восстановления пароля */
+  checkSecretcode: async (
+    payload: CheckSecretCodeRequestDTO
+  ): Promise<ServerResponse> => {
+    try {
+      const response = await axios.post('/api/v1/auth/check-secret', payload)
+      return response.data
+    } catch (error) {
+      return makeError(error)
+    }
+  },
+
+  /** Изменение пароля пользователя */
+  changePassword: async (
+    payload: ChangePasswordRequestDTO
+  ): Promise<ServerResponse> => {
+    try {
+      const response = await axios.patch(
+        '/api/v1/auth/change-password',
+        payload
+      )
       return response.data
     } catch (error) {
       return makeError(error)

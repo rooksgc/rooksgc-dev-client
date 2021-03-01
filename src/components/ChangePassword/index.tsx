@@ -1,70 +1,140 @@
-import { Form, Input, Button, Card } from 'antd'
+import { FC, useState, useEffect } from 'react'
+import { useParams, Link } from 'react-router-dom'
+import { Form, Input, Button, Card, Alert } from 'antd'
 import { LockOutlined } from '@ant-design/icons'
+import authService from '../../services/auth'
 
-const ChangePassword = () => {
-  const onFinish = (values: any) => {
-    // eslint-disable-next-line no-console
-    console.log('Success:', values)
-  }
+interface ChangePasswordParams {
+  code?: string
+}
 
-  const onFinishFailed = (errorInfo: any) => {
-    // eslint-disable-next-line no-console
-    console.log('Failed:', errorInfo)
+interface FormValues {
+  password: string
+  confirmPassword: string
+}
+
+const ChangePassword: FC = () => {
+  const { code }: ChangePasswordParams = useParams()
+  const emptyMessage = { type: '', message: '' }
+  const [alert, setAlert] = useState(emptyMessage)
+  const [secretError, setSecretError] = useState(false)
+  const [changeSuccess, setChangeSuccess] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const checkSecretcode = async () => {
+      const { type, message } = await authService.checkSecretcode({
+        code,
+        secretType: 'RECOVER_PASSWORD'
+      })
+      if (type === 'error') {
+        setAlert({ type, message })
+        setSecretError(true)
+      }
+    }
+    if (code) {
+      checkSecretcode()
+    }
+  }, [code])
+
+  const onFinish = async (values: FormValues) => {
+    try {
+      setAlert(emptyMessage)
+      setLoading(true)
+
+      const { password } = values
+      const { type, message } = await authService.changePassword({
+        code,
+        password
+      })
+
+      if (message) {
+        setAlert({ type, message })
+        setLoading(false)
+        if (type === 'error') return
+      }
+
+      setChangeSuccess(true)
+      setLoading(false)
+    } catch (error) {
+      setAlert(error)
+      setLoading(false)
+    }
   }
 
   return (
     <div className="flex-center">
       <Card className="card" title="Изменение пароля">
-        <p>Придумайте новый пароль</p>
-        <Form
-          name="change-password"
-          initialValues={{ remember: true }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-        >
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: 'Введите пароль!' }]}
-          >
-            <Input.Password
-              placeholder="Пароль"
-              prefix={<LockOutlined />}
-              size="large"
-            />
-          </Form.Item>
+        {alert.message && (
+          <Alert
+            className="alert"
+            message={alert.message}
+            type={alert.type as any}
+          />
+        )}
 
-          <Form.Item
-            name="confirm-password"
-            dependencies={['password']}
-            rules={[
-              { required: true, message: 'Введите подтверждение пароля!' },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue('password') === value) {
-                    return Promise.resolve()
-                  }
-                  return Promise.reject(new Error('Пароли должны совпадать!'))
-                }
-              })
-            ]}
-          >
-            <Input.Password
-              placeholder="Пароль еще раз"
-              prefix={<LockOutlined />}
-              size="large"
-            />
-          </Form.Item>
+        {changeSuccess && (
+          <p>
+            Теперь Вы можете <Link to="/auth/login">Войти</Link> в приложение
+          </p>
+        )}
 
-          <Button
-            className="submit-button"
-            type="primary"
-            htmlType="submit"
-            size="large"
-            block
-          >
-            Изменить пароль
-          </Button>
-        </Form>
+        {!secretError && !changeSuccess && (
+          <>
+            <p>Придумайте новый пароль</p>
+            <Form
+              name="change-password-request"
+              initialValues={{ remember: true }}
+              onFinish={onFinish}
+            >
+              <Form.Item
+                name="password"
+                rules={[{ required: true, message: 'Введите пароль!' }]}
+              >
+                <Input.Password
+                  placeholder="Пароль"
+                  prefix={<LockOutlined />}
+                  size="large"
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="confirmPassword"
+                dependencies={['password']}
+                rules={[
+                  { required: true, message: 'Введите подтверждение пароля!' },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue('password') === value) {
+                        return Promise.resolve()
+                      }
+                      return Promise.reject(
+                        new Error('Пароли должны совпадать!')
+                      )
+                    }
+                  })
+                ]}
+              >
+                <Input.Password
+                  placeholder="Пароль еще раз"
+                  prefix={<LockOutlined />}
+                  size="large"
+                />
+              </Form.Item>
+
+              <Button
+                className="submit-button"
+                type="primary"
+                htmlType="submit"
+                size="large"
+                block
+                disabled={loading}
+              >
+                Изменить пароль
+              </Button>
+            </Form>
+          </>
+        )}
       </Card>
     </div>
   )

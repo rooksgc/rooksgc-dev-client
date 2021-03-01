@@ -26,7 +26,7 @@ const Register: FC = () => {
       setLoading(true)
 
       const { name, email, password } = values
-      const { type, message } = await authService.create({
+      const { type, message } = await authService.register({
         name,
         email,
         password
@@ -143,6 +143,7 @@ const Register: FC = () => {
             htmlType="submit"
             size="large"
             block
+            disabled={loading}
           >
             Зарегистрироваться
           </Button>
