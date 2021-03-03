@@ -1,4 +1,4 @@
-import { FC, SyntheticEvent, useState } from 'react'
+import { FC, SyntheticEvent, useState, useEffect } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { Layout, Menu } from 'antd'
 import {
@@ -6,6 +6,10 @@ import {
   MenuUnfoldOutlined,
   MenuFoldOutlined
 } from '@ant-design/icons'
+
+import useActions from '../../hooks/useActions'
+import { fetchUserRequest } from '../../modules/Auth/actions'
+import authService from '../../services/auth'
 
 import Home from '../Home'
 import MainMenu from '../MainMenu'
@@ -19,6 +23,15 @@ import Activation from '../Activation'
 const { Header, Content, Footer, Sider } = Layout
 
 const App: FC = () => {
+  const [dispatchFetchUserRequest] = useActions([fetchUserRequest], null)
+
+  useEffect(() => {
+    const token = authService.getToken()
+    if (token) {
+      dispatchFetchUserRequest(token)
+    }
+  }, [dispatchFetchUserRequest])
+
   const [collapsed, setCollapsed] = useState(false)
 
   const toggle = (event: SyntheticEvent): void => {

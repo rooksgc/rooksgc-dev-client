@@ -2,7 +2,9 @@ import { FC, useState } from 'react'
 import { Form, Input, Button, Card, Alert, Spin } from 'antd'
 import { MailOutlined, LockOutlined, LoadingOutlined } from '@ant-design/icons'
 import { Link } from 'react-router-dom'
+import useActions from '../../hooks/useActions'
 import authService from '../../services/auth'
+import { setUser, setToken } from '../../modules/Auth/actions'
 
 interface FormValues {
   email: string
@@ -14,6 +16,10 @@ const Login: FC = () => {
   const [form] = Form.useForm()
   const [alert, setAlert] = useState(emptyMessage)
   const [loading, setLoading] = useState(false)
+  const [dispatchSetUser, dispatchSetToken] = useActions(
+    [setUser, setToken],
+    null
+  )
 
   const onFinish = async (values: FormValues) => {
     try {
@@ -21,7 +27,7 @@ const Login: FC = () => {
       setLoading(true)
 
       const { email, password } = values
-      const { type, message } = await authService.login({
+      const { type, message, token, data } = await authService.login({
         email,
         password
       })
@@ -31,6 +37,9 @@ const Login: FC = () => {
         setLoading(false)
         if (type === 'error') return
       }
+
+      dispatchSetUser(data)
+      dispatchSetToken(token)
 
       // todo form.resetFields() ?
       setLoading(false)

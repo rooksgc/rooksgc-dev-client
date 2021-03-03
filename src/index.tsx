@@ -2,13 +2,19 @@ import { StrictMode } from 'react'
 import { render } from 'react-dom'
 import './index.scss'
 import { BrowserRouter } from 'react-router-dom'
+import { Provider } from 'react-redux'
 import App from './components/App'
 import reportWebVitals from './reportWebVitals'
+import createStore from './store'
+
+const store = createStore()
 
 render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     </BrowserRouter>
   </StrictMode>,
   document.getElementById('root')

@@ -1,5 +1,12 @@
 import axios from 'axios'
-import { ServerResponse } from '../types/server'
+
+export interface ServerResponse {
+  type: any
+  message?: string
+  data?: any
+  errors?: string[]
+  token?: string
+}
 
 export interface UserLoginRequestDTO {
   email: string
@@ -33,6 +40,10 @@ export interface ChangePasswordRequestDTO {
   password: string
 }
 
+export interface UserFetchByTokenRequestDTO {
+  token: string
+}
+
 const SERVER_UNAVAILABLE =
   'Сервер не отвечает или временно недоступен. Попробуйте повторить запрос позднее.'
 
@@ -48,7 +59,7 @@ const makeError = (error): ServerResponse => {
   return response.data
 }
 
-// todo Методы абсолютно одинаковы, следует вынести логику в одно место
+// todo DRY!
 const AuthService = {
   /** Регистрация нового пользователя */
   register: async (payload: UserCreateRequestDTO): Promise<ServerResponse> => {
@@ -74,6 +85,18 @@ const AuthService = {
   login: async (payload: UserLoginRequestDTO): Promise<ServerResponse> => {
     try {
       const response = await axios.post('/api/v1/auth/login', payload)
+      return response.data
+    } catch (error) {
+      return makeError(error)
+    }
+  },
+
+  /** Попытка получить объект пользователя по токену */
+  fetchByToken: async (
+    payload: UserFetchByTokenRequestDTO
+  ): Promise<ServerResponse> => {
+    try {
+      const response = await axios.post('/api/v1/auth/fetch-by-token', payload)
       return response.data
     } catch (error) {
       return makeError(error)
@@ -117,7 +140,10 @@ const AuthService = {
     } catch (error) {
       return makeError(error)
     }
-  }
+  },
+
+  /** Получить token из localStorage */
+  getToken: (): string | null => localStorage.getItem('auth')
 }
 
 export default AuthService
