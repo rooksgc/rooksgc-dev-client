@@ -1,4 +1,4 @@
-import { takeLatest, put, call, fork } from 'redux-saga/effects'
+import { takeLatest, takeLeading, put, call, fork } from 'redux-saga/effects'
 import {
   fetchUserRequest,
   fetchUserSuccess,
@@ -29,7 +29,7 @@ export function* fetchUserByTokenFlow({ payload }) {
   }
 }
 function* fetchUserByTokenWatcher() {
-  yield takeLatest(fetchUserRequest, fetchUserByTokenFlow)
+  yield takeLeading(fetchUserRequest, fetchUserByTokenFlow)
 }
 
 export default function* generator() {

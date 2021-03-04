@@ -49,6 +49,7 @@ const SERVER_UNAVAILABLE =
 
 const makeError = (error): ServerResponse => {
   const { response } = error
+  // todo не работает на prod
   if (response.statusText === 'Internal Server Error') {
     return {
       type: 'error',
@@ -59,91 +60,82 @@ const makeError = (error): ServerResponse => {
   return response.data
 }
 
-// todo DRY!
 const AuthService = {
   /** Регистрация нового пользователя */
-  register: async (payload: UserCreateRequestDTO): Promise<ServerResponse> => {
-    try {
-      const response = await axios.post('/api/v1/auth/register', payload)
-      return response.data
-    } catch (error) {
-      return makeError(error)
-    }
-  },
+  register: async (payload: UserCreateRequestDTO): Promise<ServerResponse> =>
+    AuthService.send({
+      method: 'post',
+      endpoint: '/api/v1/auth/register',
+      payload
+    }),
 
   /** Активация пользователя по коду из письма */
-  activate: async (code: string): Promise<ServerResponse> => {
-    try {
-      const response = await axios.patch(`/api/v1/auth/activate/${code}`)
-      return response.data
-    } catch (error) {
-      return makeError(error)
-    }
-  },
+  activate: async (code: string): Promise<ServerResponse> =>
+    AuthService.send({
+      method: 'patch',
+      endpoint: `/api/v1/auth/activate/${code}`
+    }),
 
   /** Вход пользователя в систему и полуение токена */
-  login: async (payload: UserLoginRequestDTO): Promise<ServerResponse> => {
-    try {
-      const response = await axios.post('/api/v1/auth/login', payload)
-      return response.data
-    } catch (error) {
-      return makeError(error)
-    }
-  },
+  login: async (payload: UserLoginRequestDTO): Promise<ServerResponse> =>
+    AuthService.send({
+      method: 'post',
+      endpoint: '/api/v1/auth/login',
+      payload
+    }),
 
   /** Попытка получить объект пользователя по токену */
   fetchByToken: async (
     payload: UserFetchByTokenRequestDTO
-  ): Promise<ServerResponse> => {
-    try {
-      const response = await axios.post('/api/v1/auth/fetch-by-token', payload)
-      return response.data
-    } catch (error) {
-      return makeError(error)
-    }
-  },
+  ): Promise<ServerResponse> =>
+    AuthService.send({
+      method: 'post',
+      endpoint: '/api/v1/auth/fetch-by-token',
+      payload
+    }),
 
   /** Запрос на изменение пароля, отправка письма со ссылкой на email */
   recover: async (
     payload: UserRecoverPasswordRequestDTO
-  ): Promise<ServerResponse> => {
-    try {
-      const response = await axios.post('/api/v1/auth/recover', payload)
-      return response.data
-    } catch (error) {
-      return makeError(error)
-    }
-  },
+  ): Promise<ServerResponse> =>
+    AuthService.send({
+      method: 'post',
+      endpoint: '/api/v1/auth/recover',
+      payload
+    }),
 
   /** Проверка секретного ключа для доступа к форме восстановления пароля */
   checkSecretcode: async (
     payload: CheckSecretCodeRequestDTO
-  ): Promise<ServerResponse> => {
-    try {
-      const response = await axios.post('/api/v1/auth/check-secret', payload)
-      return response.data
-    } catch (error) {
-      return makeError(error)
-    }
-  },
+  ): Promise<ServerResponse> =>
+    AuthService.send({
+      method: 'post',
+      endpoint: '/api/v1/auth/check-secret',
+      payload
+    }),
 
   /** Изменение пароля пользователя */
   changePassword: async (
     payload: ChangePasswordRequestDTO
-  ): Promise<ServerResponse> => {
+  ): Promise<ServerResponse> =>
+    AuthService.send({
+      method: 'patch',
+      endpoint: '/api/v1/auth/change-password',
+      payload
+    }),
+
+  /** Получить token из localStorage */
+  getToken: (): string | null => localStorage.getItem('auth'),
+
+  /** Отправка запроса на API */
+  send: async ({ method, endpoint, payload = {} }): Promise<ServerResponse> => {
     try {
-      const response = await axios.patch(
-        '/api/v1/auth/change-password',
-        payload
-      )
+      const response = await axios[method](endpoint, payload)
       return response.data
     } catch (error) {
       return makeError(error)
     }
-  },
-
-  /** Получить token из localStorage */
-  getToken: (): string | null => localStorage.getItem('auth')
+  }
 }
 
 export default AuthService
