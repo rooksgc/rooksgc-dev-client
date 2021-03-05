@@ -16,7 +16,7 @@ const user = handleActions(
   {
     [fetchUserRequest]: () => null,
     [fetchUserSuccess]: (_state, action) => action.payload,
-    [fetchUserFailure]: () => null,
+    [fetchUserFailure]: () => false,
     [setUser]: (_state, action) => action.payload
   },
   null

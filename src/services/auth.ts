@@ -44,8 +44,11 @@ export interface UserFetchByTokenRequestDTO {
   token: string
 }
 
+/** Сообщение при недоступном соединении */
 const SERVER_UNAVAILABLE =
   'Сервер не отвечает или временно недоступен. Попробуйте повторить запрос позднее.'
+/** */
+const AUTH_TOKEN_STORAGE_KEY = 'auth'
 
 const makeError = (error): ServerResponse => {
   const { response } = error
@@ -124,10 +127,13 @@ const AuthService = {
       payload
     }),
 
-  /** Получить token из localStorage */
-  getToken: (): string | null => localStorage.getItem('auth'),
+  getToken: (): string | null => localStorage.getItem(AUTH_TOKEN_STORAGE_KEY),
 
-  /** Отправка запроса на API */
+  setToken: (payload: string): void =>
+    localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, payload),
+
+  removeToken: (): void => localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY),
+
   send: async ({ method, endpoint, payload = {} }): Promise<ServerResponse> => {
     try {
       const response = await axios[method](endpoint, payload)

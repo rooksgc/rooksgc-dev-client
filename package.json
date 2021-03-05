@@ -43,9 +43,11 @@
     "rules": {
       "camelcase": "off",
       "no-underscore-dangle": "off",
+      "no-nested-ternary": "off",
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
       "react/jsx-uses-react": "off",
+      "react/jsx-props-no-spreading": "off",
       "react/react-in-jsx-scope": "off",
       "react/jsx-filename-extension": [
         1,

@@ -1,7 +1,7 @@
 import { FC, useState } from 'react'
 import { Form, Input, Button, Card, Alert, Spin } from 'antd'
 import { MailOutlined, LockOutlined, LoadingOutlined } from '@ant-design/icons'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import useActions from '../../hooks/useActions'
 import authService from '../../services/auth'
 import { setUser, setToken } from '../../modules/Auth/actions'
@@ -20,6 +20,7 @@ const Login: FC = () => {
     [setUser, setToken],
     null
   )
+  const history = useHistory()
 
   const onFinish = async (values: FormValues) => {
     try {
@@ -41,10 +42,9 @@ const Login: FC = () => {
       dispatchSetUser(data)
       dispatchSetToken(token)
 
-      // todo form.resetFields() ?
       setLoading(false)
 
-      // todo Выполнен логин, редирект куда-то ?
+      history.push('/')
     } catch (error) {
       setAlert(error)
       setLoading(false)
