@@ -3,7 +3,6 @@ import { useLocation, useHistory } from 'react-router-dom'
 import { PieChartOutlined } from '@ant-design/icons'
 import { Menu } from 'antd'
 import useShallowEqualSelector from '../../hooks/useShallowEqualSelector'
-import { RootState } from '../../modules'
 import useActions from '../../hooks/useActions'
 import { logoutUserRequest } from '../../modules/Auth/actions'
 
@@ -45,7 +44,7 @@ const MainMenu: FC = () => {
   const [selectedKey, setSelectedKey] = useState('')
   const location = useLocation()
   const history = useHistory()
-  const user = useShallowEqualSelector((state: RootState) => state.auth.user)
+  const user = useShallowEqualSelector((state) => state.auth.user)
 
   const [dispatchLogoutUserRequest] = useActions([logoutUserRequest], null)
 

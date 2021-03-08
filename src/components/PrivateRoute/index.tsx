@@ -1,7 +1,6 @@
 import { FC } from 'react'
-import { useSelector } from 'react-redux'
 import { Route, Redirect, RouteProps } from 'react-router-dom'
-import { RootState } from '../../modules'
+import useShallowEqualSelector from '../../hooks/useShallowEqualSelector'
 
 interface PrivateRouteProps extends RouteProps {
   component?: any
@@ -10,7 +9,7 @@ interface PrivateRouteProps extends RouteProps {
 
 const PrivateRoute: FC<PrivateRouteProps> = (props: PrivateRouteProps) => {
   const { component: Component, children, ...rest } = props
-  const user = useSelector<RootState>((state) => state.auth.user)
+  const user = useShallowEqualSelector((state) => state.auth.user)
 
   return (
     <Route

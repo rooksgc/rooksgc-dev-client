@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 
 export interface ServerResponse {
   type: any
@@ -30,7 +30,7 @@ export interface UserRecoverPasswordRequestDTO {
   email: string
 }
 
-export interface CheckSecretCodeRequestDTO {
+export interface CheckSecretRequestDTO {
   code: string
   secretType: string
 }
@@ -47,12 +47,26 @@ export interface UserFetchByTokenRequestDTO {
 /** Сообщение при недоступном соединении */
 const SERVER_UNAVAILABLE =
   'Сервер не отвечает или временно недоступен. Попробуйте повторить запрос позднее.'
-/** */
+
+/** Ключ, по которому в localStorage хранится токен */
 const AUTH_TOKEN_STORAGE_KEY = 'auth'
 
-const makeError = (error): ServerResponse => {
+/** Отказ в предоставлении ресурса из-за неверного токена */
+const AUTH_REJECTION_MESSAGE =
+  'Войдите или зарегистрируйтесь для просмотра содержимого.'
+
+const makeError = (error: any): ServerResponse => {
   const { response } = error
-  // todo не работает на prod
+
+  // Приватное содержимое
+  if (response.data.message === 'No authorization token was found') {
+    return {
+      type: 'error',
+      message: AUTH_REJECTION_MESSAGE
+    }
+  }
+
+  // TODO не работает на prod
   if (response.statusText === 'Internal Server Error') {
     return {
       type: 'error',
@@ -64,10 +78,16 @@ const makeError = (error): ServerResponse => {
 }
 
 const AuthService = {
+  /** Получить список всех пользователей */
+  getAllUsers: async (): Promise<ServerResponse> =>
+    AuthService.send({
+      method: 'get',
+      endpoint: '/api/v1/auth/users'
+    }),
   /** Регистрация нового пользователя */
   register: async (payload: UserCreateRequestDTO): Promise<ServerResponse> =>
     AuthService.send({
-      method: 'post',
+      method: 'put',
       endpoint: '/api/v1/auth/register',
       payload
     }),
@@ -108,8 +128,8 @@ const AuthService = {
     }),
 
   /** Проверка секретного ключа для доступа к форме восстановления пароля */
-  checkSecretcode: async (
-    payload: CheckSecretCodeRequestDTO
+  checkSecret: async (
+    payload: CheckSecretRequestDTO
   ): Promise<ServerResponse> =>
     AuthService.send({
       method: 'post',
@@ -143,5 +163,21 @@ const AuthService = {
     }
   }
 }
+
+axios.interceptors.request.use(
+  (config: AxiosRequestConfig) => {
+    const token = AuthService.getToken()
+
+    if (token) {
+      // eslint-disable-next-line no-param-reassign
+      config.headers = {
+        Authorization: `Bearer ${token}`
+      }
+    }
+
+    return config
+  },
+  (error) => makeError(error)
+)
 
 export default AuthService

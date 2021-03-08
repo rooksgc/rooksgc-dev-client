@@ -22,8 +22,8 @@ const ChangePassword: FC = () => {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    const checkSecretcode = async () => {
-      const { type, message } = await authService.checkSecretcode({
+    const checkSecret = async () => {
+      const { type, message } = await authService.checkSecret({
         code,
         secretType: 'RECOVER_PASSWORD'
       })
@@ -38,7 +38,7 @@ const ChangePassword: FC = () => {
         /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
       )
     ) {
-      checkSecretcode()
+      checkSecret()
     } else {
       setAlert({ type: 'error', message: 'Неверный секретный код!' })
       setSecretError(true)
