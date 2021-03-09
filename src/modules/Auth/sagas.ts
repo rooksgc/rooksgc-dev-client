@@ -20,7 +20,7 @@ function* setTokenWatcher() {
 /** Выход пользователя из системы (logout) */
 export function* logoutUserRequestFlow() {
   yield call([authService, authService.removeToken])
-  yield put(setUser(null))
+  yield put(setUser(false))
 }
 function* userLogoutWatcher() {
   yield takeLatest(logoutUserRequest, logoutUserRequestFlow)
@@ -32,6 +32,7 @@ export function* fetchUserByTokenFlow() {
     const token = yield call([authService, authService.getToken])
     if (!token) {
       yield put(fetchUserFailure())
+      return
     }
     const user = yield call([authService, authService.fetchByToken], { token })
     if (user.data) {

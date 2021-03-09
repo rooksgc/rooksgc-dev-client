@@ -56,6 +56,8 @@ const AUTH_REJECTION_MESSAGE =
   'Войдите или зарегистрируйтесь для просмотра содержимого.'
 
 const makeError = (error: any): ServerResponse => {
+  console.dir(error)
+
   const { response } = error
 
   // Приватное содержимое
