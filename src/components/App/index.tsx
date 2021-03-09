@@ -77,7 +77,7 @@ const App: FC = () => {
               </Route>
             </Switch>
           </Content>
-          <Footer style={{ textAlign: 'center' }}>© [Пишем чатик]</Footer>
+          <Footer style={{ textAlign: 'center' }}>© [Chat]</Footer>
         </Layout>
       </Layout>
     </>
