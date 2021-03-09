@@ -22,7 +22,7 @@ const PrivateRoute: FC<PrivateRouteProps> = (props: PrivateRouteProps) => {
               state: { from: routeProps.location }
             }}
           />
-        ) : Component ? (
+        ) : user === null ? null : Component ? (
           <Component {...routeProps} />
         ) : (
           children

@@ -53,30 +53,29 @@ const AUTH_TOKEN_STORAGE_KEY = 'auth'
 
 /** Отказ в предоставлении ресурса из-за неверного токена */
 const AUTH_REJECTION_MESSAGE =
-  'Войдите или зарегистрируйтесь для просмотра содержимого.'
+  'Войдите или зарегистрируйтесь для просмотра данного содержимого.'
 
 const makeError = (error: any): ServerResponse => {
-  console.dir(error)
+  const {
+    response: { data, status }
+  } = error
 
-  const { response } = error
-
-  // Приватное содержимое
-  if (response.data.message === 'No authorization token was found') {
-    return {
-      type: 'error',
-      message: AUTH_REJECTION_MESSAGE
-    }
-  }
-
-  // TODO не работает на prod
-  if (response.statusText === 'Internal Server Error') {
+  if (typeof data === 'string' && (status === 502 || status === 500)) {
     return {
       type: 'error',
       message: SERVER_UNAVAILABLE
     }
   }
 
-  return response.data
+  /** Неверный токен */
+  if (data?.message === 'No authorization token was found') {
+    return {
+      type: 'error',
+      message: AUTH_REJECTION_MESSAGE
+    }
+  }
+
+  return data
 }
 
 const AuthService = {
