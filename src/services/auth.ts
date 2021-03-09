@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios'
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 
 export interface ServerResponse {
   type: any
@@ -157,7 +157,7 @@ const AuthService = {
 
   send: async ({ method, endpoint, payload = {} }): Promise<ServerResponse> => {
     try {
-      const response = await axios[method](endpoint, payload)
+      const response: AxiosResponse = await axios[method](endpoint, payload)
       return response.data
     } catch (error) {
       return makeError(error)
