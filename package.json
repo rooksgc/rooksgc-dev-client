@@ -1,6 +1,6 @@
 {
   "name": "rooksgc-dev-client",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Client scripts",
   "repository": {
     "type": "git",
@@ -13,7 +13,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "prepare": "husky install",
-    "lint": "eslint --fix --ext .ts,.tsx"
+    "lint": "eslint . --ext .jsx,.ts,.tsx",
+    "lint:fix": "eslint . --fix --ext .jsx,.ts,.tsx"
   },
   "proxy": "http://127.0.0.1:5000",
   "browserslist": {
@@ -30,9 +31,7 @@
   },
   "eslintConfig": {
     "extends": [
-      "react-app",
-      "react-app/jest",
-      "airbnb",
+      "airbnb-typescript",
       "airbnb/hooks",
       "prettier"
     ],
@@ -40,6 +39,9 @@
       "react",
       "react-hooks"
     ],
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
     "rules": {
       "camelcase": "off",
       "no-underscore-dangle": "off",
@@ -118,10 +120,12 @@
   },
   "devDependencies": {
     "@types/react-router-dom": "^5.1.7",
+    "@typescript-eslint/eslint-plugin": "^4.17.0",
     "eslint": "^7.19.0",
-    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-airbnb-typescript": "^12.3.1",
     "eslint-config-prettier": "^8.0.0",
     "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.2.0",
     "husky": "^5.1.3",
