@@ -28,7 +28,7 @@ const App: FC = () => {
   }
 
   return (
-    <>
+    <div>
       <Layout style={{ minHeight: '100vh' }}>
         <Sider theme="light" collapsible trigger={null} collapsed={collapsed}>
           <Menu mode="inline">
@@ -54,9 +54,7 @@ const App: FC = () => {
               <PrivateRoute path="/" exact>
                 <Home />
               </PrivateRoute>
-              <Route path="/auth/login">
-                <Login />
-              </Route>
+              <Route path="/auth/login" component={Login} />
               <Route path="/auth/register">
                 <Register />
               </Route>
@@ -80,7 +78,7 @@ const App: FC = () => {
           <Footer style={{ textAlign: 'center' }}>© [Chat]</Footer>
         </Layout>
       </Layout>
-    </>
+    </div>
   )
 }
 

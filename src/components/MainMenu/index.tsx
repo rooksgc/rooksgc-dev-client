@@ -69,7 +69,7 @@ const MainMenu: FC = () => {
       (item) => location.pathname === item.path
     )
     return selectedItem?.key || ''
-  }, [location.pathname, menuItems])
+  }, [location, menuItems])
 
   useEffect(() => {
     setSelectedKey(findSelectedKey())

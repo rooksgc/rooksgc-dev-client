@@ -5,7 +5,6 @@ import { AUTH_USER_FETCH_REQUEST } from './modules/Auth/actions'
 
 const createAppStore = () => {
   const sagaMiddleware = createSagaMiddleware()
-
   const store = createStore(
     rootReducer,
     compose(
@@ -16,7 +15,19 @@ const createAppStore = () => {
   )
 
   sagaMiddleware.run(rootSaga)
+  store.dispatch({ type: AUTH_USER_FETCH_REQUEST })
 
+  return store
+}
+
+export const createTestStore = () => {
+  const sagaMiddleware = createSagaMiddleware()
+  const store = createStore(
+    rootReducer,
+    compose(applyMiddleware(sagaMiddleware))
+  )
+
+  sagaMiddleware.run(rootSaga)
   store.dispatch({ type: AUTH_USER_FETCH_REQUEST })
 
   return store
