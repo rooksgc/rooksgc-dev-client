@@ -16,6 +16,12 @@
     "lint": "eslint . --ext .jsx,.ts,.tsx",
     "lint:fix": "eslint . --fix --ext .jsx,.ts,.tsx"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm test"
+    }
+  },
   "proxy": "http://127.0.0.1:5000",
   "browserslist": {
     "production": [
