@@ -14,8 +14,12 @@ code {
     monospace;
 }
 
-.site-layout {
-  &-background {
+.wrap-layout {
+  min-height: 100vh;
+}
+
+.main-layout {
+  &__background {
     background: #fff;
   }
 }
