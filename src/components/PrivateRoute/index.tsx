@@ -7,8 +7,11 @@ interface PrivateRouteProps extends RouteProps {
   children: any
 }
 
-const PrivateRoute: FC<PrivateRouteProps> = (props: PrivateRouteProps) => {
-  const { component: Component, children, ...rest } = props
+const PrivateRoute: FC<PrivateRouteProps> = ({
+  component: Component,
+  children,
+  ...rest
+}) => {
   const user = useShallowEqualSelector((state) => state.auth.user)
 
   return (

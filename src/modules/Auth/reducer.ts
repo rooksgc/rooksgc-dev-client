@@ -1,25 +1,21 @@
 import { combineReducers } from 'redux'
 import { handleActions } from 'redux-actions'
 import { UserDTO } from '../../services/auth'
-import {
-  setUser,
-  fetchUserRequest,
-  fetchUserSuccess,
-  fetchUserFailure
-} from './actions'
+import { setUser, fetchUserSuccess, fetchUserFailure } from './actions'
 
 export interface AuthState {
   user: UserDTO
 }
 
+export const initialState = null
+
 const user = handleActions(
   {
-    [fetchUserRequest]: () => null,
     [fetchUserSuccess]: (_state, action) => action.payload,
     [fetchUserFailure]: () => false,
     [setUser]: (_state, action) => action.payload
   },
-  null
+  initialState
 )
 
 export default combineReducers<AuthState>({

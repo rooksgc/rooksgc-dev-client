@@ -1,20 +1,20 @@
 import { StrictMode } from 'react'
-import { render } from 'react-dom'
-import './index.scss'
-import { BrowserRouter as Router } from 'react-router-dom'
 import { Provider } from 'react-redux'
+import { BrowserRouter } from 'react-router-dom'
+import { render } from 'react-dom'
 import App from './components/App'
+import './index.scss'
 import reportWebVitals from './reportWebVitals'
-import createStore from './store'
+import createAppStore from './store'
 
-const store = createStore()
+const store = createAppStore()
 
 render(
   <StrictMode>
     <Provider store={store}>
-      <Router>
+      <BrowserRouter>
         <App />
-      </Router>
+      </BrowserRouter>
     </Provider>
   </StrictMode>,
   document.getElementById('root')

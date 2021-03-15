@@ -55,7 +55,8 @@
       "import/extensions": 0,
       "import/no-extraneous-dependencies": 0,
       "import/no-named-default": 0,
-      "spaced-comment": 0
+      "spaced-comment": 0,
+      "react/prop-types": 0
     }
   },
   "eslintIgnore": [

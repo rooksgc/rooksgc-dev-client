@@ -1,12 +1,12 @@
-import { FC, useState, useEffect, useCallback } from 'react'
+import { FC } from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
-import { PieChartOutlined } from '@ant-design/icons'
 import { Menu } from 'antd'
-import useShallowEqualSelector from '../../hooks/useShallowEqualSelector'
+import { PieChartOutlined } from '@ant-design/icons'
 import useActions from '../../hooks/useActions'
 import { logoutUserRequest } from '../../modules/Auth/actions'
+import useShallowEqualSelector from '../../hooks/useShallowEqualSelector'
 
-const unauthorizedItems = [
+const unauthorizedMenu = [
   {
     key: '1',
     name: 'login',
@@ -23,7 +23,7 @@ const unauthorizedItems = [
   }
 ]
 
-const authorizedItems = [
+const authorizedMenu = [
   {
     key: '1',
     name: 'home',
@@ -41,17 +41,14 @@ const authorizedItems = [
 ]
 
 const MainMenu: FC = () => {
-  const [selectedKey, setSelectedKey] = useState('')
   const location = useLocation()
   const history = useHistory()
+  const [dispatchLogoutUserRequest] = useActions([logoutUserRequest], null)
   const user = useShallowEqualSelector((state) => state.auth.user)
 
-  const [dispatchLogoutUserRequest] = useActions([logoutUserRequest], null)
+  const menuItems = () => (user ? authorizedMenu : unauthorizedMenu)
 
-  const menuItems = useCallback(
-    () => (user ? authorizedItems : unauthorizedItems),
-    [user]
-  )
+  const key = menuItems().find((item) => location.pathname === item.path)?.key
 
   const onClickMenu = (item) => {
     const clicked = menuItems().find((_item) => _item.key === item.key)
@@ -64,22 +61,11 @@ const MainMenu: FC = () => {
     history.push(clicked!.path)
   }
 
-  const findSelectedKey = useCallback(() => {
-    const selectedItem = menuItems().find(
-      (item) => location.pathname === item.path
-    )
-    return selectedItem?.key || ''
-  }, [location, menuItems])
-
-  useEffect(() => {
-    setSelectedKey(findSelectedKey())
-  }, [location, findSelectedKey])
-
   return (
     <Menu
       style={{ float: 'right' }}
       mode="horizontal"
-      selectedKeys={[selectedKey]}
+      selectedKeys={[key]}
       onClick={onClickMenu}
     >
       {menuItems().map((item) => (

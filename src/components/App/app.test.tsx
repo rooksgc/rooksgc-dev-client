@@ -1,8 +1,8 @@
-import { render, cleanup, fireEvent, screen } from '@testing-library/react'
+import { render, cleanup, screen, fireEvent } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
+import App from '.'
 import { createTestStore } from '../../store'
-import App from './index'
 
 const store = createTestStore()
 
@@ -10,41 +10,8 @@ afterEach(() => {
   cleanup()
 })
 
-describe('App component', () => {
-  it('Should have correct layout structure', () => {
-    const { container } = render(
-      <Provider store={store}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </Provider>
-    )
-
-    const wrapper = container.firstChild
-    expect(wrapper).toHaveClass('wrap-layout')
-    expect(wrapper.childNodes).toHaveLength(2)
-
-    const sider = screen.getByTestId('sider')
-    expect(sider).toBeInTheDocument()
-    expect(sider.childNodes).toHaveLength(1)
-
-    const main = screen.getByTestId('main')
-    expect(main).toBeInTheDocument()
-    expect(main.childNodes).toHaveLength(3)
-
-    const header = screen.getByTestId('header')
-    expect(header).toBeInTheDocument()
-    expect(header.childNodes).toHaveLength(2)
-
-    const content = screen.getByTestId('content')
-    expect(content).toBeInTheDocument()
-
-    const footer = screen.getByTestId('footer')
-    expect(footer).toBeInTheDocument()
-    expect(footer.textContent).toBe('© [Chat]')
-  })
-
-  it('Should toggle Sider correctly', async () => {
+describe('App', () => {
+  it('Should have correct layout structure when unauthorized', () => {
     render(
       <Provider store={store}>
         <BrowserRouter>
@@ -53,8 +20,80 @@ describe('App component', () => {
       </Provider>
     )
 
-    expect(screen.getByTestId('trigger')).toHaveClass('expanded')
-    fireEvent.click(screen.getByTestId('trigger'))
-    expect(screen.getByTestId('trigger')).toHaveClass('collapsed')
+    expect(screen.getByRole('banner')).toBeInTheDocument()
+    expect(screen.getByRole('banner')).toHaveClass('header')
+
+    expect(screen.getByRole('main')).toBeInTheDocument()
+    expect(screen.getByRole('main')).toHaveClass('content')
+
+    expect(screen.getByRole('contentinfo')).toBeInTheDocument()
+    expect(screen.getByRole('contentinfo')).toHaveClass('footer')
+  })
+
+  it('Should have correct layout structure when authorized', () => {
+    render(
+      <Provider store={store}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </Provider>
+    )
+
+    store.dispatch({
+      type: 'AUTH/SET_USER',
+      payload: {
+        id: 1,
+        name: 'test',
+        email: 'testmail@gmail.com',
+        role: 'USER'
+      }
+    })
+
+    expect(screen.getByRole('banner')).toBeInTheDocument()
+    expect(screen.getByRole('banner')).toHaveClass('header')
+
+    expect(screen.getByRole('main')).toBeInTheDocument()
+    expect(screen.getByRole('main')).toHaveClass('content')
+
+    const collapseMenu = screen.getByRole('img', { name: 'menu-fold' })
+    expect(collapseMenu).toBeInTheDocument()
+
+    expect(screen.getByRole('contentinfo')).toBeInTheDocument()
+    expect(screen.getByRole('contentinfo')).toHaveClass('footer')
+
+    expect(screen.getByRole('complementary')).toBeInTheDocument()
+    expect(screen.getByRole('complementary')).toHaveClass('sider')
+  })
+
+  it('Trigger button should collapse and expand sidebar', () => {
+    render(
+      <Provider store={store}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </Provider>
+    )
+
+    store.dispatch({
+      type: 'AUTH/SET_USER',
+      payload: {
+        id: 1,
+        name: 'test',
+        email: 'testmail@gmail.com',
+        role: 'USER'
+      }
+    })
+
+    const collapseMenu = screen.getByRole('img', { name: 'menu-fold' })
+    expect(collapseMenu).toBeInTheDocument()
+    expect(collapseMenu).toHaveClass('expanded')
+
+    expect(screen.getByRole('complementary')).toBeInTheDocument()
+    expect(screen.getByRole('complementary')).toHaveClass('sider')
+
+    fireEvent.click(collapseMenu)
+
+    const expandMenu = screen.getByRole('img', { name: 'menu-unfold' })
+    expect(expandMenu).toHaveClass('collapsed')
   })
 })
