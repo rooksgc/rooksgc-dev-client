@@ -1,10 +1,12 @@
-import { render, cleanup, screen, fireEvent } from '@testing-library/react'
-import { Provider } from 'react-redux'
-import { BrowserRouter } from 'react-router-dom'
+import {
+  render,
+  cleanup,
+  screen,
+  fireEvent,
+  store
+} from '../../utils/test-wrapper'
 import App from '.'
-import { createTestStore } from '../../store'
-
-const store = createTestStore()
+import { fetchUserSuccess } from '../../modules/Auth/actions'
 
 afterEach(() => {
   cleanup()
@@ -12,13 +14,7 @@ afterEach(() => {
 
 describe('App', () => {
   it('Should have correct layout structure when unauthorized', () => {
-    render(
-      <Provider store={store}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </Provider>
-    )
+    render(<App />)
 
     expect(screen.getByRole('banner')).toBeInTheDocument()
     expect(screen.getByRole('banner')).toHaveClass('header')
@@ -31,23 +27,16 @@ describe('App', () => {
   })
 
   it('Should have correct layout structure when authorized', () => {
-    render(
-      <Provider store={store}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </Provider>
-    )
+    render(<App />)
 
-    store.dispatch({
-      type: 'AUTH/SET_USER',
-      payload: {
+    store.dispatch(
+      fetchUserSuccess({
         id: 1,
         name: 'test',
         email: 'testmail@gmail.com',
         role: 'USER'
-      }
-    })
+      })
+    )
 
     expect(screen.getByRole('banner')).toBeInTheDocument()
     expect(screen.getByRole('banner')).toHaveClass('header')
@@ -66,23 +55,16 @@ describe('App', () => {
   })
 
   it('Trigger button should collapse and expand sidebar', () => {
-    render(
-      <Provider store={store}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </Provider>
-    )
+    render(<App />)
 
-    store.dispatch({
-      type: 'AUTH/SET_USER',
-      payload: {
+    store.dispatch(
+      fetchUserSuccess({
         id: 1,
         name: 'test',
         email: 'testmail@gmail.com',
         role: 'USER'
-      }
-    })
+      })
+    )
 
     const collapseMenu = screen.getByRole('img', { name: 'menu-fold' })
     expect(collapseMenu).toBeInTheDocument()

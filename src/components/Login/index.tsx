@@ -4,7 +4,7 @@ import { MailOutlined, LockOutlined, LoadingOutlined } from '@ant-design/icons'
 import { Link, useHistory } from 'react-router-dom'
 import useActions from '../../hooks/useActions'
 import authService from '../../services/auth'
-import { setUser, setToken } from '../../modules/Auth/actions'
+import { fetchUserSuccess, setToken } from '../../modules/Auth/actions'
 
 interface FormValues {
   email: string
@@ -16,8 +16,8 @@ const Login: FC = () => {
   const [form] = Form.useForm()
   const [alert, setAlert] = useState(emptyMessage)
   const [loading, setLoading] = useState(false)
-  const [dispatchSetUser, dispatchSetToken] = useActions(
-    [setUser, setToken],
+  const [dispatchFetchUserSuccess, dispatchSetToken] = useActions(
+    [fetchUserSuccess, setToken],
     null
   )
   const history = useHistory()
@@ -39,7 +39,7 @@ const Login: FC = () => {
         if (type === 'error') return
       }
 
-      dispatchSetUser(data)
+      dispatchFetchUserSuccess(data)
       dispatchSetToken(token)
 
       setLoading(false)

@@ -1,5 +1,5 @@
 import { takeLatest, put, call, fork } from 'redux-saga/effects'
-import { logoutUserRequest, setUser, setToken } from './actions'
+import { logoutUserRequest, fetchUserSuccess, setToken } from './actions'
 import authService from '../../services/auth'
 
 /** Сохранение token в localStorage */
@@ -13,7 +13,7 @@ function* setTokenWatcher() {
 /** Выход пользователя из системы (logout) */
 export function* logoutUserRequestFlow() {
   yield call([authService, authService.removeToken])
-  yield put(setUser(false))
+  yield put(fetchUserSuccess(false))
 }
 function* userLogoutWatcher() {
   yield takeLatest(logoutUserRequest, logoutUserRequestFlow)

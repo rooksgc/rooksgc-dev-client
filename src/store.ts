@@ -18,16 +18,4 @@ const createAppStore = () => {
   return store
 }
 
-export const createTestStore = () => {
-  const sagaMiddleware = createSagaMiddleware()
-  const store = createStore(
-    rootReducer,
-    compose(applyMiddleware(sagaMiddleware))
-  )
-
-  sagaMiddleware.run(rootSaga)
-
-  return store
-}
-
 export default createAppStore
