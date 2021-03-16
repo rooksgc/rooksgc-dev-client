@@ -4,7 +4,7 @@ import {
   screen,
   fireEvent,
   store
-} from '../../utils/test-wrapper'
+} from '../../tests/test-wrapper'
 import App from '.'
 import { fetchUserSuccess } from '../../modules/Auth/actions'
 

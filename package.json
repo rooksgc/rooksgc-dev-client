@@ -68,7 +68,8 @@
     "/public/",
     "/src/types/",
     "*.spec.ts",
-    "*.test.ts"
+    "*.test.ts",
+    "/src/tests/*"
   ],
   "jest": {
     "transformIgnorePatterns": [
