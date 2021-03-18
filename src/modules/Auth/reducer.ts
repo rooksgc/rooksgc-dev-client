@@ -13,7 +13,7 @@ export const initialState = {
 
 const user = handleActions(
   {
-    [fetchUserSuccess]: (_state, action) => action.payload,
+    [fetchUserSuccess.toString()]: (_state, action) => action.payload,
     [fetchUserFailure]: () => false
   },
   null

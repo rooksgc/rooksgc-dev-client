@@ -5,7 +5,7 @@ import { render } from 'react-dom'
 import App from './components/App'
 import './index.scss'
 import reportWebVitals from './reportWebVitals'
-import createAppStore from './store'
+import createAppStore from './modules/store'
 
 const store = createAppStore()
 

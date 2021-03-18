@@ -5,13 +5,6 @@ const randomAction = {
   type: `AUTH/RANDOM_ACTION_${parseInt(String(Math.random() * 1000))}`
 }
 
-const fakeUserPayload = {
-  id: 1,
-  name: 'user0',
-  email: 'user0.gmail.com',
-  role: 'USER'
-}
-
 describe('Auth reducer', () => {
   const state0 = reducer(undefined, randomAction)
 
@@ -30,6 +23,12 @@ describe('Auth reducer', () => {
   })
 
   it('fetchUserSuccess action set user field to ste store correctly', () => {
+    const fakeUserPayload = {
+      id: 1,
+      name: 'user0',
+      email: 'user0.gmail.com',
+      role: 'USER'
+    }
     const state1 = reducer(state0, fetchUserSuccess(fakeUserPayload))
     expect(state1).toEqual({ user: fakeUserPayload })
   })

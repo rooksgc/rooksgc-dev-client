@@ -1,86 +1,78 @@
-import { call, put, takeLatest, all, fork } from 'redux-saga/effects'
-import authService from '../../services/auth'
-import { runSaga } from 'redux-saga'
+import { takeLatest, all, fork } from 'redux-saga/effects'
 import {
-  setTokenFlow,
-  logoutUserRequestFlow,
   setTokenWatcher,
+  setTokenFlow,
   userLogoutWatcher,
+  logoutUserRequestFlow,
   default as mainGenerator
 } from './sagas'
-import { setToken, fetchUserSuccess, logoutUserRequest } from './actions'
+import { fetchUserSuccess, logoutUserRequest, setToken } from './actions'
+import authService from '../../services/auth'
+import { runSaga } from 'redux-saga'
 
-describe('Set jwt token saga', () => {
-  const fakeToken = 'e2e23d.23d23d23d.23d32d23'
+beforeEach(() => {
+  jest.resetAllMocks()
+})
 
-  it('Should call correct setToken saga tasks', async () => {
-    const iterator = setTokenFlow({ payload: fakeToken })
-    expect(iterator.next().value).toEqual(
-      call([authService, authService.setToken], fakeToken)
+describe('Auth saga', () => {
+  test('mainGenerator', async () => {
+    const generator = mainGenerator()
+    expect(generator.next().value).toEqual(
+      all([fork(setTokenWatcher), fork(userLogoutWatcher)])
     )
-    expect(iterator.next().done).toBeTruthy()
   })
 
-  it('Should call saga for saving auth token to localStorage', async () => {
-    const setToken = jest.spyOn(authService, 'setToken')
-    const dispatched = []
+  test('setTokenWatcher', async () => {
+    const generator = setTokenWatcher()
+    expect(generator.next().value).toEqual(takeLatest(setToken, setTokenFlow))
+  })
 
-    await runSaga(
-      {
-        dispatch: (action) => dispatched.push(action)
-      },
-      setTokenFlow,
-      { payload: fakeToken }
+  test('userLogoutWatcher', async () => {
+    const generator = userLogoutWatcher()
+    expect(generator.next().value).toEqual(
+      takeLatest(logoutUserRequest, logoutUserRequestFlow)
     )
+  })
+
+  test('setTokenFlow', async () => {
+    const dispatchedActions = []
+    const fakeToken = '1d23d.2vse3d.23d5v'
+    const fakeStore = {
+      getState: () => ({ auth: { user: null } }),
+      dispatch: (action) => dispatchedActions.push(action)
+    }
+    const setToken = jest.fn()
+    authService.setToken = setToken
+
+    await runSaga(fakeStore, setTokenFlow, {
+      payload: fakeToken
+    })
 
     expect(setToken).toHaveBeenCalledTimes(1)
     expect(setToken).toHaveBeenCalledWith(fakeToken)
-    setToken.mockRestore()
+    expect(setToken.mock.results[0].value).not.toBeDefined()
   })
 
-  it('Should call correct logoutUserRequestFlow saga tasks', async () => {
-    const iterator = logoutUserRequestFlow()
-    expect(iterator.next().value).toEqual(
-      call([authService, authService.removeToken])
-    )
-    expect(iterator.next().value).toEqual(put(fetchUserSuccess(false)))
-    expect(iterator.next().done).toBeTruthy()
-  })
+  test('logoutUserRequestFlow', async () => {
+    const dispatchedActions = []
+    const fakeStore = {
+      getState: () => ({ auth: { user: fakeUser } }),
+      dispatch: (action) => dispatchedActions.push(action)
+    }
+    const fakeUser = {
+      id: 1,
+      name: 'test',
+      email: 'testmail@gmail.com',
+      role: 'USER'
+    }
+    const removeToken = jest.fn()
+    authService.removeToken = removeToken
 
-  it('Should call saga for removing auth token from localStorage', async () => {
-    const removeToken = jest.spyOn(authService, 'removeToken')
-    const dispatched = []
-
-    await runSaga(
-      {
-        dispatch: (action) => dispatched.push(action)
-      },
-      logoutUserRequestFlow
-    )
+    await runSaga(fakeStore, logoutUserRequestFlow)
 
     expect(removeToken).toHaveBeenCalledTimes(1)
-    removeToken.mockRestore()
-  })
-
-  it('Test setTokenWatcher saga', async () => {
-    const iterator = setTokenWatcher()
-    expect(iterator.next().value).toEqual(takeLatest(setToken, setTokenFlow))
-    expect(iterator.next().done).toBeTruthy()
-  })
-
-  it('Test userLogoutWatcher saga', async () => {
-    const iterator = userLogoutWatcher()
-    expect(iterator.next().value).toEqual(
-      takeLatest(logoutUserRequest, logoutUserRequestFlow)
-    )
-    expect(iterator.next().done).toBeTruthy()
-  })
-
-  it('Test main auth saga generator', async () => {
-    const iterator = mainGenerator()
-    expect(iterator.next().value).toEqual(
-      all([fork(setTokenWatcher), fork(userLogoutWatcher)])
-    )
-    expect(iterator.next().done).toBeTruthy()
+    expect(removeToken.mock.results[0].value).not.toBeDefined()
+    expect(dispatchedActions.length).toBe(1)
+    expect(dispatchedActions[0].type).toBe(fetchUserSuccess().type)
   })
 })
