@@ -78,7 +78,8 @@
     "testMatch": [
       "**/__tests__/**/*.[jt]s?(x)",
       "**/?(*.)+(spec|test).[jt]s?(x)"
-    ]
+    ],
+    "resetMocks": false
   },
   "dependencies": {
     "@ant-design/icons": "^4.5.0",
@@ -120,6 +121,8 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-testing-library": "^3.10.1",
     "husky": "^5.1.3",
+    "jest-localstorage-mock": "^2.4.8",
+    "msw": "^0.27.1",
     "prettier": "^2.2.1"
   }
 }

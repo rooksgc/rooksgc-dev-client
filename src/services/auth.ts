@@ -45,17 +45,17 @@ export interface UserFetchByTokenRequestDTO {
 }
 
 /** Сообщение при недоступном соединении */
-const SERVER_UNAVAILABLE =
+export const SERVER_UNAVAILABLE =
   'Сервер не отвечает или временно недоступен. Попробуйте повторить запрос позднее.'
 
 /** Ключ, по которому в localStorage хранится токен */
 const AUTH_TOKEN_STORAGE_KEY = 'auth'
 
 /** Отказ в предоставлении ресурса из-за неверного токена */
-const AUTH_REJECTION_MESSAGE =
+export const AUTH_REJECTION_MESSAGE =
   'Войдите или зарегистрируйтесь для просмотра данного содержимого.'
 
-const makeError = (error: any): ServerResponse => {
+export const makeError = (error: any): ServerResponse => {
   const {
     response: { data, status }
   } = error
@@ -67,7 +67,6 @@ const makeError = (error: any): ServerResponse => {
     }
   }
 
-  /** Неверный токен */
   if (data?.message === 'No authorization token was found') {
     return {
       type: 'error',

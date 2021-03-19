@@ -53,7 +53,7 @@ const Login: FC = () => {
 
   return (
     <div className="flex-center">
-      <Card className="card" title="Войти">
+      <Card className="card" title="Вход в систему">
         {alert.message && (
           <Alert
             className="alert"

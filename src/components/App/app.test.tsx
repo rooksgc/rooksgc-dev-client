@@ -1,16 +1,6 @@
-import {
-  render,
-  cleanup,
-  screen,
-  fireEvent,
-  store
-} from '../../tests/test-wrapper'
+import { render, screen, fireEvent, store } from '../../mock/test-wrapper'
 import App from '.'
 import { fetchUserSuccess } from '../../modules/Auth/actions'
-
-afterEach(() => {
-  cleanup()
-})
 
 describe('App', () => {
   it('Should have correct layout structure when unauthorized', () => {

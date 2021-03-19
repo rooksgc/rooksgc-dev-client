@@ -19,7 +19,5 @@ const render = (ui, { initialState = rootState, ...renderOptions } = {}) => {
   return rtlRender(ui, { wrapper: Wrapper as any, ...renderOptions })
 }
 
-// re-export everything
 export * from '@testing-library/react'
-// override render method
 export { render, store }

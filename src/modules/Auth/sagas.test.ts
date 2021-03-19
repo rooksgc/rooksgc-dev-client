@@ -35,16 +35,11 @@ describe('Auth saga', () => {
   })
 
   test('setTokenFlow', async () => {
-    const dispatchedActions = []
     const fakeToken = '1d23d.2vse3d.23d5v'
-    const fakeStore = {
-      getState: () => ({ auth: { user: null } }),
-      dispatch: (action) => dispatchedActions.push(action)
-    }
     const setToken = jest.fn()
     authService.setToken = setToken
 
-    await runSaga(fakeStore, setTokenFlow, {
+    await runSaga({}, setTokenFlow, {
       payload: fakeToken
     })
 
@@ -56,14 +51,7 @@ describe('Auth saga', () => {
   test('logoutUserRequestFlow', async () => {
     const dispatchedActions = []
     const fakeStore = {
-      getState: () => ({ auth: { user: fakeUser } }),
       dispatch: (action) => dispatchedActions.push(action)
-    }
-    const fakeUser = {
-      id: 1,
-      name: 'test',
-      email: 'testmail@gmail.com',
-      role: 'USER'
     }
     const removeToken = jest.fn()
     authService.removeToken = removeToken

@@ -11,7 +11,6 @@ const createAppStore = () => {
   )
 
   sagaMiddleware.run(rootSaga)
-
   return store
 }
 
