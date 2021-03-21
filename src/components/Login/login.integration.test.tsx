@@ -5,7 +5,7 @@ import { render, screen } from '../../mock/test-wrapper'
 import Login from '.'
 
 const server = setupServer(
-  rest.post('/api/v1/auth/login', (req, res, ctx) =>
+  rest.post('/api/v1/auth/login', (_req, res, ctx) =>
     res(
       ctx.status(401),
       ctx.json({ type: 'error', message: 'Invalid credentials' })
@@ -44,7 +44,7 @@ describe('Login form', () => {
       role: 'USER'
     }
     server.use(
-      rest.post('/api/v1/auth/login', (req, res, ctx) => {
+      rest.post('/api/v1/auth/login', (_req, res, ctx) => {
         localStorage.setItem('auth', fakeToken)
 
         return res(
@@ -73,7 +73,7 @@ describe('Login form', () => {
 
   test('Should show alert if throws some Uncaught exception', async () => {
     server.use(
-      rest.post('/api/v1/auth/login', (req, res, ctx) => {
+      rest.post('/api/v1/auth/login', () => {
         throw new Error('Uncaught error from server')
       })
     )

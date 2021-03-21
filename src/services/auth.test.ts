@@ -7,13 +7,10 @@ import authService, {
 describe('Auth service', () => {
   beforeEach(() => {
     localStorage.clear()
-    jest.clearAllMocks()
-    localStorage.setItem.mockClear()
+    jest.clearAllMocks(), (localStorage.setItem as any).mockClear()
   })
 
   test('getToken should return token from localStorage', () => {
-    expect(authService.getToken()).toBeNull()
-
     const fakeToken = '123213.2132312.3123'
     localStorage.setItem('auth', fakeToken)
 
@@ -23,8 +20,18 @@ describe('Auth service', () => {
   })
 
   test('setToken should set token to localStorage', () => {
+    const fakeToken = '123213.2132312.3123'
+    authService.setToken(fakeToken)
+    expect(authService.getToken()).toBe(fakeToken)
+
+    authService.removeToken()
     expect(authService.getToken()).toBeNull()
 
+    expect(localStorage.removeItem).toHaveBeenCalled()
+    expect(localStorage.__STORE__['auth']).not.toBeDefined()
+  })
+
+  test('removeToken should delete token from localStorage', () => {
     const fakeToken = '123213.2132312.3123'
     authService.setToken(fakeToken)
 
