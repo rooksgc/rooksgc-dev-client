@@ -1,4 +1,4 @@
-import { takeLatest, put, call, fork, all } from 'redux-saga/effects'
+import { takeLatest, put, call, fork } from 'redux-saga/effects'
 import { logoutUserRequest, fetchUserSuccess, setToken } from './actions'
 import authService from '../../services/auth'
 
@@ -20,5 +20,6 @@ export function* userLogoutWatcher() {
 }
 
 export default function* generator() {
-  yield all([fork(setTokenWatcher), fork(userLogoutWatcher)])
+  yield fork(setTokenWatcher)
+  yield fork(userLogoutWatcher)
 }

@@ -1,4 +1,8 @@
 #!/bin/sh
+echo "$(dirname "$0")/husky.sh"
+. "$(dirname "$0")/husky.sh"
+
 . "$(dirname "$0")/_/husky.sh"
 
 npm run lint
+npm test

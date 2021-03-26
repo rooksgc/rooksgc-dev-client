@@ -17,9 +17,8 @@ beforeEach(() => {
 describe('Auth saga', () => {
   test('mainGenerator', async () => {
     const generator = mainGenerator()
-    expect(generator.next().value).toEqual(
-      all([fork(setTokenWatcher), fork(userLogoutWatcher)])
-    )
+    expect(generator.next().value).toEqual(fork(setTokenWatcher))
+    expect(generator.next().value).toEqual(fork(userLogoutWatcher))
   })
 
   test('setTokenWatcher', async () => {
