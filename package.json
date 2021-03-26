@@ -12,11 +12,16 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "prepare": "husky install",
     "lint": "eslint . --ext .jsx,.ts,.tsx",
     "lint:fix": "eslint . --fix --ext .jsx,.ts,.tsx"
   },
   "proxy": "http://127.0.0.1:5000",
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm test"
+    }
+  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -120,7 +125,7 @@
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-testing-library": "^3.10.1",
-    "husky": "^5.1.3",
+    "husky": "^4.3.8",
     "jest-localstorage-mock": "^2.4.8",
     "msw": "^0.27.1",
     "prettier": "^2.2.1"
