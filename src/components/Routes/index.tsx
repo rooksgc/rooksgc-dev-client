@@ -9,28 +9,18 @@ import Recover from '../Recover'
 import ChangePassword from '../ChangePassword'
 import Activation from '../Activation'
 import PrivateRoute from '../PrivateRoute'
+import UserProfile from '../UserProfile'
 
 const Routes: FC = () => (
   <Switch>
-    <PrivateRoute path="/" exact>
-      <Home />
-    </PrivateRoute>
+    <PrivateRoute exact path="/" component={Home} />
     <Route path="/auth/login" component={Login} />
-    <Route path="/auth/register">
-      <Register />
-    </Route>
-    <Route path="/auth/activation/:code">
-      <Activation />
-    </Route>
-    <Route path="/auth/recover">
-      <Recover />
-    </Route>
-    <Route path="/auth/change-password/:code">
-      <ChangePassword />
-    </Route>
-    <Route path="/chat">
-      <Chat />
-    </Route>
+    <Route path="/auth/register" component={Register} />
+    <Route path="/auth/activation/:code" component={Activation} />
+    <Route path="/auth/recover" component={Recover} />
+    <Route path="/auth/change-password/:code" component={ChangePassword} />
+    <PrivateRoute path="/user/profile" component={UserProfile} />
+    <PrivateRoute path="/chat" component={Chat} />
     <Route path="*">
       <Redirect to="/auth/login" />
     </Route>

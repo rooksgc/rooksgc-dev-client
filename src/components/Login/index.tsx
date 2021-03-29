@@ -44,7 +44,7 @@ const Login: FC = () => {
 
       setLoading(false)
 
-      history.push('/')
+      history.push('/chat')
     } catch (error) {
       setAlert(error)
       setLoading(false)

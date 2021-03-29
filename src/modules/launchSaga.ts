@@ -16,7 +16,7 @@ const launchSaga = function* launchSaga() {
       { token }
     )
 
-    if (message === 'TokenExpiredError') {
+    if (message === 'TokenExpiredError' || message === 'JsonWebTokenError') {
       yield call([authService, authService.removeToken])
       yield put(fetchUserFailure())
     }
@@ -25,6 +25,7 @@ const launchSaga = function* launchSaga() {
       yield put(fetchUserSuccess(data))
     }
   } catch (error) {
+    yield call([authService, authService.removeToken])
     yield put(fetchUserFailure(error))
   }
 }

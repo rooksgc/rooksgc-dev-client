@@ -29,10 +29,7 @@ const App: FC = () => {
           >
             <Menu mode="inline">
               <Menu.Item key="1" icon={<DesktopOutlined />}>
-                Комната 1
-              </Menu.Item>
-              <Menu.Item key="2" icon={<DesktopOutlined />}>
-                Комната 2
+                Общий чат
               </Menu.Item>
             </Menu>
           </Sider>

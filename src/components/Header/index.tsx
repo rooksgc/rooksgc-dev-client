@@ -1,6 +1,7 @@
 import { Layout } from 'antd'
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons'
 import MainMenu from '../MainMenu'
+import UserMenu from '../UserMenu'
 import PrivateContainer from '../../containers/Private'
 
 const { Header: AntHeader } = Layout
@@ -20,7 +21,12 @@ const Header = (props: any) => {
           <MenuFoldOutlined className="trigger expanded" onClick={onToggle} />
         )}
       </PrivateContainer>
-      <MainMenu />
+      <div className="header-menu">
+        <MainMenu />
+        <PrivateContainer>
+          <UserMenu />
+        </PrivateContainer>
+      </div>
     </AntHeader>
   )
 }

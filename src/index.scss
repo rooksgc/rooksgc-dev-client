@@ -32,6 +32,17 @@ code {
   padding-left: 0;
 }
 
+.header-menu {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.user-profile {
+  cursor: pointer;
+  margin-left: 20px;
+}
+
 .flex-center {
   display: flex;
   height: 80vh;
@@ -41,10 +52,6 @@ code {
 
 .flex-column {
   flex-direction: column;
-}
-
-.mainMenu {
-  float: right;
 }
 
 .card {
@@ -75,6 +82,7 @@ code {
 }
 
 .trigger {
+  float: left;
   padding: 0 24px;
   font-size: 18px;
   line-height: 64px;
