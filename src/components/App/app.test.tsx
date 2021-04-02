@@ -11,9 +11,6 @@ describe('App', () => {
 
     expect(screen.getByRole('main')).toBeInTheDocument()
     expect(screen.getByRole('main')).toHaveClass('content')
-
-    expect(screen.getByRole('contentinfo')).toBeInTheDocument()
-    expect(screen.getByRole('contentinfo')).toHaveClass('footer')
   })
 
   it('Should have correct layout structure when authorized', () => {
@@ -28,17 +25,17 @@ describe('App', () => {
       })
     )
 
+    expect(screen.getByRole('complementary')).toBeInTheDocument()
+    expect(screen.getByRole('complementary')).toHaveClass('sider')
+
     expect(screen.getByRole('banner')).toBeInTheDocument()
     expect(screen.getByRole('banner')).toHaveClass('header')
 
     expect(screen.getByRole('main')).toBeInTheDocument()
     expect(screen.getByRole('main')).toHaveClass('content')
 
-    const collapseMenu = screen.getByRole('img', { name: 'menu-fold' })
+    const collapseMenu = screen.getByRole('img', { name: 'left' })
     expect(collapseMenu).toBeInTheDocument()
-
-    expect(screen.getByRole('contentinfo')).toBeInTheDocument()
-    expect(screen.getByRole('contentinfo')).toHaveClass('footer')
 
     expect(screen.getByRole('complementary')).toBeInTheDocument()
     expect(screen.getByRole('complementary')).toHaveClass('sider')
@@ -56,16 +53,16 @@ describe('App', () => {
       })
     )
 
-    const collapseMenu = screen.getByRole('img', { name: 'menu-fold' })
+    const collapseMenu = screen.getByRole('img', { name: 'left' })
     expect(collapseMenu).toBeInTheDocument()
-    expect(collapseMenu).toHaveClass('expanded')
+    expect(collapseMenu).toHaveClass('anticon-left')
 
     expect(screen.getByRole('complementary')).toBeInTheDocument()
     expect(screen.getByRole('complementary')).toHaveClass('sider')
 
     fireEvent.click(collapseMenu)
 
-    const expandMenu = screen.getByRole('img', { name: 'menu-unfold' })
-    expect(expandMenu).toHaveClass('collapsed')
+    const expandMenu = screen.getByRole('img', { name: 'right' })
+    expect(expandMenu).toHaveClass('anticon-right')
   })
 })

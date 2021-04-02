@@ -1,6 +1,7 @@
 import { call, put } from 'redux-saga/effects'
 import { fetchUserSuccess, fetchUserFailure } from './Auth/actions'
 import authService from '../services/auth'
+import ws from '../services/socket'
 
 /** Launch saga once when on app start */
 const launchSaga = function* launchSaga() {
@@ -23,6 +24,8 @@ const launchSaga = function* launchSaga() {
 
     if (data) {
       yield put(fetchUserSuccess(data))
+      // todo test
+      yield call([ws, ws.connect])
     }
   } catch (error) {
     yield call([authService, authService.removeToken])

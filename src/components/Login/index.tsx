@@ -4,7 +4,11 @@ import { MailOutlined, LockOutlined, LoadingOutlined } from '@ant-design/icons'
 import { Link, useHistory } from 'react-router-dom'
 import useActions from '../../hooks/useActions'
 import authService from '../../services/auth'
-import { fetchUserSuccess, setToken } from '../../modules/Auth/actions'
+import {
+  fetchUserSuccess,
+  setToken,
+  connectToWebSocket
+} from '../../modules/Auth/actions'
 
 interface FormValues {
   email: string
@@ -16,10 +20,11 @@ const Login: FC = () => {
   const [form] = Form.useForm()
   const [alert, setAlert] = useState(emptyMessage)
   const [loading, setLoading] = useState(false)
-  const [dispatchFetchUserSuccess, dispatchSetToken] = useActions(
-    [fetchUserSuccess, setToken],
-    null
-  )
+  const [
+    dispatchFetchUserSuccess,
+    dispatchSetToken,
+    dispatchConnectToWebSocket
+  ] = useActions([fetchUserSuccess, setToken, connectToWebSocket], null)
   const history = useHistory()
 
   const onFinish = async (values: FormValues) => {
@@ -41,6 +46,7 @@ const Login: FC = () => {
 
       dispatchFetchUserSuccess(data)
       dispatchSetToken(token)
+      dispatchConnectToWebSocket()
 
       setLoading(false)
 

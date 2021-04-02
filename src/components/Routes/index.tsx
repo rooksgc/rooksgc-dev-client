@@ -8,7 +8,7 @@ import Register from '../Register'
 import Recover from '../Recover'
 import ChangePassword from '../ChangePassword'
 import Activation from '../Activation'
-import PrivateRoute from '../PrivateRoute'
+import PrivateRoute from '../../containers/PrivateRoute'
 import UserProfile from '../UserProfile'
 
 const Routes: FC = () => (

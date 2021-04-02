@@ -23,8 +23,6 @@ code {
 }
 
 .content {
-  margin: 0 16px;
-  padding: 24px;
   min-height: 360px;
 }
 
@@ -92,4 +90,25 @@ code {
   &:hover {
     color: #1890ff;
   }
+}
+
+.chat-wrapper {
+  height: calc(100vh - 64px);
+}
+
+.chat-window {
+  height: calc(100% - 40px);
+}
+
+.input-form {
+  display: flex;
+}
+
+.input-messaage {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.send-button {
+  margin-bottom: 0;
 }

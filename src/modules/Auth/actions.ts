@@ -11,3 +11,8 @@ export const fetchUserFailure: any = createAction('AUTH/USER_FETCH_FAILURE')
 
 /** Выход пользователя из системы (logout) */
 export const logoutUserRequest: any = createAction('AUTH/USER_LOGOUT_REQUEST')
+
+/** Установить соединение через websocket */
+export const connectToWebSocket: any = createAction(
+  'AUTH/USER_CONNECT_TO_WEBSOCKET'
+)

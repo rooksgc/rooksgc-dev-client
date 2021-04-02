@@ -3,7 +3,7 @@ import { handleActions } from 'redux-actions'
 import { UserDTO } from '../../services/auth'
 import { fetchUserSuccess, fetchUserFailure } from './actions'
 
-export interface AuthState {
+export interface IAuthState {
   user: UserDTO
 }
 
@@ -19,6 +19,6 @@ const user = handleActions(
   null
 )
 
-export default combineReducers<AuthState>({
+export default combineReducers<IAuthState>({
   user
 })
