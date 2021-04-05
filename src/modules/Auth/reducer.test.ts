@@ -1,12 +1,8 @@
 import reducer, { initialState } from './reducer'
-import { setToken, fetchUserSuccess, fetchUserFailure } from './actions'
-
-const randomAction = {
-  type: `AUTH/RANDOM_ACTION_${parseInt(String(Math.random() * 1000))}`
-}
+import { userFetchSuccess, userFetchFailure } from './actions'
 
 describe('Auth reducer', () => {
-  const state0 = reducer(undefined, randomAction)
+  const state0 = reducer(undefined, { type: '' })
 
   it('Should return initial state', () => {
     expect(state0).toEqual(initialState)
@@ -16,25 +12,19 @@ describe('Auth reducer', () => {
     expect(Object.keys(state0)).toEqual(expect.arrayContaining(['user']))
   })
 
-  it('setToken action do not change to the store', () => {
-    const fakeToken = '13d23d21.d2m-d29d3e.2dm203d32'
-    const state1 = reducer(state0, setToken(fakeToken))
-    expect(state0).toEqual(state1)
-  })
-
-  it('fetchUserSuccess action set user field to ste store correctly', () => {
+  it('userFetchSuccess action set user field to store correctly', () => {
     const fakeUserPayload = {
       id: 1,
       name: 'user0',
       email: 'user0.gmail.com',
       role: 'USER'
     }
-    const state1 = reducer(state0, fetchUserSuccess(fakeUserPayload))
+    const state1 = reducer(state0, userFetchSuccess(fakeUserPayload))
     expect(state1).toEqual({ user: fakeUserPayload })
   })
 
-  it('fetchUserFailure action set user field to false', () => {
-    const state1 = reducer(state0, fetchUserFailure())
+  it('userFetchFailure action set user field to false', () => {
+    const state1 = reducer(state0, userFetchFailure())
     expect(state1).toEqual({ user: false })
   })
 })

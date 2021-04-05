@@ -3,15 +3,14 @@ import { Layout, Menu } from 'antd'
 import { useLocation } from 'react-router-dom'
 import { DesktopOutlined } from '@ant-design/icons'
 import PrivateContainer from '../../../containers/Private'
-import ws from '../../../services/socket'
 import useEscape from '../../../hooks/useEscape'
 import useShallowEqualSelector from '../../../hooks/useShallowEqualSelector'
-import { setActiveRoomId } from '../../../modules/Chat/actions'
+import { setActiveChannelId } from '../../../modules/Chat/actions'
 import useActions from '../../../hooks/useActions'
 
 const { Sider } = Layout
 
-const rooms = [
+const channels = [
   {
     id: 1,
     label: 'Общий чат',
@@ -19,7 +18,7 @@ const rooms = [
   },
   {
     id: 2,
-    label: 'Тестовая комната',
+    label: 'Тестовый канал',
     icon: <DesktopOutlined />
   }
 ]
@@ -27,15 +26,14 @@ const rooms = [
 const Sidebar: FC = () => {
   const [collapsed, setCollapsed] = useState(false)
   const location = useLocation()
-  const [dispatchActiveRoomId] = useActions([setActiveRoomId], null)
-  const activeRoomId = useShallowEqualSelector(
-    (state) => state.chat.activeRoomId
+  const [dispatchActiveChannelId] = useActions([setActiveChannelId], null)
+  const activeChannelId = useShallowEqualSelector(
+    (state) => state.chat.activeChannelId
   )
 
   useEscape(() => {
-    if (location.pathname !== '/chat' || !activeRoomId) return
-    ws.socket.emit('room:leave', activeRoomId)
-    dispatchActiveRoomId('')
+    if (location.pathname !== '/chat' || !activeChannelId) return
+    dispatchActiveChannelId('')
   })
 
   const onCollapse = (isCollapsed) => {
@@ -43,12 +41,8 @@ const Sidebar: FC = () => {
   }
 
   const onClickMenu = ({ key }) => {
-    if (key === activeRoomId) return
-    if (activeRoomId) {
-      ws.socket.emit('room:leave', activeRoomId)
-    }
-    ws.socket.emit('room:join', key)
-    dispatchActiveRoomId(key)
+    if (key === activeChannelId) return
+    dispatchActiveChannelId(key)
   }
 
   return (
@@ -63,10 +57,10 @@ const Sidebar: FC = () => {
         <Menu
           theme="dark"
           mode="inline"
-          selectedKeys={[activeRoomId as string]}
+          selectedKeys={[activeChannelId as string]}
           onClick={onClickMenu}
         >
-          {rooms.map((item) => (
+          {channels.map((item) => (
             <Menu.Item key={item.id} icon={item.icon}>
               {item.label}
             </Menu.Item>

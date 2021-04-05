@@ -1,43 +1,53 @@
 import { takeLatest, put, call, fork } from 'redux-saga/effects'
 import {
-  logoutUserRequest,
-  fetchUserSuccess,
-  setToken,
-  connectToWebSocket
+  userLoginRequest,
+  userLogoutRequest,
+  userFetchSuccess
 } from './actions'
-import { setActiveRoomId } from '../Chat/actions'
+import { initChannelsData, setActiveChannelId } from '../Chat/actions'
 import authService from '../../services/auth'
-import ws from '../../services/socket'
+import WS from '../../services/socket'
 
-/** Сохранение token в localStorage */
-export function* setTokenFlow({ payload }) {
-  yield call([authService, authService.setToken], payload)
-}
-export function* setTokenWatcher() {
-  yield takeLatest(setToken, setTokenFlow)
-}
+/** Успешный вход пользователя */
+export function* userLoginRequestFlow({ payload: { data, token } }) {
+  yield put(userFetchSuccess(data))
+  yield call([authService, authService.setToken], token)
+  yield call([WS, WS.connect])
 
-/** Установка соединения через websocket */
-export function* connectToWebSocketFlow() {
-  yield call([ws, ws.connect])
+  // 1. Get channels list for userId [1, 2, 4, 14]
+  const channelsList = [1, 2]
+  // 2. Fill Channels with info (messages and metadata)
+  const channelsData = channelsList.reduce(
+    (acc, channel) => ({
+      ...acc,
+      [channel]: {
+        title: `channel${channel}`,
+        messages: []
+      }
+    }),
+    {}
+  )
+  // 3. Send socket message to obtain channels subscription
+  yield call([WS, WS.subscribeToChannels], channelsList)
+  // 4. Fill redux state with data
+  yield put(initChannelsData(channelsData))
 }
-export function* connectToWebSocketWatcher() {
-  yield takeLatest(connectToWebSocket, connectToWebSocketFlow)
+export function* userLoginWatcher() {
+  yield takeLatest(userLoginRequest, userLoginRequestFlow)
 }
 
 /** Выход пользователя из системы (logout) */
-export function* logoutUserRequestFlow() {
+export function* userLogoutRequestFlow() {
   yield call([authService, authService.removeToken])
-  yield put(fetchUserSuccess(false))
-  yield put(setActiveRoomId(''))
-  yield call([ws, ws.disconnect])
+  yield put(userFetchSuccess(false))
+  yield put(setActiveChannelId(''))
+  yield call([WS, WS.disconnect])
 }
 export function* userLogoutWatcher() {
-  yield takeLatest(logoutUserRequest, logoutUserRequestFlow)
+  yield takeLatest(userLogoutRequest, userLogoutRequestFlow)
 }
 
 export default function* generator() {
-  yield fork(setTokenWatcher)
-  yield fork(connectToWebSocketWatcher)
+  yield fork(userLoginWatcher)
   yield fork(userLogoutWatcher)
 }

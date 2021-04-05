@@ -1,22 +1,46 @@
 import { combineReducers } from 'redux'
 import { handleActions } from 'redux-actions'
-import { setActiveRoomId } from './actions'
+import {
+  setActiveChannelId,
+  initChannelsData,
+  addChannelMessage
+} from './actions'
 
 export interface IChatState {
-  activeRoomId: string
+  activeChannelId: string
+  channels: Object
 }
 
 export const initialState = {
-  activeRoomId: ''
+  activeChannelId: '',
+  channels: {}
 }
 
-const activeRoomId = handleActions(
+const activeChannelId = handleActions(
   {
-    [setActiveRoomId]: (_state, action) => action.payload
+    [setActiveChannelId]: (_state, action) => action.payload
   },
   ''
 )
 
+const channels = handleActions(
+  {
+    [initChannelsData]: (_state, action) => action.payload,
+    [addChannelMessage]: (state, action) => ({
+      ...state,
+      [action.payload.activeChannelId]: {
+        ...state[action.payload.activeChannelId],
+        messages: [
+          ...state[action.payload.activeChannelId].messages,
+          action.payload.message
+        ]
+      }
+    })
+  },
+  null
+)
+
 export default combineReducers<IChatState>({
-  activeRoomId
+  activeChannelId,
+  channels
 })

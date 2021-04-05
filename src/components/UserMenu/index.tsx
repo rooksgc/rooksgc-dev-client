@@ -7,12 +7,12 @@ import {
   ProfileOutlined
 } from '@ant-design/icons'
 import useActions from '../../hooks/useActions'
-import { logoutUserRequest } from '../../modules/Auth/actions'
+import { userLogoutRequest } from '../../modules/Auth/actions'
 
 const UserMenu: FC = () => {
   const location = useLocation()
   const history = useHistory()
-  const [dispatchLogoutUserRequest] = useActions([logoutUserRequest], null)
+  const [dispatchUserLogoutRequest] = useActions([userLogoutRequest], null)
 
   const handleMenuClick = (event) => {
     const { key } = event
@@ -23,7 +23,7 @@ const UserMenu: FC = () => {
         history.push('/user/profile')
         break
       case 'logout':
-        dispatchLogoutUserRequest()
+        dispatchUserLogoutRequest()
         history.push('/auth/login')
         break
       default:

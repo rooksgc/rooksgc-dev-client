@@ -19,7 +19,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "npm run lint",
-      "pre-push": "npm test --forceExit"
+      "pre-push": "npm test"
     }
   },
   "browserslist": {

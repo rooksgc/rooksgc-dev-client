@@ -4,11 +4,7 @@ import { MailOutlined, LockOutlined, LoadingOutlined } from '@ant-design/icons'
 import { Link, useHistory } from 'react-router-dom'
 import useActions from '../../hooks/useActions'
 import authService from '../../services/auth'
-import {
-  fetchUserSuccess,
-  setToken,
-  connectToWebSocket
-} from '../../modules/Auth/actions'
+import { userLoginRequest } from '../../modules/Auth/actions'
 
 interface FormValues {
   email: string
@@ -20,11 +16,7 @@ const Login: FC = () => {
   const [form] = Form.useForm()
   const [alert, setAlert] = useState(emptyMessage)
   const [loading, setLoading] = useState(false)
-  const [
-    dispatchFetchUserSuccess,
-    dispatchSetToken,
-    dispatchConnectToWebSocket
-  ] = useActions([fetchUserSuccess, setToken, connectToWebSocket], null)
+  const [dispatchUserLoginRequest] = useActions([userLoginRequest], null)
   const history = useHistory()
 
   const onFinish = async (values: FormValues) => {
@@ -44,10 +36,7 @@ const Login: FC = () => {
         if (type === 'error') return
       }
 
-      dispatchFetchUserSuccess(data)
-      dispatchSetToken(token)
-      dispatchConnectToWebSocket()
-
+      dispatchUserLoginRequest({ data, token })
       setLoading(false)
 
       history.push('/chat')

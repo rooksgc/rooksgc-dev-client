@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, store } from '../../mock/test-wrapper'
 import App from '.'
-import { fetchUserSuccess } from '../../modules/Auth/actions'
+import { userFetchSuccess } from '../../modules/Auth/actions'
 
 describe('App', () => {
   it('Should have correct layout structure when unauthorized', () => {
@@ -17,7 +17,7 @@ describe('App', () => {
     render(<App />)
 
     store.dispatch(
-      fetchUserSuccess({
+      userFetchSuccess({
         id: 1,
         name: 'test',
         email: 'testmail@gmail.com',
@@ -45,7 +45,7 @@ describe('App', () => {
     render(<App />)
 
     store.dispatch(
-      fetchUserSuccess({
+      userFetchSuccess({
         id: 1,
         name: 'test',
         email: 'testmail@gmail.com',

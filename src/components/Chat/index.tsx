@@ -1,29 +1,43 @@
-import { useState } from 'react'
-import ChatWindow from './ChatWindow'
-import ChatInput from './ChatInput'
-// import useShallowEqualSelector from '../../hooks/useShallowEqualSelector'
+import { useCallback } from 'react'
+import { nanoid } from 'nanoid'
+import { UserDTO } from 'src/services/auth'
+import Messages from './Messages'
+import InputMessage from './InputMessage'
+import useShallowEqualSelector from '../../hooks/useShallowEqualSelector'
+import { addChannelMessage } from '../../modules/Chat/actions'
+import useActions from '../../hooks/useActions'
+import WS from '../../services/socket'
 
 const Chat = () => {
-  const [messages, setMessages] = useState([])
-  // const activeRoomId = useShallowEqualSelector(
-  //   (state) => state.chat.activeRoomId
-  // )
+  const user = useShallowEqualSelector((state) => state.auth.user) as UserDTO
+  const [dispatchAddChannelMessage] = useActions([addChannelMessage], null)
+  const { activeChannelId, channels } = useShallowEqualSelector(
+    (state) => state.chat
+  ) as any
 
-  const onSendMessage = (text: string): void => {
-    if (!text) return
+  const onSendMessage = useCallback(
+    (text: string): void => {
+      if (!activeChannelId) return
+      if (!text) return
 
-    setMessages([
-      ...messages,
-      {
-        text
-      }
-    ])
-  }
+      const id = nanoid()
+      const message = { id, text, from: user.name }
+
+      dispatchAddChannelMessage({ activeChannelId, message })
+      WS.addMessageToChannel({ activeChannelId, message })
+    },
+    [activeChannelId, dispatchAddChannelMessage, user.name]
+  )
+
+  if (!user || !activeChannelId || !channels) return null
+
+  const channelsData = channels[activeChannelId as string]
+  if (!channelsData) return null
 
   return (
     <div className="chat-wrapper">
-      <ChatWindow messages={messages} />
-      <ChatInput sendMessage={onSendMessage} />
+      <Messages data={channelsData} />
+      <InputMessage sendMessage={onSendMessage} />
     </div>
   )
 }

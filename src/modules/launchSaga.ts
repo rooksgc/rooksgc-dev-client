@@ -1,7 +1,8 @@
 import { call, put } from 'redux-saga/effects'
-import { fetchUserSuccess, fetchUserFailure } from './Auth/actions'
+import { userFetchSuccess, userFetchFailure } from './Auth/actions'
 import authService from '../services/auth'
-import ws from '../services/socket'
+import WS from '../services/socket'
+import { initChannelsData } from './Chat/actions'
 
 /** Launch saga once when on app start */
 const launchSaga = function* launchSaga() {
@@ -9,7 +10,7 @@ const launchSaga = function* launchSaga() {
     const token = yield call([authService, authService.getToken])
 
     if (!token) {
-      yield put(fetchUserFailure())
+      yield put(userFetchFailure())
       return
     }
     const { data, message } = yield call(
@@ -19,17 +20,34 @@ const launchSaga = function* launchSaga() {
 
     if (message === 'TokenExpiredError' || message === 'JsonWebTokenError') {
       yield call([authService, authService.removeToken])
-      yield put(fetchUserFailure())
+      yield put(userFetchFailure())
     }
 
     if (data) {
-      yield put(fetchUserSuccess(data))
-      // todo test
-      yield call([ws, ws.connect])
+      yield put(userFetchSuccess(data))
+      yield call([WS, WS.connect])
+
+      // 1. Get channels list for userId [1, 2, 4, 14]
+      const channelsList = [1, 2]
+      // 2. Fill Channels with info (messages and metadata)
+      const channelsData = channelsList.reduce(
+        (acc, channel) => ({
+          ...acc,
+          [channel]: {
+            title: `channel${channel}`,
+            messages: []
+          }
+        }),
+        {}
+      )
+      // 3. Send socket message to obtain channels subscription
+      yield call([WS, WS.subscribeToChannels], channelsList)
+      // 4. Fill redux state with data
+      yield put(initChannelsData(channelsData))
     }
   } catch (error) {
     yield call([authService, authService.removeToken])
-    yield put(fetchUserFailure(error))
+    yield put(userFetchFailure(error))
   }
 }
 

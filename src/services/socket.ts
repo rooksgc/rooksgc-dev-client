@@ -5,14 +5,17 @@ const WS = {
   connect: () => {
     if (!WS.socket) {
       WS.socket = io()
-    } else {
-      // eslint-disable-next-line no-console
-      console.log('Socket client allready connected!')
     }
   },
   disconnect: () => {
     WS.socket.disconnect()
     WS.socket = undefined
+  },
+  subscribeToChannels: (channelsList: number[]): void => {
+    WS.socket.emit('channels:subscribe', channelsList)
+  },
+  addMessageToChannel: (payload) => {
+    WS.socket.emit('channel:message:add', payload)
   }
 }
 

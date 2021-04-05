@@ -1,7 +1,9 @@
-import { fetchUserSuccess, fetchUserFailure } from './Auth/actions'
+import { userFetchSuccess, userFetchFailure } from './Auth/actions'
 import authService from '../services/auth'
 import launchSaga from './launchSaga'
 import { runSaga } from 'redux-saga'
+import WS from '../services/socket'
+import { initChannelsData } from './Chat/actions'
 
 beforeEach(() => {
   jest.resetAllMocks()
@@ -21,7 +23,7 @@ describe('Launch saga', () => {
     expect(getToken).toHaveBeenCalledTimes(1)
     expect(getToken.mock.results[0].value).toBeNull()
     expect(dispatchedActions.length).toBe(1)
-    expect(dispatchedActions[0].type).toBe(fetchUserFailure().type)
+    expect(dispatchedActions[0].type).toBe(userFetchFailure().type)
   })
 
   test('Test flow if token is provided', async () => {
@@ -43,15 +45,24 @@ describe('Launch saga', () => {
         data: fakeUser
       })
     )
+    const connect = jest.fn()
+    const subscribeToChannels = jest.fn()
+
     authService.getToken = getToken
     authService.fetchByToken = fetchByToken
+    WS.connect = connect
+    WS.subscribeToChannels = subscribeToChannels
 
     await runSaga(fakeStore, launchSaga)
 
     expect(getToken).toHaveBeenCalledTimes(1)
     expect(getToken.mock.results[0].value).toBe(fakeToken)
     expect(fetchByToken).toHaveBeenCalledTimes(1)
-    expect(dispatchedActions[0].type).toBe(fetchUserSuccess().type)
+    expect(connect).toHaveBeenCalledTimes(1)
+    expect(subscribeToChannels).toHaveBeenCalledTimes(1)
+    expect(dispatchedActions.length).toBe(2)
+    expect(dispatchedActions[0].type).toBe(userFetchSuccess().type)
+    expect(dispatchedActions[1].type).toBe(initChannelsData().type)
   })
 
   test('Test flow if token has expired', async () => {
@@ -85,7 +96,7 @@ describe('Launch saga', () => {
     expect(getToken.mock.results[0].value).toBe(expiredToken)
     expect(fetchByToken).toHaveBeenCalledTimes(1)
     expect(removeToken).toHaveBeenCalledTimes(1)
-    expect(dispatchedActions[0].type).toBe(fetchUserFailure().type)
+    expect(dispatchedActions[0].type).toBe(userFetchFailure().type)
   })
 
   test('Test flow if throws some error', async () => {
@@ -109,6 +120,6 @@ describe('Launch saga', () => {
     expect(getToken).toHaveBeenCalledTimes(1)
     expect(getToken.mock.results[0].value).toBe(fakeToken)
     expect(fetchByToken).toHaveBeenCalledTimes(1)
-    expect(dispatchedActions[0].type).toBe(fetchUserFailure().type)
+    expect(dispatchedActions[0].type).toBe(userFetchFailure().type)
   })
 })

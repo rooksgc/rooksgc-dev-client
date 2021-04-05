@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, memo } from 'react'
 import { Form, Input, Button } from 'antd'
 import { SendOutlined } from '@ant-design/icons'
 
@@ -10,7 +10,7 @@ interface IChatInputProps {
   sendMessage: (text: string) => void
 }
 
-const ChatInput: FC<IChatInputProps> = ({ sendMessage }) => {
+const InputMessage: FC<IChatInputProps> = ({ sendMessage }) => {
   const [form] = Form.useForm()
 
   const onFinish = async (values: FormValues) => {
@@ -39,4 +39,4 @@ const ChatInput: FC<IChatInputProps> = ({ sendMessage }) => {
   )
 }
 
-export default ChatInput
+export default memo(InputMessage)
