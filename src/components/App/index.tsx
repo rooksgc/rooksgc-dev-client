@@ -19,7 +19,6 @@ const App: FC = () => {
 
   useEffect(() => {
     if (!WS.socket) return null
-
     SR.current = WS.socket
     SR.current.on(
       'channel:message:broadcast',
