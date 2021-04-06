@@ -1,6 +1,6 @@
 import { FC, useState } from 'react'
 import { Layout, Menu } from 'antd'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useHistory } from 'react-router-dom'
 import { DesktopOutlined } from '@ant-design/icons'
 import PrivateContainer from '../../../containers/Private'
 import useEscape from '../../../hooks/useEscape'
@@ -26,13 +26,14 @@ const channels = [
 const Sidebar: FC = () => {
   const [collapsed, setCollapsed] = useState(false)
   const location = useLocation()
+  const history = useHistory()
   const [dispatchActiveChannelId] = useActions([setActiveChannelId], null)
   const activeChannelId = useShallowEqualSelector(
     (state) => state.chat.activeChannelId
   )
 
   useEscape(() => {
-    if (location.pathname !== '/chat' || !activeChannelId) return
+    if (location.pathname !== '/' || !activeChannelId) return
     dispatchActiveChannelId('')
   })
 
@@ -42,6 +43,9 @@ const Sidebar: FC = () => {
 
   const onClickMenu = ({ key }) => {
     if (key === activeChannelId) return
+    if (location.pathname !== '/') {
+      history.push('/')
+    }
     dispatchActiveChannelId(key)
   }
 

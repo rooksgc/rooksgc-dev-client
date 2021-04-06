@@ -4,7 +4,7 @@ import { Menu } from 'antd'
 import { PieChartOutlined } from '@ant-design/icons'
 import useShallowEqualSelector from '../../hooks/useShallowEqualSelector'
 
-const unauthorizedMenu = [
+const menuItems = [
   {
     key: 'login',
     label: 'Войти',
@@ -19,39 +19,23 @@ const unauthorizedMenu = [
   }
 ]
 
-const authorizedMenu = [
-  {
-    key: 'home',
-    label: 'Главная',
-    path: '/',
-    icon: <PieChartOutlined />
-  },
-  {
-    key: 'chat',
-    label: 'Чат',
-    path: '/chat',
-    icon: <PieChartOutlined />
-  }
-]
-
 const MainMenu: FC = () => {
   const location = useLocation()
   const history = useHistory()
   const user = useShallowEqualSelector((state) => state.auth.user)
-  const menuItems = () => (user ? authorizedMenu : unauthorizedMenu)
 
-  const key = menuItems().find((item) => location.pathname === item.path)?.key
-  if (!key && !user) return null
+  const key = menuItems.find((item) => location.pathname === item.path)?.key
+  if (user && !key) return null
 
   const onClickMenu = (item) => {
     if (item.key === key) return
-    const clicked = menuItems().find((_item) => _item.key === item.key)
+    const clicked = menuItems.find((_item) => _item.key === item.key)
     history.push(clicked.path)
   }
 
   return (
     <Menu mode="horizontal" selectedKeys={[key]} onClick={onClickMenu}>
-      {menuItems().map((item) => (
+      {menuItems.map((item) => (
         <Menu.Item key={item.key} icon={item.icon}>
           {item.label}
         </Menu.Item>

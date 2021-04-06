@@ -39,7 +39,7 @@ const Login: FC = () => {
       dispatchUserLoginRequest({ data, token })
       setLoading(false)
 
-      history.push('/chat')
+      history.push('/')
     } catch (error) {
       setAlert(error)
       setLoading(false)
