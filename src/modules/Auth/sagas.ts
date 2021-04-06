@@ -14,6 +14,7 @@ export function* userLoginRequestFlow({ payload: { data, token } }) {
   yield call([authService, authService.setToken], token)
   yield call([WS, WS.connect])
 
+  // todo DRY
   // 1. Get channels list for userId [1, 2, 4, 14]
   const channelsList = [1, 2]
   // 2. Fill Channels with info (messages and metadata)
