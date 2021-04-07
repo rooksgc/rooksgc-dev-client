@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from 'react'
+import { FC, useState, useEffect, useRef } from 'react'
 import { Layout } from 'antd'
 import Header from './Header'
 import Sidebar from './Sidebar'
@@ -11,11 +11,20 @@ import WS from '../../services/socket'
 const { Content } = Layout
 
 const App: FC = () => {
+  const [currentChannel, setCurrentChannel] = useState('')
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const SR = useRef(null)
   const [dispatchAddChannelMessage] = useActions([addChannelMessage], null)
   const { activeChannelId } = useShallowEqualSelector(
     (state) => state.chat
   ) as any
+
+  const onSidebarToggle = (isCollapsed: boolean) => {
+    setSidebarCollapsed(isCollapsed)
+  }
+  const onCurrentChannelChange = ({ label }) => {
+    setCurrentChannel(label)
+  }
 
   useEffect(() => {
     if (!WS.socket) return null
@@ -34,9 +43,17 @@ const App: FC = () => {
 
   return (
     <Layout className="wrap-layout">
-      <Sidebar />
+      <Sidebar
+        sidebarCollapsed={sidebarCollapsed}
+        onSidebarToggle={onSidebarToggle}
+        onCurrentChannelChange={onCurrentChannelChange}
+      />
       <Layout className="site-layout">
-        <Header />
+        <Header
+          sidebarCollapsed={sidebarCollapsed}
+          onSidebarToggle={onSidebarToggle}
+          currentChannel={currentChannel}
+        />
         <Content className="content">
           <Routes />
         </Content>

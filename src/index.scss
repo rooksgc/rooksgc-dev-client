@@ -27,8 +27,13 @@ code {
   padding-right: 16px;
 }
 
+.current-channel-badge {
+  background-color: #1890ff;
+}
+
 .header-menu {
   display: flex;
+  float: right;
   align-items: center;
   justify-content: flex-end;
   height: 100%;
@@ -58,11 +63,6 @@ code {
   float: right;
 }
 
-.logo {
-  height: 64px;
-  background: #000;
-}
-
 .submit-button {
   margin-top: 16px;
 }
@@ -75,19 +75,6 @@ code {
   display: flex;
   justify-content: center;
   margin: 10px 0;
-}
-
-.trigger {
-  float: left;
-  padding: 0 24px;
-  font-size: 18px;
-  line-height: 64px;
-  cursor: pointer;
-  transition: color 0.3s;
-
-  &:hover {
-    color: #1890ff;
-  }
 }
 
 .chat-window {

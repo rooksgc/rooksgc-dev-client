@@ -24,7 +24,7 @@ const Messages: FC<IMessagesProps> = ({
     <div className="chat-window">
       {messages.map(({ id, text, from }) => (
         <div key={id}>
-          {from}: {text}
+          <strong>{from}</strong>: {text}
         </div>
       ))}
     </div>

@@ -34,7 +34,7 @@ describe('App', () => {
     expect(screen.getByRole('main')).toBeInTheDocument()
     expect(screen.getByRole('main')).toHaveClass('content')
 
-    const collapseMenu = screen.getByRole('img', { name: 'left' })
+    const collapseMenu = screen.getByRole('img', { name: 'bars' })
     expect(collapseMenu).toBeInTheDocument()
 
     expect(screen.getByRole('complementary')).toBeInTheDocument()
@@ -53,16 +53,16 @@ describe('App', () => {
       })
     )
 
-    const collapseMenu = screen.getByRole('img', { name: 'left' })
+    const collapseMenu = screen.getByRole('img', { name: 'bars' })
     expect(collapseMenu).toBeInTheDocument()
-    expect(collapseMenu).toHaveClass('anticon-left')
+    expect(collapseMenu).toHaveClass('anticon-bars')
 
     expect(screen.getByRole('complementary')).toBeInTheDocument()
     expect(screen.getByRole('complementary')).toHaveClass('sider')
 
     fireEvent.click(collapseMenu)
 
-    const expandMenu = screen.getByRole('img', { name: 'right' })
-    expect(expandMenu).toHaveClass('anticon-right')
+    const expandMenu = screen.getByRole('img', { name: 'bars' })
+    expect(expandMenu).toHaveClass('anticon-bars')
   })
 })
