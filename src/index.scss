@@ -26,6 +26,8 @@ code {
   padding-left: 0;
 }
 
+/*.content {} */
+
 .header-menu {
   display: flex;
   align-items: center;
@@ -89,12 +91,12 @@ code {
   }
 }
 
-.chat-wrapper {
+/*.chat-wrapper {
   height: calc(100vh - 64px);
-}
+}*/
 
 .chat-window {
-  height: calc(100% - 40px);
+  height: calc(100vh - 104px);
   overflow-y: scroll;
 }
 
