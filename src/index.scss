@@ -14,9 +14,9 @@ code {
     monospace;
 }
 
-/*.wrap-layout {
+.wrap-layout {
   min-height: 100vh;
-}*/
+}
 
 .background-white {
   background: #fff;
@@ -24,9 +24,8 @@ code {
 
 .header {
   padding-left: 0;
+  padding-right: 16px;
 }
-
-/*.content {} */
 
 .header-menu {
   display: flex;
@@ -40,12 +39,12 @@ code {
   margin-left: 20px;
 }
 
-/*.flex-center {
+.flex-center {
   display: flex;
   height: 80vh;
   align-items: center;
   justify-content: center;
-}*/
+}
 
 .flex-column {
   flex-direction: column;
@@ -90,10 +89,6 @@ code {
     color: #1890ff;
   }
 }
-
-/*.chat-wrapper {
-  height: calc(100vh - 64px);
-}*/
 
 .chat-window {
   height: calc(100vh - 104px);

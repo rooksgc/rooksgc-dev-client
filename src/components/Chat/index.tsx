@@ -35,10 +35,10 @@ const Chat = () => {
   if (!channelsData) return null
 
   return (
-    <div className="chat-wrapper">
+    <>
       <Messages data={channelsData} />
       <InputMessage sendMessage={onSendMessage} />
-    </div>
+    </>
   )
 }
 
