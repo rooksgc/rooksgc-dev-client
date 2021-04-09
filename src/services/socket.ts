@@ -5,12 +5,15 @@ const WS = {
   connect: async () => {
     // 1 Create new Socket client
     if (!WS.socket) {
-      WS.socket = io()
+      WS.socket = io('/', {
+        reconnection: true,
+        reconnectionDelay: 500,
+        reconnectionAttempts: Infinity
+      })
     }
 
     // 2
     // subscribeto channels
-
     // WS.socket.emit('channels:subscribe', channelsList)
   },
   disconnect: () => {
