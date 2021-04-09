@@ -1,4 +1,5 @@
 import { FC, useState, useEffect, useRef } from 'react'
+import { UserDTO } from 'src/services/auth'
 import { Layout } from 'antd'
 import Header from './Header'
 import Sidebar from './Sidebar'
@@ -18,7 +19,7 @@ const App: FC = () => {
   const { activeChannelId } = useShallowEqualSelector(
     (state) => state.chat
   ) as any
-  const user = useShallowEqualSelector((state) => state.auth.user)
+  const user = useShallowEqualSelector((state) => state.auth.user) as UserDTO
 
   const onSidebarToggle = (isCollapsed: boolean) => {
     setSidebarCollapsed(isCollapsed)
@@ -31,8 +32,11 @@ const App: FC = () => {
     if (!WS.socket) return null
     SR.current = WS.socket
 
-    SR.current.on('disconnection:request', () => {
-      SR.current.disconnect()
+    SR.current.on('disconnect', (reason: string) => {
+      if (reason === 'transport close') {
+        // the disconnection was initiated by the server, you need to reconnect manually
+        WS.connect(user)
+      }
     })
 
     SR.current.on(
