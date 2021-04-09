@@ -13,6 +13,7 @@ const { Content } = Layout
 
 const App: FC = () => {
   const [currentChannel, setCurrentChannel] = useState('')
+  const [needRecreateRef, setNeedRecreateRef] = useState(0)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const SR = useRef(null)
   const [dispatchAddChannelMessage] = useActions([addChannelMessage], null)
@@ -33,13 +34,11 @@ const App: FC = () => {
     SR.current = WS.socket
 
     WS.socket.on('disconnect', (reason: string) => {
-      // eslint-disable-next-line no-alert
-      alert(reason)
-
       if (reason === 'transport error' || reason === 'ping timeout') {
         if (!user) return
         WS.disconnect()
         WS.connect(user)
+        setNeedRecreateRef((state) => state + 1)
       }
     })
 
@@ -53,7 +52,7 @@ const App: FC = () => {
     return () => {
       SR.current.off('channel:message:broadcast')
     }
-  }, [user, activeChannelId, dispatchAddChannelMessage])
+  }, [user, activeChannelId, dispatchAddChannelMessage, needRecreateRef])
 
   return (
     <Layout className="wrap-layout">
