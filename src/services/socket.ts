@@ -56,7 +56,7 @@ const WS = {
     WS.socket.on('disconnect', (reason: string) => {
       if (reason === 'transport close') {
         // the disconnection was initiated by the server, you need to reconnect manually
-        WS.socket.coonect()
+        WS.socket.connect()
       }
     })
 
