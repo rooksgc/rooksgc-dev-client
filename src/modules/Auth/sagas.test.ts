@@ -52,9 +52,7 @@ describe('Auth saga', () => {
     authService.setToken = setToken
 
     const connect = jest.fn()
-    const subscribeToChannels = jest.fn()
     WS.connect = connect
-    WS.subscribeToChannels = subscribeToChannels
 
     await runSaga(fakeStore, userLoginRequestFlow, {
       payload: { data: {}, token: fakeToken }
@@ -67,7 +65,6 @@ describe('Auth saga', () => {
     expect(setToken).toHaveBeenCalledTimes(1)
     expect(setToken).toHaveBeenCalledWith(fakeToken)
     expect(connect).toHaveBeenCalledTimes(1)
-    expect(subscribeToChannels).toHaveBeenCalledTimes(1)
   })
 
   test('userLogoutRequestFlow', async () => {

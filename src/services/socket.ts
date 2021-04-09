@@ -1,18 +1,14 @@
 import { io } from 'socket.io-client'
 import { UserDTO } from './auth'
 
-const WS = {
-  socket: undefined,
-  connect: async (data: UserDTO) => {
+// TODO: Move to "Chat service"
+const chatService = {
+  getUserChannelsData: async (user: UserDTO) => {
+    // Get channels from database for userId = userData.id
     // eslint-disable-next-line no-console
-    console.log(data) // user data fetched by token
+    console.log(user)
 
-    // 1 Create new Socket client
-    if (!WS.socket) {
-      WS.socket = io()
-    }
-
-    // 2 Get user channels from database (chat service)
+    // todo fetch from db
     const userChannelsList = [
       1,
       2,
@@ -34,8 +30,8 @@ const WS = {
       18
     ]
 
-    // 3 todo get channel messages here
-    const channelsData = userChannelsList.reduce(
+    // todo fetch from db
+    const userChannelsData = await userChannelsList.reduce(
       (acc, channel) => ({
         ...acc,
         [channel]: {
@@ -46,19 +42,34 @@ const WS = {
       {}
     )
 
-    // 4 subscribe to all channels
-    WS.subscribeToChannels(userChannelsList)
-    return channelsData
+    return { userChannelsList, userChannelsData }
+  }
+}
+
+const WS = {
+  socket: undefined,
+  connect: async (user: UserDTO) => {
+    if (!WS.socket) {
+      WS.socket = io()
+    }
+
+    return WS.subscribeToChannels(user)
+  },
+  subscribeToChannels: async (user: UserDTO) => {
+    const {
+      userChannelsList,
+      userChannelsData
+    } = await chatService.getUserChannelsData(user)
+
+    WS.socket.emit('channels:subscribe', userChannelsList)
+    return userChannelsData
+  },
+  addMessageToChannel: (payload) => {
+    WS.socket.emit('channel:message:add', payload)
   },
   disconnect: () => {
     WS.socket.disconnect()
     WS.socket = undefined
-  },
-  subscribeToChannels: (channelsList: number[]): void => {
-    WS.socket.emit('channels:subscribe', channelsList)
-  },
-  addMessageToChannel: (payload) => {
-    WS.socket.emit('channel:message:add', payload)
   }
 }
 
