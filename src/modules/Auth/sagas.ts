@@ -12,44 +12,7 @@ import WS from '../../services/socket'
 export function* userLoginRequestFlow({ payload: { data, token } }) {
   yield put(userFetchSuccess(data))
   yield call([authService, authService.setToken], token)
-  yield call([WS, WS.connect])
-
-  // todo DRY
-  // 1. Get channels list for userId [1, 2, 4, 14]
-  const channelsList = [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-    13,
-    14,
-    15,
-    16,
-    17,
-    18
-  ]
-  // 2. Fill Channels with info (messages and metadata)
-  const channelsData = channelsList.reduce(
-    (acc, channel) => ({
-      ...acc,
-      [channel]: {
-        title: `channel${channel}`,
-        messages: []
-      }
-    }),
-    {}
-  )
-  // 3. Send socket message to obtain channels subscription
-  yield call([WS, WS.subscribeToChannels], channelsList)
-  // 4. Fill redux state with data
+  const channelsData = yield call([WS, WS.connect], data)
   yield put(initChannelsData(channelsData))
 }
 export function* userLoginWatcher() {

@@ -46,22 +46,20 @@ describe('Launch saga', () => {
       })
     )
     const connect = jest.fn()
-    const subscribeToChannels = jest.fn()
 
     authService.getToken = getToken
     authService.fetchByToken = fetchByToken
     WS.connect = connect
-    WS.subscribeToChannels = subscribeToChannels
 
     await runSaga(fakeStore, launchSaga)
 
     expect(getToken).toHaveBeenCalledTimes(1)
     expect(getToken.mock.results[0].value).toBe(fakeToken)
     expect(fetchByToken).toHaveBeenCalledTimes(1)
-    expect(connect).toHaveBeenCalledTimes(1)
-    expect(subscribeToChannels).toHaveBeenCalledTimes(1)
+
     expect(dispatchedActions.length).toBe(2)
     expect(dispatchedActions[0].type).toBe(userFetchSuccess().type)
+    expect(connect).toHaveBeenCalledTimes(1)
     expect(dispatchedActions[1].type).toBe(initChannelsData().type)
   })
 
