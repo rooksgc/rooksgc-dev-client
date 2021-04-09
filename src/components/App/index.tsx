@@ -29,19 +29,29 @@ const App: FC = () => {
   useEffect(() => {
     if (!WS.socket) return null
     SR.current = WS.socket
+
+    SR.current.on('connect', () => {
+      dispatchAddChannelMessage({
+        activeChannelId,
+        message: `Client ${WS.socket} connected again`
+      })
+    })
+
+    SR.current.io.on('reconnect', () => {
+      // eslint-disable-next-line no-console
+      console.log(`${WS.socket.id} reconnected`)
+      dispatchAddChannelMessage({
+        activeChannelId,
+        message: `${WS.socket.id} reconnected`
+      })
+    })
+
     SR.current.on(
       'channel:message:broadcast',
       ({ activeChannelId: channelId, message, from }) => {
         dispatchAddChannelMessage({ activeChannelId: channelId, message, from })
       }
     )
-
-    // todo debug
-    SR.current.on('server:disconnect', ({ message }) => {
-      SR.current.disconnect()
-      // eslint-disable-next-line no-console
-      console.log(message)
-    })
 
     return () => {
       SR.current.off('channel:message:broadcast')

@@ -2,10 +2,16 @@ import { io } from 'socket.io-client'
 
 const WS = {
   socket: undefined,
-  connect: () => {
+  connect: async () => {
+    // 1 Create new Socket client
     if (!WS.socket) {
       WS.socket = io()
     }
+
+    // 2
+    // subscribeto channels
+
+    // WS.socket.emit('channels:subscribe', channelsList)
   },
   disconnect: () => {
     WS.socket.disconnect()

@@ -27,7 +27,6 @@ const launchSaga = function* launchSaga() {
       yield put(userFetchSuccess(data))
       yield call([WS, WS.connect])
 
-      // todo DRY
       // 1. Get channels list for userId [1, 2, 4, 14]
       const channelsList = [
         1,
