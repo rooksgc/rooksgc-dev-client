@@ -54,6 +54,11 @@ const WS = {
     }
 
     WS.socket.on('disconnect', (reason: string) => {
+      // eslint-disable-next-line no-console
+      console.log(reason)
+      // eslint-disable-next-line no-alert
+      alert(reason)
+
       if (reason === 'transport close') {
         // the disconnection was initiated by the server, you need to reconnect manually
         WS.socket.connect()
