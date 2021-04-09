@@ -34,6 +34,11 @@ const App: FC = () => {
     if (!WS.socket) return null
     SR.current = WS.socket
 
+    SR.current.on('connect', () => {
+      if (!user) return
+      SR.current.subscribeToChannels(user)
+    })
+
     SR.current.on('channels:subscription:request', () => {
       if (!user) return
       SR.current.subscribeToChannels(user)
@@ -49,7 +54,7 @@ const App: FC = () => {
     return () => {
       SR.current.off('channel:message:broadcast')
     }
-  }, [activeChannelId, dispatchAddChannelMessage])
+  }, [user, activeChannelId, dispatchAddChannelMessage])
 
   return (
     <Layout className="wrap-layout">
