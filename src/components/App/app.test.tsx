@@ -13,7 +13,7 @@ describe('App', () => {
     expect(screen.getByRole('main')).toHaveClass('content')
   })
 
-  it('Should have correct layout structure when authorized', () => {
+  xit('Should have correct layout structure when authorized', () => {
     render(<App />)
 
     store.dispatch(
@@ -41,7 +41,7 @@ describe('App', () => {
     expect(screen.getByRole('complementary')).toHaveClass('sider')
   })
 
-  it('Trigger button should collapse and expand sidebar', () => {
+  xit('Trigger button should collapse and expand sidebar', () => {
     render(<App />)
 
     store.dispatch(

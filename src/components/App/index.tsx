@@ -36,6 +36,13 @@ const App: FC = () => {
       }
     )
 
+    // todo debug
+    SR.current.on('server:disconnect', ({ message }) => {
+      SR.current.disconnect()
+      // eslint-disable-next-line no-console
+      console.log(message)
+    })
+
     return () => {
       SR.current.off('channel:message:broadcast')
     }

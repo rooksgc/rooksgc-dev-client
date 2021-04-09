@@ -1,7 +1,12 @@
 import { FC } from 'react'
 import { Layout, Menu } from 'antd'
 import { useLocation, useHistory } from 'react-router-dom'
-import { UploadOutlined, VideoCameraOutlined } from '@ant-design/icons'
+import {
+  UploadOutlined,
+  VideoCameraOutlined,
+  LockOutlined,
+  UnlockOutlined
+} from '@ant-design/icons'
 import PrivateContainer from '../../../containers/Private'
 import useEscape from '../../../hooks/useEscape'
 import useShallowEqualSelector from '../../../hooks/useShallowEqualSelector'
@@ -147,7 +152,6 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
       <Sider
         trigger={null}
         collapsed={sidebarCollapsed}
-        breakpoint="lg"
         collapsedWidth={0}
         className="sider"
         theme="dark"
@@ -156,6 +160,8 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
           height: '100vh'
         }}
       >
+        <LockOutlined className="sidebar-lock" />
+        <UnlockOutlined />
         <Menu
           theme="dark"
           mode="inline"

@@ -40,7 +40,7 @@ const Header: FC<IHeaderProps> = (props: IHeaderProps) => {
         <Badge
           count={currentChannel}
           style={{
-            marginBottom: '8px',
+            marginBottom: '6px',
             backgroundColor: '#E7F3FF',
             color: '#000'
           }}

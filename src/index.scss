@@ -31,6 +31,17 @@ code {
   background-color: #1890ff;
 }
 
+.anticon.sidebar-lock {
+  color: #fff;
+  padding: 22px;
+  font-size: 20px;
+}
+
+.sidebar-lock:hover {
+  cursor: pointer;
+  color: #a0d0ff;
+}
+
 .header-menu {
   display: flex;
   float: right;
