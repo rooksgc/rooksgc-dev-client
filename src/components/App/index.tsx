@@ -32,13 +32,6 @@ const App: FC = () => {
     if (!WS.socket) return null
     SR.current = WS.socket
 
-    SR.current.on('disconnect', (reason: string) => {
-      if (reason === 'transport close') {
-        // the disconnection was initiated by the server, you need to reconnect manually
-        WS.connect(user)
-      }
-    })
-
     SR.current.on(
       'channel:message:broadcast',
       ({ activeChannelId: channelId, message, from }) => {

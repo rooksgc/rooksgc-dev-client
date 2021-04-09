@@ -53,6 +53,13 @@ const WS = {
       WS.socket = io()
     }
 
+    WS.socket.on('disconnect', (reason: string) => {
+      if (reason === 'transport close') {
+        // the disconnection was initiated by the server, you need to reconnect manually
+        WS.socket.coonect()
+      }
+    })
+
     return WS.subscribeToChannels(user)
   },
   subscribeToChannels: async (user: UserDTO) => {
