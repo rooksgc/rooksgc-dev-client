@@ -32,6 +32,17 @@ const App: FC = () => {
     if (!WS.socket) return null
     SR.current = WS.socket
 
+    WS.socket.on('disconnect', (reason: string) => {
+      // eslint-disable-next-line no-alert
+      alert(reason)
+
+      if (reason === 'transport error' || reason === 'ping timeout') {
+        if (!user) return
+        WS.socket = undefined
+        WS.connect(user)
+      }
+    })
+
     SR.current.on(
       'channel:message:broadcast',
       ({ activeChannelId: channelId, message, from }) => {

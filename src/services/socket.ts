@@ -53,17 +53,6 @@ const WS = {
       WS.socket = io()
     }
 
-    WS.socket.on('disconnect', (reason: string) => {
-      // eslint-disable-next-line no-console
-      console.log(reason)
-      // eslint-disable-next-line no-alert
-      alert(reason)
-
-      if (reason === 'transport error' || reason === 'ping timeout') {
-        WS.socket.connect()
-      }
-    })
-
     return WS.subscribeToChannels(user)
   },
   subscribeToChannels: async (user: UserDTO) => {
