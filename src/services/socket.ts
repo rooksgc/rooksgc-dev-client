@@ -59,8 +59,7 @@ const WS = {
       // eslint-disable-next-line no-alert
       alert(reason)
 
-      if (reason === 'transport close') {
-        // the disconnection was initiated by the server, you need to reconnect manually
+      if (reason === 'transport error' || reason === 'ping timeout') {
         WS.socket.connect()
       }
     })
