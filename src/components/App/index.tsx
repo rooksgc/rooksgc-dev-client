@@ -38,7 +38,7 @@ const App: FC = () => {
 
       if (reason === 'transport error' || reason === 'ping timeout') {
         if (!user) return
-        WS.socket = undefined
+        WS.disconnect()
         WS.connect(user)
       }
     })

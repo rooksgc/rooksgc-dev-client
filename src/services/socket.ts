@@ -50,7 +50,11 @@ const WS = {
   socket: undefined,
   connect: async (user: UserDTO) => {
     if (!WS.socket) {
-      WS.socket = io()
+      WS.socket = io({
+        autoConnect: false
+      })
+
+      WS.socket.connect()
     }
 
     return WS.subscribeToChannels(user)
