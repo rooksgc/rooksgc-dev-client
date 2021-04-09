@@ -20,9 +20,6 @@ const App: FC = () => {
   ) as any
   const user = useShallowEqualSelector((state) => state.auth.user)
 
-  // eslint-disable-next-line no-console
-  console.log(user)
-
   const onSidebarToggle = (isCollapsed: boolean) => {
     setSidebarCollapsed(isCollapsed)
   }
@@ -34,14 +31,8 @@ const App: FC = () => {
     if (!WS.socket) return null
     SR.current = WS.socket
 
-    SR.current.on('connect', () => {
-      if (!user) return
-      SR.current.subscribeToChannels(user)
-    })
-
-    SR.current.on('channels:subscription:request', () => {
-      if (!user) return
-      SR.current.subscribeToChannels(user)
+    SR.current.on('disconnection:request', () => {
+      SR.current.disconnect()
     })
 
     SR.current.on(
