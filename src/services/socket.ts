@@ -6,7 +6,7 @@ const chatService = {
   getUserChannelsData: async (user: UserDTO) => {
     // Get channels from database for userId = userData.id
     // eslint-disable-next-line no-console
-    console.log(user)
+    console.log(user.id)
 
     // todo fetch from db
     const userChannelsList = [

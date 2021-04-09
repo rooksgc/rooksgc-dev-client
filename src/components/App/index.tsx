@@ -33,6 +33,7 @@ const App: FC = () => {
     if (!WS.socket) return null
     SR.current = WS.socket
 
+    // Correct reconnection after server emits disconnected event
     WS.socket.on('disconnect', (reason: string) => {
       if (reason === 'transport error' || reason === 'ping timeout') {
         if (!user) return
