@@ -31,13 +31,19 @@ code {
   background-color: #1890ff;
 }
 
-.anticon.sidebar-lock {
+.sidebar-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.sidebar-locker {
   color: #fff;
   padding: 22px;
   font-size: 20px;
 }
 
-.sidebar-lock:hover {
+.sidebar-locker:hover {
   cursor: pointer;
   color: #a0d0ff;
 }
@@ -91,6 +97,13 @@ code {
 .chat-window {
   height: calc(100vh - 104px);
   overflow-y: scroll;
+}
+
+.chat-empty {
+  display: flex;
+  height: calc(100vh - 104px);
+  align-items: center;
+  justify-content: center;
 }
 
 .input-form {

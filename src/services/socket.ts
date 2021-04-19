@@ -10,39 +10,57 @@ const chatService = {
 
     // todo fetch from db
     const userChannelsList = [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
-      14,
-      15,
-      16,
-      17,
-      18
+      {
+        id: 1,
+        name: 'Общий чат',
+        type: 'channel'
+      }
+    ]
+    const userContactsList = [
+      {
+        id: 1,
+        name: 'Артемс',
+        type: 'contact'
+      },
+      {
+        id: 2,
+        name: 'Уварыч',
+        type: 'contact'
+      },
+      {
+        id: 3,
+        name: 'Кузьмич',
+        type: 'contact'
+      }
     ]
 
-    // todo fetch from db
-    const userChannelsData = await userChannelsList.reduce(
-      (acc, channel) => ({
+    const channels = await userChannelsList.reduce(
+      (acc, { id, name, type }) => ({
         ...acc,
-        [channel]: {
-          title: `channel_${channel}`,
+        [id]: {
+          name,
+          type,
           messages: []
         }
       }),
       {}
     )
 
-    return { userChannelsList, userChannelsData }
+    const contacts = await userContactsList.reduce(
+      (acc, { id, name, type }) => ({
+        ...acc,
+        [id]: {
+          name,
+          type,
+          messages: []
+        }
+      }),
+      {}
+    )
+
+    const userChannelsData = { channels, contacts }
+
+    return { userChannelsList, userContactsList, userChannelsData }
   }
 }
 
@@ -54,6 +72,7 @@ const WS = {
         autoConnect: false
       })
 
+      WS.socket.auth = { username: user.name }
       WS.socket.connect()
     }
 
@@ -62,10 +81,11 @@ const WS = {
   subscribeToChannels: async (user: UserDTO) => {
     const {
       userChannelsList,
+      userContactsList,
       userChannelsData
     } = await chatService.getUserChannelsData(user)
 
-    WS.socket.emit('channels:subscribe', userChannelsList)
+    WS.socket.emit('channels:subscribe', { userChannelsList, userContactsList })
     return userChannelsData
   },
   addMessageToChannel: (payload) => {

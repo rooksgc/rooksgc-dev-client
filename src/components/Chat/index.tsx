@@ -1,42 +1,68 @@
 import { useCallback } from 'react'
 import { nanoid } from 'nanoid'
 import { UserDTO } from 'src/services/auth'
+import { Empty } from 'antd'
 import Messages from './Messages'
 import InputMessage from './InputMessage'
 import useShallowEqualSelector from '../../hooks/useShallowEqualSelector'
-import { addChannelMessage } from '../../modules/Chat/actions'
+import {
+  addChannelMessage,
+  addContactMessage
+} from '../../modules/Chat/actions'
 import useActions from '../../hooks/useActions'
 import WS from '../../services/socket'
 
 const Chat = () => {
   const user = useShallowEqualSelector((state) => state.auth.user) as UserDTO
-  const [dispatchAddChannelMessage] = useActions([addChannelMessage], null)
-  const { activeChannelId, channels } = useShallowEqualSelector(
+  const [dispatchAddChannelMessage, dispatchAddContactMessage] = useActions(
+    [addChannelMessage, addContactMessage],
+    null
+  )
+  const { activeChannel, channels, contacts } = useShallowEqualSelector(
     (state) => state.chat
   ) as any
 
   const onSendMessage = useCallback(
     (text: string): void => {
-      if (!activeChannelId) return
+      if (!activeChannel) return
       if (!text) return
 
       const id = nanoid()
-      const message = { id, text, from: user.name }
+      const { id: userId, name } = user
+      const message = { id, text, from: `${name}(${userId})` }
+      const payload = {
+        activeChannelId: activeChannel.id,
+        message
+      }
 
-      dispatchAddChannelMessage({ activeChannelId, message })
-      WS.addMessageToChannel({ activeChannelId, message })
+      if (activeChannel.type === 'channel') {
+        dispatchAddChannelMessage(payload)
+      }
+
+      if (activeChannel.type === 'contact') {
+        dispatchAddContactMessage(payload)
+      }
+
+      WS.addMessageToChannel(payload)
     },
-    [activeChannelId, dispatchAddChannelMessage, user.name]
+    [activeChannel, dispatchAddChannelMessage, dispatchAddContactMessage, user]
   )
 
-  if (!user || !activeChannelId || !channels) return null
+  if (!user || !activeChannel || (!channels && !contacts))
+    return (
+      <div className="chat-empty">
+        <Empty description="Выберите канал для начала общения!" />
+      </div>
+    )
 
-  const channelsData = channels[activeChannelId as string]
-  if (!channelsData) return null
+  const { type, id } = activeChannel
+  const channelData = type === 'channel' ? channels[id] : contacts[id]
+
+  if (!channelData) return null
 
   return (
     <>
-      <Messages data={channelsData} />
+      <Messages channel={channelData} />
       <InputMessage sendMessage={onSendMessage} />
     </>
   )

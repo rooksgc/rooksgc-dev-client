@@ -12,21 +12,18 @@ import WS from '../../services/socket'
 const { Content } = Layout
 
 const App: FC = () => {
-  const [currentChannel, setCurrentChannel] = useState('')
   const [needRecreateRef, setNeedRecreateRef] = useState(0)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [onlineUsers, setOnlineUsers] = useState([])
   const SR = useRef(null)
   const [dispatchAddChannelMessage] = useActions([addChannelMessage], null)
-  const { activeChannelId } = useShallowEqualSelector(
-    (state) => state.chat
+  const activeChannel = useShallowEqualSelector(
+    (state) => state.chat.activeChannel
   ) as any
   const user = useShallowEqualSelector((state) => state.auth.user) as UserDTO
 
   const onSidebarToggle = (isCollapsed: boolean) => {
     setSidebarCollapsed(isCollapsed)
-  }
-  const onCurrentChannelChange = ({ label }) => {
-    setCurrentChannel(label)
   }
 
   useEffect(() => {
@@ -43,6 +40,27 @@ const App: FC = () => {
       }
     })
 
+    WS.socket.on('users', (users) => {
+      // users.forEach((user) => {
+      // user.self = user.userId === WS.socket.id
+      // initReactiveProperties(user)
+      // dispatchUpdateUsersOnline(users)
+      // })
+      // put the current user first, and then sort by username
+      setOnlineUsers(
+        users.sort((a, b) => {
+          if (a.self) return -1
+          if (b.self) return 1
+          if (a.username < b.username) return -1
+          return a.username > b.username ? 1 : 0
+        })
+      )
+      // dispatchUpdateUsersOnline(users)
+
+      // eslint-disable-next-line no-console
+      console.log(onlineUsers)
+    })
+
     SR.current.on(
       'channel:message:broadcast',
       ({ activeChannelId: channelId, message, from }) => {
@@ -53,20 +71,18 @@ const App: FC = () => {
     return () => {
       SR.current.off('channel:message:broadcast')
     }
-  }, [user, activeChannelId, dispatchAddChannelMessage, needRecreateRef])
+  }, [user, activeChannel, dispatchAddChannelMessage, needRecreateRef])
 
   return (
     <Layout className="wrap-layout">
       <Sidebar
         sidebarCollapsed={sidebarCollapsed}
         onSidebarToggle={onSidebarToggle}
-        onCurrentChannelChange={onCurrentChannelChange}
       />
       <Layout className="site-layout">
         <Header
           sidebarCollapsed={sidebarCollapsed}
           onSidebarToggle={onSidebarToggle}
-          currentChannel={currentChannel}
         />
         <Content className="content">
           <Routes />

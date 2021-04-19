@@ -1,46 +1,66 @@
 import { combineReducers } from 'redux'
 import { handleActions } from 'redux-actions'
 import {
-  setActiveChannelId,
+  setActiveChannel,
   initChannelsData,
-  addChannelMessage
+  initContactsData,
+  addChannelMessage,
+  addContactMessage
 } from './actions'
 
+export interface IActiveChannel {
+  id: string | number | null
+  label: string
+}
+
 export interface IChatState {
-  activeChannelId: string
+  activeChannel: IActiveChannel
   channels: Object
+  contacts: Object
 }
 
 export const initialState = {
-  activeChannelId: '',
-  channels: {}
+  activeChannel: null,
+  channels: {},
+  contacts: {}
 }
 
-const activeChannelId = handleActions(
+const activeChannel = handleActions(
   {
-    [setActiveChannelId]: (_state, action) => action.payload
+    [setActiveChannel]: (_state, action) => action.payload
   },
-  ''
+  null
 )
+
+const addMessage = (state, action) => ({
+  ...state,
+  [action.payload.activeChannelId]: {
+    ...state[action.payload.activeChannelId],
+    messages: [
+      ...state[action.payload.activeChannelId].messages,
+      action.payload.message
+    ]
+  }
+})
 
 const channels = handleActions(
   {
     [initChannelsData]: (_state, action) => action.payload,
-    [addChannelMessage]: (state, action) => ({
-      ...state,
-      [action.payload.activeChannelId]: {
-        ...state[action.payload.activeChannelId],
-        messages: [
-          ...state[action.payload.activeChannelId].messages,
-          action.payload.message
-        ]
-      }
-    })
+    [addChannelMessage]: addMessage
+  },
+  null
+)
+
+const contacts = handleActions(
+  {
+    [initContactsData]: (_state, action) => action.payload,
+    [addContactMessage]: addMessage
   },
   null
 )
 
 export default combineReducers<IChatState>({
-  activeChannelId,
-  channels
+  activeChannel,
+  channels,
+  contacts
 })

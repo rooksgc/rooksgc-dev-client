@@ -1,4 +1,3 @@
-import { Card } from 'antd'
 import useShallowEqualSelector from '../../hooks/useShallowEqualSelector'
 import { UserDTO } from '../../services/auth'
 
@@ -8,11 +7,9 @@ const UserProfile = () => {
   ) as UserDTO
   return (
     <>
-      <Card title="Профиль" bordered={false} style={{ maxWidth: 500 }}>
-        <p>Имя: {name}</p>
-        <p>Email: {email}</p>
-        <p>Роль: {role}</p>
-      </Card>
+      <p>Имя: {name}</p>
+      <p>Email: {email}</p>
+      <p>Роль: {role}</p>
     </>
   )
 }

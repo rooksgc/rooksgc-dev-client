@@ -8,7 +8,6 @@ import Recover from '../Recover'
 import ChangePassword from '../ChangePassword'
 import Activation from '../Activation'
 import PrivateRoute from '../../containers/PrivateRoute'
-import UserProfile from '../UserProfile'
 
 const Routes: FC = () => (
   <Switch>
@@ -18,7 +17,6 @@ const Routes: FC = () => (
     <Route path="/auth/activation/:code" component={Activation} />
     <Route path="/auth/recover" component={Recover} />
     <Route path="/auth/change-password/:code" component={ChangePassword} />
-    <PrivateRoute path="/user/profile" component={UserProfile} />
     <Route path="*">
       <Redirect to="/auth/login" />
     </Route>

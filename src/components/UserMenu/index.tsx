@@ -1,5 +1,5 @@
-import { FC } from 'react'
-import { useLocation, useHistory } from 'react-router-dom'
+import { FC, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import { Menu, Dropdown, Avatar } from 'antd'
 import {
   UserOutlined,
@@ -8,19 +8,22 @@ import {
 } from '@ant-design/icons'
 import useActions from '../../hooks/useActions'
 import { userLogoutRequest } from '../../modules/Auth/actions'
+import UserProfile from '../UserProfile'
+import ModalWindow from '../../containers/ModalWindow'
 
 const UserMenu: FC = () => {
-  const location = useLocation()
+  const [userProfileModalVisibility, setUserProfileModalVisibility] = useState(
+    false
+  )
   const history = useHistory()
   const [dispatchUserLogoutRequest] = useActions([userLogoutRequest], null)
 
   const handleMenuClick = (event) => {
     const { key } = event
-    if (location.pathname === `/user/${key}`) return
 
     switch (key) {
       case 'profile':
-        history.push('/user/profile')
+        setUserProfileModalVisibility(true)
         break
       case 'logout':
         dispatchUserLogoutRequest()
@@ -44,9 +47,18 @@ const UserMenu: FC = () => {
   )
 
   return (
-    <Dropdown overlay={menu} trigger={['click']}>
-      <Avatar className="user-profile" icon={<UserOutlined />} />
-    </Dropdown>
+    <>
+      <Dropdown overlay={menu} trigger={['click']}>
+        <Avatar className="user-profile" icon={<UserOutlined />} />
+      </Dropdown>
+      <ModalWindow
+        title="Профиль"
+        visible={userProfileModalVisibility}
+        onCancel={() => setUserProfileModalVisibility(false)}
+      >
+        <UserProfile />
+      </ModalWindow>
+    </>
   )
 }
 
