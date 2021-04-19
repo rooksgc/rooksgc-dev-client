@@ -1,86 +1,94 @@
-import { FC, SyntheticEvent, useState } from 'react'
-import { Switch, Route, Redirect } from 'react-router-dom'
-import { Layout, Menu } from 'antd'
-import {
-  DesktopOutlined,
-  MenuUnfoldOutlined,
-  MenuFoldOutlined
-} from '@ant-design/icons'
+import { FC, useState, useEffect, useRef } from 'react'
+import { UserDTO } from 'src/services/auth'
+import { Layout } from 'antd'
+import Header from './Header'
+import Sidebar from './Sidebar'
+import Routes from '../Routes'
+import { addChannelMessage } from '../../modules/Chat/actions'
+import useShallowEqualSelector from '../../hooks/useShallowEqualSelector'
+import useActions from '../../hooks/useActions'
+import WS from '../../services/socket'
 
-import Home from '../Home'
-import MainMenu from '../MainMenu'
-import Chat from '../Chat'
-import Login from '../Login'
-import Register from '../Register'
-import Recover from '../Recover'
-import ChangePassword from '../ChangePassword'
-import Activation from '../Activation'
-import PrivateRoute from '../PrivateRoute'
-
-const { Header, Content, Footer, Sider } = Layout
+const { Content } = Layout
 
 const App: FC = () => {
-  const [collapsed, setCollapsed] = useState(false)
+  const [needRecreateRef, setNeedRecreateRef] = useState(0)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [onlineUsers, setOnlineUsers] = useState([])
+  const SR = useRef(null)
+  const [dispatchAddChannelMessage] = useActions([addChannelMessage], null)
+  const activeChannel = useShallowEqualSelector(
+    (state) => state.chat.activeChannel
+  ) as any
+  const user = useShallowEqualSelector((state) => state.auth.user) as UserDTO
 
-  const toggle = (event: SyntheticEvent): void => {
-    event.preventDefault()
-    setCollapsed(!collapsed)
+  const onSidebarToggle = (isCollapsed: boolean) => {
+    setSidebarCollapsed(isCollapsed)
   }
 
+  useEffect(() => {
+    if (!WS.socket) return null
+    SR.current = WS.socket
+
+    // Correct reconnection after server emits disconnected event
+    WS.socket.on('disconnect', (reason: string) => {
+      if (reason === 'transport error' || reason === 'ping timeout') {
+        if (!user) return
+        WS.disconnect()
+        WS.connect(user)
+        setNeedRecreateRef((state) => state + 1)
+      }
+    })
+
+    WS.socket.on('users', (users) => {
+      // users.forEach((user) => {
+      // user.self = user.userId === WS.socket.id
+      // initReactiveProperties(user)
+      // dispatchUpdateUsersOnline(users)
+      // })
+      // put the current user first, and then sort by username
+      setOnlineUsers(
+        users.sort((a, b) => {
+          if (a.self) return -1
+          if (b.self) return 1
+          if (a.username < b.username) return -1
+          return a.username > b.username ? 1 : 0
+        })
+      )
+      // dispatchUpdateUsersOnline(users)
+
+      // eslint-disable-next-line no-console
+      console.log(onlineUsers)
+    })
+
+    SR.current.on(
+      'channel:message:broadcast',
+      ({ activeChannelId: channelId, message, from }) => {
+        dispatchAddChannelMessage({ activeChannelId: channelId, message, from })
+      }
+    )
+
+    return () => {
+      SR.current.off('channel:message:broadcast')
+    }
+  }, [user, activeChannel, dispatchAddChannelMessage, needRecreateRef])
+
   return (
-    <>
-      <Layout style={{ minHeight: '100vh' }}>
-        <Sider theme="light" collapsible trigger={null} collapsed={collapsed}>
-          <Menu mode="inline">
-            <Menu.Item key="1" icon={<DesktopOutlined />}>
-              Комната 1
-            </Menu.Item>
-            <Menu.Item key="2" icon={<DesktopOutlined />}>
-              Комната 2
-            </Menu.Item>
-          </Menu>
-        </Sider>
-        <Layout className="site-layout">
-          <Header className="header site-layout-background">
-            {collapsed ? (
-              <MenuUnfoldOutlined className="trigger" onClick={toggle} />
-            ) : (
-              <MenuFoldOutlined className="trigger" onClick={toggle} />
-            )}
-            <MainMenu />
-          </Header>
-          <Content className="content">
-            <Switch>
-              <PrivateRoute path="/" exact>
-                <Home />
-              </PrivateRoute>
-              <Route path="/auth/login">
-                <Login />
-              </Route>
-              <Route path="/auth/register">
-                <Register />
-              </Route>
-              <Route path="/auth/activation/:code">
-                <Activation />
-              </Route>
-              <Route path="/auth/recover">
-                <Recover />
-              </Route>
-              <Route path="/auth/change-password/:code">
-                <ChangePassword />
-              </Route>
-              <Route path="/chat">
-                <Chat />
-              </Route>
-              <Route path="*">
-                <Redirect to="/auth/login" />
-              </Route>
-            </Switch>
-          </Content>
-          <Footer style={{ textAlign: 'center' }}>© [Chat]</Footer>
-        </Layout>
+    <Layout className="wrap-layout">
+      <Sidebar
+        sidebarCollapsed={sidebarCollapsed}
+        onSidebarToggle={onSidebarToggle}
+      />
+      <Layout className="site-layout">
+        <Header
+          sidebarCollapsed={sidebarCollapsed}
+          onSidebarToggle={onSidebarToggle}
+        />
+        <Content className="content">
+          <Routes />
+        </Content>
       </Layout>
-    </>
+    </Layout>
   )
 }
 

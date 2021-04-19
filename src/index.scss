@@ -14,20 +14,51 @@ code {
     monospace;
 }
 
-.site-layout {
-  &-background {
-    background: #fff;
-  }
+.wrap-layout {
+  min-height: 100vh;
 }
 
-.content {
-  margin: 0 16px;
-  padding: 24px;
-  min-height: 360px;
+.background-white {
+  background: #fff;
 }
 
 .header {
   padding-left: 0;
+  padding-right: 16px;
+}
+
+.current-channel-badge {
+  background-color: #1890ff;
+}
+
+.sidebar-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.sidebar-locker {
+  color: #fff;
+  padding: 22px;
+  font-size: 20px;
+}
+
+.sidebar-locker:hover {
+  cursor: pointer;
+  color: #a0d0ff;
+}
+
+.header-menu {
+  display: flex;
+  float: right;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+.user-profile {
+  cursor: pointer;
+  margin-left: 20px;
 }
 
 .flex-center {
@@ -49,11 +80,6 @@ code {
   float: right;
 }
 
-.logo {
-  height: 64px;
-  background: #000;
-}
-
 .submit-button {
   margin-top: 16px;
 }
@@ -68,14 +94,27 @@ code {
   margin: 10px 0;
 }
 
-.trigger {
-  padding: 0 24px;
-  font-size: 18px;
-  line-height: 64px;
-  cursor: pointer;
-  transition: color 0.3s;
+.chat-window {
+  height: calc(100vh - 104px);
+  overflow-y: scroll;
+}
 
-  &:hover {
-    color: #1890ff;
-  }
+.chat-empty {
+  display: flex;
+  height: calc(100vh - 104px);
+  align-items: center;
+  justify-content: center;
+}
+
+.input-form {
+  display: flex;
+}
+
+.input-messaage {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.send-button {
+  margin-bottom: 0;
 }

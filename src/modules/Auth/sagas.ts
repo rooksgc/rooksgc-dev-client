@@ -1,53 +1,41 @@
-import { takeLatest, takeLeading, put, call, fork } from 'redux-saga/effects'
+import { takeLatest, put, call, fork } from 'redux-saga/effects'
 import {
-  fetchUserRequest,
-  fetchUserSuccess,
-  fetchUserFailure,
-  logoutUserRequest,
-  setUser,
-  setToken
+  userLoginRequest,
+  userLogoutRequest,
+  userFetchSuccess
 } from './actions'
+import {
+  initChannelsData,
+  initContactsData,
+  setActiveChannel
+} from '../Chat/actions'
 import authService from '../../services/auth'
+import WS from '../../services/socket'
 
-/** Сохранение token в localStorage */
-export function* setTokenFlow({ payload }) {
-  yield call([authService, authService.setToken], payload)
+/** login success */
+export function* userLoginRequestFlow({ payload: { data, token } }) {
+  yield put(userFetchSuccess(data))
+  yield call([authService, authService.setToken], token)
+  const { channels, contacts } = yield call([WS, WS.connect], data)
+  yield put(initChannelsData(channels))
+  yield put(initContactsData(contacts))
 }
-function* setTokenWatcher() {
-  yield takeLatest(setToken, setTokenFlow)
+export function* userLoginWatcher() {
+  yield takeLatest(userLoginRequest, userLoginRequestFlow)
 }
 
-/** Выход пользователя из системы (logout) */
-export function* logoutUserRequestFlow() {
+/** logout */
+export function* userLogoutRequestFlow() {
   yield call([authService, authService.removeToken])
-  yield put(setUser(false))
+  yield put(userFetchSuccess(false))
+  yield put(setActiveChannel(null))
+  yield call([WS, WS.disconnect])
 }
-function* userLogoutWatcher() {
-  yield takeLatest(logoutUserRequest, logoutUserRequestFlow)
-}
-
-/** Получение объекта пользователя по токену */
-export function* fetchUserByTokenFlow() {
-  try {
-    const token = yield call([authService, authService.getToken])
-    if (!token) {
-      yield put(fetchUserFailure())
-      return
-    }
-    const user = yield call([authService, authService.fetchByToken], { token })
-    if (user.data) {
-      yield put(fetchUserSuccess(user.data))
-    }
-  } catch (error) {
-    yield put(fetchUserFailure(error))
-  }
-}
-function* fetchUserByTokenWatcher() {
-  yield takeLeading(fetchUserRequest, fetchUserByTokenFlow)
+export function* userLogoutWatcher() {
+  yield takeLatest(userLogoutRequest, userLogoutRequestFlow)
 }
 
 export default function* generator() {
-  yield fork(setTokenWatcher)
-  yield fork(fetchUserByTokenWatcher)
+  yield fork(userLoginWatcher)
   yield fork(userLogoutWatcher)
 }

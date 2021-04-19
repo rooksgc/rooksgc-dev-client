@@ -1,32 +1,30 @@
-// import reducer from './reducer';
-// import { fetchRequest, fetchSuccess, fetchFailure } from './actions';
+import reducer, { initialState } from './reducer'
+import { userFetchSuccess, userFetchFailure } from './actions'
 
-// const randomAction = {
-//   type: `RANDOM_ACTION_${parseInt(Math.random() * 1000, 10)}`
-// };
+describe('Auth reducer', () => {
+  const state0 = reducer(undefined, { type: '' })
 
-// describe('Reducer User', () => {
-//   const state0 = reducer(undefined, randomAction);
+  it('Should return initial state', () => {
+    expect(state0).toEqual(initialState)
+  })
 
-//   it('Содержит поле isLoading и data', () => {
-//     expect(Object.keys(state0)).toEqual(
-//       expect.arrayContaining(['isLoading', 'data'])
-//     );
-//   });
+  it('Should contain `user` field', () => {
+    expect(Object.keys(state0)).toEqual(expect.arrayContaining(['user']))
+  })
 
-//   it('Экшен user/fetchRequest выставляет флаг isLoading в true', () => {
-//     expect(reducer(state0, fetchRequest()).isLoading).toBeTruthy();
-//   });
+  it('userFetchSuccess action set user field to store correctly', () => {
+    const fakeUserPayload = {
+      id: 1,
+      name: 'user0',
+      email: 'user0.gmail.com',
+      role: 'USER'
+    }
+    const state1 = reducer(state0, userFetchSuccess(fakeUserPayload))
+    expect(state1).toEqual({ user: fakeUserPayload })
+  })
 
-//   it('Экшен user/fetchSuccess выставляет флаг isLoading в false', () => {
-//     expect(reducer(state0, fetchSuccess('test_data')).isLoading).toBeFalsy();
-//   });
-
-//   it('Экшен user/fetchFailure выставляет флаг isLoading в false', () => {
-//     expect(reducer(state0, fetchFailure('test_error')).isLoading).toBeFalsy();
-//   });
-
-//   it('Экшен user/fetchSuccess наполняет своим payload поле data', () => {
-//     expect(reducer(state0, fetchSuccess('test_data')).data).toBe('test_data');
-//   });
-// });
+  it('userFetchFailure action set user field to false', () => {
+    const state1 = reducer(state0, userFetchFailure())
+    expect(state1).toEqual({ user: false })
+  })
+})
