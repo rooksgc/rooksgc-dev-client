@@ -3,11 +3,8 @@ import { UserDTO } from './auth'
 
 // TODO: Move to "Chat service"
 const chatService = {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getUserChannelsData: async (user: UserDTO) => {
-    // Get channels from database for userId = userData.id
-    // eslint-disable-next-line no-console
-    console.log(user.id)
-
     // todo fetch from db
     const userChannelsList = [
       {
@@ -18,18 +15,8 @@ const chatService = {
     ]
     const userContactsList = [
       {
-        id: 1,
-        name: 'Артемс',
-        type: 'contact'
-      },
-      {
         id: 2,
-        name: 'Уварыч',
-        type: 'contact'
-      },
-      {
-        id: 3,
-        name: 'Кузьмич',
+        name: 'Demo',
         type: 'contact'
       }
     ]
@@ -72,7 +59,7 @@ const WS = {
         autoConnect: false
       })
 
-      WS.socket.auth = { username: user.name }
+      WS.socket.auth = { userId: user.id }
       WS.socket.connect()
     }
 
@@ -88,8 +75,11 @@ const WS = {
     WS.socket.emit('channels:subscribe', { userChannelsList, userContactsList })
     return userChannelsData
   },
-  addMessageToChannel: (payload) => {
-    WS.socket.emit('channel:message:add', payload)
+  sendChannelMessage: (payload) => {
+    WS.socket.emit('channel:message:send', payload)
+  },
+  sendContactMessage: (payload) => {
+    WS.socket.emit('contact:message:send', payload)
   },
   disconnect: () => {
     WS.socket.disconnect()

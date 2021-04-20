@@ -29,7 +29,7 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
 
   const onClickMenu = ({ key }) => {
     if (activeChannel) {
-      const { id, type } = activeChannel as IChannelData
+      const { id, type } = activeChannel
       if (key === `${type}-${id}`) return
     }
 
@@ -37,7 +37,8 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
     const place = channelType === 'channel' ? channels : contacts
     const { name, type } = place[channelId]
 
-    dispatchActiveChannel({ id: channelId, name, type })
+    const intChannelId = parseInt(channelId, 10)
+    dispatchActiveChannel({ id: intChannelId, name, type })
 
     if (!sidebarLocked) {
       onSidebarToggle(true)

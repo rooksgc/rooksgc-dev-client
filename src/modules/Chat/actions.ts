@@ -7,6 +7,6 @@ export const initChannelsData: any = createAction('CHAT/INIT_CHANNELS_DATA')
 /** Начальное состояние контактов на момент захода пользователя */
 export const initContactsData: any = createAction('CHAT/INIT_CONTACTS_DATA')
 /** Добавить сообщение в чат канала */
-export const addChannelMessage: any = createAction('CHAT/ADD_CHANNEL_MESSAGE')
+export const sendChannelMessage: any = createAction('CHAT/SEND_CHANNEL_MESSAGE')
 /** Добавить приватное сообщение пользователю */
-export const addContactMessage: any = createAction('CHAT/ADD_CONTACT_MESSAGE')
+export const sendContactMessage: any = createAction('CHAT/SEND_CONTACT_MESSAGE')

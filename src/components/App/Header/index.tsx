@@ -53,8 +53,11 @@ const Header: FC<IHeaderProps> = (props: IHeaderProps) => {
 
   return (
     <AntHeader className="header background-white">
-      {menuTrigger}
-      {activeChannelLabel}
+      <PrivateContainer>
+        {menuTrigger}
+        {activeChannelLabel}
+      </PrivateContainer>
+
       <div className="header-menu">
         <MainMenu />
         <PrivateContainer>

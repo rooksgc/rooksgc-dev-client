@@ -6,16 +6,16 @@ import Messages from './Messages'
 import InputMessage from './InputMessage'
 import useShallowEqualSelector from '../../hooks/useShallowEqualSelector'
 import {
-  addChannelMessage,
-  addContactMessage
+  sendChannelMessage,
+  sendContactMessage
 } from '../../modules/Chat/actions'
 import useActions from '../../hooks/useActions'
 import WS from '../../services/socket'
 
 const Chat = () => {
   const user = useShallowEqualSelector((state) => state.auth.user) as UserDTO
-  const [dispatchAddChannelMessage, dispatchAddContactMessage] = useActions(
-    [addChannelMessage, addContactMessage],
+  const [dispatchSendChannelMessage, dispatchSendContactMessage] = useActions(
+    [sendChannelMessage, sendContactMessage],
     null
   )
   const { activeChannel, channels, contacts } = useShallowEqualSelector(
@@ -36,16 +36,21 @@ const Chat = () => {
       }
 
       if (activeChannel.type === 'channel') {
-        dispatchAddChannelMessage(payload)
+        dispatchSendChannelMessage(payload)
+        WS.sendChannelMessage(payload)
       }
 
       if (activeChannel.type === 'contact') {
-        dispatchAddContactMessage(payload)
+        dispatchSendContactMessage(payload)
+        WS.sendContactMessage({ from: user.id, to: activeChannel.id, message })
       }
-
-      WS.addMessageToChannel(payload)
     },
-    [activeChannel, dispatchAddChannelMessage, dispatchAddContactMessage, user]
+    [
+      activeChannel,
+      dispatchSendChannelMessage,
+      dispatchSendContactMessage,
+      user
+    ]
   )
 
   if (!user || !activeChannel || (!channels && !contacts))

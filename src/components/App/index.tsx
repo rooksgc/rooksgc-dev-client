@@ -4,7 +4,10 @@ import { Layout } from 'antd'
 import Header from './Header'
 import Sidebar from './Sidebar'
 import Routes from '../Routes'
-import { addChannelMessage } from '../../modules/Chat/actions'
+import {
+  sendChannelMessage,
+  sendContactMessage
+} from '../../modules/Chat/actions'
 import useShallowEqualSelector from '../../hooks/useShallowEqualSelector'
 import useActions from '../../hooks/useActions'
 import WS from '../../services/socket'
@@ -16,7 +19,10 @@ const App: FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [onlineUsers, setOnlineUsers] = useState([])
   const SR = useRef(null)
-  const [dispatchAddChannelMessage] = useActions([addChannelMessage], null)
+  const [dispatchSendChannelMessage, dispatchSendContactMessage] = useActions(
+    [sendChannelMessage, sendContactMessage],
+    null
+  )
   const activeChannel = useShallowEqualSelector(
     (state) => state.chat.activeChannel
   ) as any
@@ -58,20 +64,40 @@ const App: FC = () => {
       // dispatchUpdateUsersOnline(users)
 
       // eslint-disable-next-line no-console
-      console.log(onlineUsers)
+      // console.log(onlineUsers)
     })
 
     SR.current.on(
       'channel:message:broadcast',
       ({ activeChannelId: channelId, message, from }) => {
-        dispatchAddChannelMessage({ activeChannelId: channelId, message, from })
+        dispatchSendChannelMessage({
+          activeChannelId: channelId,
+          message,
+          from
+        })
       }
     )
 
+    SR.current.on('contact:message:private', ({ message, from }) => {
+      dispatchSendContactMessage({
+        activeChannelId: user.id,
+        from,
+        message
+      })
+    })
+
     return () => {
       SR.current.off('channel:message:broadcast')
+      SR.current.off('contact:message:private')
     }
-  }, [user, activeChannel, dispatchAddChannelMessage, needRecreateRef])
+  }, [
+    user,
+    activeChannel,
+    dispatchSendChannelMessage,
+    dispatchSendContactMessage,
+    needRecreateRef,
+    onlineUsers
+  ])
 
   return (
     <Layout className="wrap-layout">

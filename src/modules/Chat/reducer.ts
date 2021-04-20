@@ -4,13 +4,14 @@ import {
   setActiveChannel,
   initChannelsData,
   initContactsData,
-  addChannelMessage,
-  addContactMessage
+  sendChannelMessage,
+  sendContactMessage
 } from './actions'
 
 export interface IActiveChannel {
-  id: string | number | null
-  label: string
+  id: number | null
+  name: string
+  type: string
 }
 
 export interface IChatState {
@@ -19,10 +20,10 @@ export interface IChatState {
   contacts: Object
 }
 
-export const initialState = {
+export const initialState: IChatState = {
   activeChannel: null,
-  channels: {},
-  contacts: {}
+  channels: null,
+  contacts: null
 }
 
 const activeChannel = handleActions(
@@ -46,7 +47,7 @@ const addMessage = (state, action) => ({
 const channels = handleActions(
   {
     [initChannelsData]: (_state, action) => action.payload,
-    [addChannelMessage]: addMessage
+    [sendChannelMessage]: addMessage
   },
   null
 )
@@ -54,7 +55,7 @@ const channels = handleActions(
 const contacts = handleActions(
   {
     [initContactsData]: (_state, action) => action.payload,
-    [addContactMessage]: addMessage
+    [sendContactMessage]: addMessage
   },
   null
 )
