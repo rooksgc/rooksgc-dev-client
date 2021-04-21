@@ -17,7 +17,7 @@ const { Content } = Layout
 const App: FC = () => {
   const [needRecreateRef, setNeedRecreateRef] = useState(0)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const [onlineUsers, setOnlineUsers] = useState([])
+  // const [onlineUsers, setOnlineUsers] = useState([])
   const SR = useRef(null)
   const [dispatchSendChannelMessage, dispatchSendContactMessage] = useActions(
     [sendChannelMessage, sendContactMessage],
@@ -46,42 +46,42 @@ const App: FC = () => {
       }
     })
 
-    WS.socket.on('users', (users) => {
+    WS.socket.on('users:connected', () => {
       // users.forEach((user) => {
       // user.self = user.userId === WS.socket.id
       // initReactiveProperties(user)
       // dispatchUpdateUsersOnline(users)
       // })
       // put the current user first, and then sort by username
-      setOnlineUsers(
-        users.sort((a, b) => {
-          if (a.self) return -1
-          if (b.self) return 1
-          if (a.username < b.username) return -1
-          return a.username > b.username ? 1 : 0
-        })
-      )
+      // setOnlineUsers(
+      //   users.sort((a, b) => {
+      //     if (a.self) return -1
+      //     if (b.self) return 1
+      //     if (a.username < b.username) return -1
+      //     return a.username > b.username ? 1 : 0
+      //   })
+      // )
       // dispatchUpdateUsersOnline(users)
-
       // eslint-disable-next-line no-console
       // console.log(onlineUsers)
     })
 
     SR.current.on(
       'channel:message:broadcast',
-      ({ activeChannelId: channelId, message, from }) => {
+      ({ activeChannelId: channelId, message }) => {
         dispatchSendChannelMessage({
           activeChannelId: channelId,
-          message,
-          from
+          message
         })
       }
     )
 
     SR.current.on('contact:message:private', ({ message, from }) => {
+      // eslint-disable-next-line no-console
+      console.log('contact:message:private', message, `from: ${from}`)
+
       dispatchSendContactMessage({
-        activeChannelId: user.id,
-        from,
+        activeChannelId: from,
         message
       })
     })
@@ -95,8 +95,7 @@ const App: FC = () => {
     activeChannel,
     dispatchSendChannelMessage,
     dispatchSendContactMessage,
-    needRecreateRef,
-    onlineUsers
+    needRecreateRef
   ])
 
   return (

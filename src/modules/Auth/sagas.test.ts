@@ -14,7 +14,11 @@ import {
 import authService from '../../services/auth'
 import WS from '../../services/socket'
 import { runSaga } from 'redux-saga'
-import { setActiveChannel, initChannelsData } from '../Chat/actions'
+import {
+  setActiveChannel,
+  initChannelsData,
+  initContactsData
+} from '../Chat/actions'
 
 beforeEach(() => {
   jest.resetAllMocks()
@@ -58,9 +62,10 @@ describe('Auth saga', () => {
       payload: { data: {}, token: fakeToken }
     })
 
-    expect(dispatchedActions.length).toBe(2)
+    expect(dispatchedActions.length).toBe(3)
     expect(dispatchedActions[0].type).toBe(userFetchSuccess().type)
     expect(dispatchedActions[1].type).toBe(initChannelsData().type)
+    expect(dispatchedActions[2].type).toBe(initContactsData().type)
 
     expect(setToken).toHaveBeenCalledTimes(1)
     expect(setToken).toHaveBeenCalledWith(fakeToken)

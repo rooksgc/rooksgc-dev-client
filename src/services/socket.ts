@@ -3,7 +3,6 @@ import { UserDTO } from './auth'
 
 // TODO: Move to "Chat service"
 const chatService = {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getUserChannelsData: async (user: UserDTO) => {
     // todo fetch from db
     const userChannelsList = [
@@ -13,13 +12,22 @@ const chatService = {
         type: 'channel'
       }
     ]
-    const userContactsList = [
-      {
-        id: 2,
-        name: 'Demo',
-        type: 'contact'
-      }
-    ]
+    const userContactsList =
+      user.id === 1
+        ? [
+            {
+              id: 2,
+              name: 'Demo',
+              type: 'contact'
+            }
+          ]
+        : [
+            {
+              id: 1,
+              name: 'Rooks',
+              type: 'contact'
+            }
+          ]
 
     const channels = await userChannelsList.reduce(
       (acc, { id, name, type }) => ({
