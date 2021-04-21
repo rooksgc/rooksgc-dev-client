@@ -50,16 +50,28 @@ describe('Auth saga', () => {
     const fakeStore = {
       dispatch: (action) => dispatchedActions.push(action)
     }
-
+    const fakeUser = {
+      id: 1,
+      name: 'user0',
+      email: 'user0.gmail.com',
+      role: 'USER'
+    }
     const fakeToken = '1d23d.2vse3d.23d5v'
-    const setToken = jest.fn()
-    authService.setToken = setToken
+    const connectResponse = {
+      type: 'success',
+      data: fakeUser
+    }
 
-    const connect = jest.fn()
+    const setToken = jest.fn()
+    const connect = jest.fn((): any => {
+      return connectResponse
+    })
+
+    authService.setToken = setToken
     WS.connect = connect
 
     await runSaga(fakeStore, userLoginRequestFlow, {
-      payload: { data: {}, token: fakeToken }
+      payload: { data: fakeUser, token: fakeToken }
     })
 
     expect(dispatchedActions.length).toBe(3)
@@ -70,6 +82,7 @@ describe('Auth saga', () => {
     expect(setToken).toHaveBeenCalledTimes(1)
     expect(setToken).toHaveBeenCalledWith(fakeToken)
     expect(connect).toHaveBeenCalledTimes(1)
+    expect(connect).toHaveBeenCalledWith(fakeUser)
   })
 
   test('userLogoutRequestFlow', async () => {

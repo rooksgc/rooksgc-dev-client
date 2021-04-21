@@ -20,6 +20,7 @@ const launchSaga = function* launchSaga() {
     if (!data) {
       yield call([authService, authService.removeToken])
       yield put(userFetchFailure())
+      return
     }
 
     yield put(userFetchSuccess(data))
