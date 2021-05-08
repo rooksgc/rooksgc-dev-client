@@ -33,17 +33,17 @@ code {
 
 .sidebar-top {
   display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.sidebar-locker {
+.sidebar-icon {
   color: #fff;
   padding: 22px;
   font-size: 20px;
 }
 
-.sidebar-locker:hover {
+.sidebar-icon:hover {
   cursor: pointer;
   color: #a0d0ff;
 }
@@ -54,6 +54,19 @@ code {
   align-items: center;
   justify-content: flex-end;
   height: 100%;
+}
+
+.active-channel {
+  display: inline-flex;
+  position: relative;
+  top: -12px;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.active-channel-text {
+  height: 20px;
+  line-height: 28px;
 }
 
 .user-profile {
@@ -117,4 +130,60 @@ code {
 
 .send-button {
   margin-bottom: 0;
+}
+
+.avatar-uploader > .ant-upload {
+  width: 128px;
+  height: 128px;
+}
+
+.upload-channel-photo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.upload-channel-photo .ant-upload-picture-card-wrapper {
+  width: auto;
+}
+
+.upload-channel-photo .ant-upload-list-picture-card-container,
+.upload-channel-photo .ant-upload-select-picture-card {
+  width: 150px;
+  height: 150px;
+}
+
+.form-footer {
+  text-align: right;
+}
+
+.form-footer .ant-btn + .ant-btn {
+  margin-bottom: 0;
+  margin-left: 8px;
+}
+
+.contacts-menu {
+  border-top: 1px solid #6b6f74;
+}
+
+.channels-menu-title,
+.contacts-menu-title {
+  padding-left: 10px;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.nocontent {
+  color: #91969d;
+  padding-left: 10px;
+}
+
+.channel-photo,
+.contact-photo {
+  margin-top: -3px;
+}
+
+.channel-name {
+  padding-left: 10px;
 }

@@ -7,7 +7,10 @@ interface IModalWindowProps {
   centered?: boolean
   onOk?: () => any | null
   onCancel?: () => any | null
+  afterClose?: () => any | null
+  destroyOnClose?: boolean
   footer?: Component[] | FC[] | ReactElement[] | null
+  style?: object | null
 }
 
 const ModalWindow: FC<IModalWindowProps> = (props) => {
@@ -17,7 +20,10 @@ const ModalWindow: FC<IModalWindowProps> = (props) => {
     visible = false,
     onOk = null,
     onCancel = null,
-    footer = null
+    afterClose = null,
+    destroyOnClose = true,
+    footer = null,
+    style = null
   } = props
 
   return (
@@ -27,7 +33,10 @@ const ModalWindow: FC<IModalWindowProps> = (props) => {
       visible={visible}
       onOk={onOk}
       onCancel={onCancel}
+      afterClose={afterClose}
+      destroyOnClose={destroyOnClose}
       footer={footer}
+      style={style}
     >
       {children}
     </Modal>

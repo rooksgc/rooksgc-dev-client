@@ -1,8 +1,5 @@
-import authService, {
-  makeError,
-  SERVER_UNAVAILABLE,
-  AUTH_REJECTION_MESSAGE
-} from './auth'
+import { makeError, SERVER_UNAVAILABLE, AUTH_REJECTION_MESSAGE } from './api'
+import authService from './auth'
 
 describe('Auth service', () => {
   beforeEach(() => {
@@ -70,6 +67,7 @@ describe('Make Error helper', () => {
     expect(makeError(error502)).toEqual(expectedError)
   })
 
+  // todo move to api service test
   test('Should return error if server responded with incorrect token', () => {
     const incorrectTokenError = {
       response: {

@@ -1,4 +1,6 @@
 import { takeLatest, put, call, fork } from 'redux-saga/effects'
+import authService from 'services/auth'
+import WS from 'services/socket'
 import {
   userLoginRequest,
   userLogoutRequest,
@@ -9,14 +11,12 @@ import {
   initContactsData,
   setActiveChannel
 } from '../Chat/actions'
-import authService from '../../services/auth'
-import WS from '../../services/socket'
 
-/** login success */
+/** login */
 export function* userLoginRequestFlow({ payload: { data, token } }) {
   yield put(userFetchSuccess(data))
   yield call([authService, authService.setToken], token)
-  const { channels, contacts } = yield call([WS, WS.connect], data)
+  const { channels, contacts } = yield call([WS, WS.connect], data.id)
   yield put(initChannelsData(channels))
   yield put(initContactsData(contacts))
 }

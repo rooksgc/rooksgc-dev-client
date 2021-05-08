@@ -1,19 +1,48 @@
 import { FC, useState } from 'react'
-import { Layout, Menu } from 'antd'
-import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
-import PrivateContainer from '../../../containers/Private'
-import useEscape from '../../../hooks/useEscape'
-import useShallowEqualSelector from '../../../hooks/useShallowEqualSelector'
-import { setActiveChannel } from '../../../modules/Chat/actions'
-import useActions from '../../../hooks/useActions'
-import { IChannelData } from '../../Chat/Messages'
+import { Layout, Menu, Avatar } from 'antd'
+import { LockOutlined, UnlockOutlined, MessageFilled } from '@ant-design/icons'
+import { Scrollbars } from 'react-custom-scrollbars'
+import useEscape from 'hooks/useEscape'
+import useShallowEqualSelector from 'hooks/useShallowEqualSelector'
+import { setActiveChannel } from 'modules/Chat/actions'
+import useActions from 'hooks/useActions'
+import { IChannelData } from 'components/Chat/Messages'
+import SidebarMenu from './SidebarMenu'
+
+const { Sider } = Layout
 
 interface ISidebarProps {
   sidebarCollapsed: boolean
   onSidebarToggle: (isCollapsed: boolean) => void
 }
 
-const { Sider } = Layout
+const renderTrackVertical = ({ style, ...ownProps }) => (
+  <div
+    {...ownProps}
+    className="scrollTrackVertical"
+    style={{
+      ...style,
+      backgroundColor: '#E5E5E5',
+      right: '2px',
+      bottom: '2px',
+      top: '2px',
+      borderRadius: '3px'
+    }}
+  />
+)
+
+const renderThumbVertical = ({ style, ...ownProps }) => (
+  <div
+    {...ownProps}
+    className="scrollThumbVertical"
+    style={{
+      ...style,
+      borderRadius: '4px',
+      boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.16)',
+      backgroundColor: '#9A9A9A'
+    }}
+  />
+)
 
 const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
   const [sidebarLocked, setSidebarLocked] = useState(true)
@@ -50,7 +79,7 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
     : []
 
   return (
-    <PrivateContainer>
+    <>
       <Sider
         trigger={null}
         collapsed={sidebarCollapsed}
@@ -63,54 +92,90 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
         }}
       >
         <div className="sidebar-top">
+          <SidebarMenu />
           {sidebarLocked ? (
             <LockOutlined
               title="Отмена фиксации"
-              className="sidebar-locker"
+              className="sidebar-icon"
               onClick={() => setSidebarLocked(false)}
             />
           ) : (
             <UnlockOutlined
               title="Фиксировать меню"
-              className="sidebar-locker"
+              className="sidebar-icon"
               onClick={() => setSidebarLocked(true)}
             />
           )}
         </div>
-        {channels && (
-          <Menu
-            theme="dark"
-            mode="inline"
-            selectedKeys={selectedMenuKey}
-            onClick={onClickMenu}
-          >
-            {Object.entries(channels as IChannelData).map(
-              ([channelId, channel]) => (
-                <Menu.Item key={`${channel.type}-${channelId}`}>
-                  {channel.name}
-                </Menu.Item>
-              )
-            )}
-          </Menu>
-        )}
-        {contacts && (
-          <Menu
-            theme="dark"
-            mode="inline"
-            selectedKeys={selectedMenuKey}
-            onClick={onClickMenu}
-          >
-            {Object.entries(contacts as IChannelData).map(
-              ([channelId, channel]) => (
-                <Menu.Item key={`${channel.type}-${channelId}`}>
-                  {channel.name}
-                </Menu.Item>
-              )
-            )}
-          </Menu>
-        )}
+
+        <div className="channels-menu">
+          <span className="channels-menu-title">Каналы</span>
+          {(channels && Object.keys(channels).length && (
+            <Scrollbars
+              style={{ height: 'calc(50vh - 58px)' }}
+              hideTracksWhenNotNeeded
+              autoHide
+              autoHideTimeout={400}
+              renderTrackVertical={renderTrackVertical}
+              renderThumbVertical={renderThumbVertical}
+            >
+              <Menu
+                theme="dark"
+                mode="inline"
+                selectedKeys={selectedMenuKey}
+                onClick={onClickMenu}
+              >
+                {Object.entries(channels as IChannelData).map(
+                  ([channelId, channel]) => (
+                    <Menu.Item key={`${channel.type}-${channelId}`}>
+                      {channel.photo ? (
+                        <Avatar className="channel-photo" src={channel.photo} />
+                      ) : (
+                        <Avatar
+                          className="channel-photo"
+                          icon={<MessageFilled style={{ color: '#fefefe' }} />}
+                        />
+                      )}
+
+                      <span className="channel-name">{channel.name}</span>
+                    </Menu.Item>
+                  )
+                )}
+              </Menu>
+            </Scrollbars>
+          )) || <p className="nocontent">нет каналов</p>}
+        </div>
+
+        <div className="contacts-menu">
+          <span className="contacts-menu-title">Контакты</span>
+          {(contacts && Object.keys(contacts).length && (
+            <Scrollbars
+              style={{ height: 'calc(50vh - 58px)' }}
+              hideTracksWhenNotNeeded
+              autoHide
+              autoHideTimeout={400}
+              renderTrackVertical={renderTrackVertical}
+              renderThumbVertical={renderThumbVertical}
+            >
+              <Menu
+                theme="dark"
+                mode="inline"
+                selectedKeys={selectedMenuKey}
+                onClick={onClickMenu}
+              >
+                {Object.entries(contacts as IChannelData).map(
+                  ([channelId, channel]) => (
+                    <Menu.Item key={`${channel.type}-${channelId}`}>
+                      {channel.name}
+                    </Menu.Item>
+                  )
+                )}
+              </Menu>
+            </Scrollbars>
+          )) || <p className="nocontent">нет контактов</p>}
+        </div>
       </Sider>
-    </PrivateContainer>
+    </>
   )
 }
 

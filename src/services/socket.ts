@@ -1,87 +1,35 @@
 import { io } from 'socket.io-client'
-import { UserDTO } from './auth'
-
-// TODO: Move to "Chat service"
-const chatService = {
-  getUserChannelsData: async (user: UserDTO) => {
-    // todo fetch from db
-    const userChannelsList = [
-      {
-        id: 1,
-        name: 'Общий чат',
-        type: 'channel'
-      }
-    ]
-    const userContactsList =
-      user.id === 1
-        ? [
-            {
-              id: 2,
-              name: 'Demo',
-              type: 'contact'
-            }
-          ]
-        : [
-            {
-              id: 1,
-              name: 'Rooks',
-              type: 'contact'
-            }
-          ]
-
-    const channels = await userChannelsList.reduce(
-      (acc, { id, name, type }) => ({
-        ...acc,
-        [id]: {
-          name,
-          type,
-          messages: []
-        }
-      }),
-      {}
-    )
-
-    const contacts = await userContactsList.reduce(
-      (acc, { id, name, type }) => ({
-        ...acc,
-        [id]: {
-          name,
-          type,
-          messages: []
-        }
-      }),
-      {}
-    )
-
-    const userChannelsData = { channels, contacts }
-
-    return { userChannelsList, userContactsList, userChannelsData }
-  }
-}
+import channelService from './channel'
 
 const WS = {
   socket: undefined,
-  connect: async (user: UserDTO) => {
+  connect: async (userId: number) => {
     if (!WS.socket) {
-      WS.socket = io({
+      WS.socket = io('/chat', {
         autoConnect: false
       })
 
-      WS.socket.auth = { userId: user.id }
+      WS.socket.auth = { userId }
       WS.socket.connect()
     }
 
-    return WS.subscribeToChannels(user)
+    return WS.subscribeToChannels(userId)
   },
-  subscribeToChannels: async (user: UserDTO) => {
+  subscribeToChannels: async (userId: number) => {
     const {
       userChannelsList,
       userContactsList,
-      userChannelsData
-    } = await chatService.getUserChannelsData(user)
+      data
+    } = await channelService.getUserChannels(userId)
 
     WS.socket.emit('channels:subscribe', { userChannelsList, userContactsList })
-    return userChannelsData
+    return data
+  },
+  subscribeToChannel: async (channelId: number) => {
+    WS.socket.emit('channel:subscribe', channelId)
+  },
+  inviteToChannel: async (userId: number, channelId: number) => {
+    WS.socket.emit('channel:invite', { userId, channelId })
   },
   sendChannelMessage: (payload) => {
     WS.socket.emit('channel:message:send', payload)

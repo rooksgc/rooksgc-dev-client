@@ -11,8 +11,13 @@ export interface RootState {
   chat: IChatState
 }
 
-export const initialState = {
-  auth: { user: null }
+export const initialState: RootState = {
+  auth: { user: null },
+  chat: {
+    activeChannel: null,
+    channels: null,
+    contacts: null
+  }
 }
 
 // Root reducer

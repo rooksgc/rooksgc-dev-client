@@ -1,16 +1,14 @@
 import { FC, useState, useEffect, useRef } from 'react'
-import { UserDTO } from 'src/services/auth'
+import { UserDTO } from 'services/auth'
 import { Layout } from 'antd'
+import PrivateContainer from 'containers/Private'
+import { sendChannelMessage, sendContactMessage } from 'modules/Chat/actions'
+import useShallowEqualSelector from 'hooks/useShallowEqualSelector'
+import useActions from 'hooks/useActions'
+import WS from 'services/socket'
 import Header from './Header'
 import Sidebar from './Sidebar'
 import Routes from '../Routes'
-import {
-  sendChannelMessage,
-  sendContactMessage
-} from '../../modules/Chat/actions'
-import useShallowEqualSelector from '../../hooks/useShallowEqualSelector'
-import useActions from '../../hooks/useActions'
-import WS from '../../services/socket'
 
 const { Content } = Layout
 
@@ -41,7 +39,7 @@ const App: FC = () => {
       if (reason === 'transport error' || reason === 'ping timeout') {
         if (!user) return
         WS.disconnect()
-        WS.connect(user)
+        WS.connect(user.id)
         setNeedRecreateRef((state) => state + 1)
       }
     })
@@ -100,10 +98,13 @@ const App: FC = () => {
 
   return (
     <Layout className="wrap-layout">
-      <Sidebar
-        sidebarCollapsed={sidebarCollapsed}
-        onSidebarToggle={onSidebarToggle}
-      />
+      <PrivateContainer>
+        <Sidebar
+          sidebarCollapsed={sidebarCollapsed}
+          onSidebarToggle={onSidebarToggle}
+        />
+      </PrivateContainer>
+
       <Layout className="site-layout">
         <Header
           sidebarCollapsed={sidebarCollapsed}

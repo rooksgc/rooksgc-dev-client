@@ -11,8 +11,8 @@ import {
   userLoginRequest,
   userLogoutRequest
 } from './actions'
-import authService from '../../services/auth'
-import WS from '../../services/socket'
+import authService from 'services/auth'
+import WS from 'services/socket'
 import { runSaga } from 'redux-saga'
 import {
   setActiveChannel,
@@ -82,7 +82,7 @@ describe('Auth saga', () => {
     expect(setToken).toHaveBeenCalledTimes(1)
     expect(setToken).toHaveBeenCalledWith(fakeToken)
     expect(connect).toHaveBeenCalledTimes(1)
-    expect(connect).toHaveBeenCalledWith(fakeUser)
+    expect(connect).toHaveBeenCalledWith(fakeUser.id)
   })
 
   test('userLogoutRequestFlow', async () => {

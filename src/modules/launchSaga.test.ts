@@ -1,8 +1,8 @@
 import { userFetchSuccess, userFetchFailure } from './Auth/actions'
-import authService from '../services/auth'
+import authService from 'services/auth'
 import launchSaga from './launchSaga'
 import { runSaga } from 'redux-saga'
-import WS from '../services/socket'
+import WS from 'services/socket'
 import { initChannelsData, initContactsData } from './Chat/actions'
 
 beforeEach(() => {
@@ -95,7 +95,7 @@ describe('Launch saga', () => {
     expect(fetchByToken.mock.results[0].value).toBe(fetchByTokenResponse)
 
     expect(connect).toHaveBeenCalledTimes(1)
-    expect(connect).toHaveBeenCalledWith(fakeUser)
+    expect(connect).toHaveBeenCalledWith(fakeUser.id)
     expect(connect.mock.results[0].value).toBe(connectResponse)
 
     expect(dispatchedActions.length).toBe(3)

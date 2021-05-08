@@ -1,7 +1,7 @@
 import { FC, useState } from 'react'
 import { Form, Input, Button, Card, Alert, Spin } from 'antd'
 import { MailOutlined, LoadingOutlined } from '@ant-design/icons'
-import authService from '../../services/auth'
+import authService from 'services/auth'
 
 interface FormValues {
   email: string

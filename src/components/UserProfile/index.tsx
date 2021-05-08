@@ -1,5 +1,5 @@
-import useShallowEqualSelector from '../../hooks/useShallowEqualSelector'
-import { UserDTO } from '../../services/auth'
+import useShallowEqualSelector from 'hooks/useShallowEqualSelector'
+import { UserDTO } from 'services/auth'
 
 const UserProfile = () => {
   const { name, email, role } = useShallowEqualSelector(

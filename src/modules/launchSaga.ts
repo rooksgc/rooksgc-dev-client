@@ -1,7 +1,7 @@
 import { call, put } from 'redux-saga/effects'
+import authService from 'services/auth'
+import WS from 'services/socket'
 import { userFetchSuccess, userFetchFailure } from './Auth/actions'
-import authService from '../services/auth'
-import WS from '../services/socket'
 import { initChannelsData, initContactsData } from './Chat/actions'
 
 /** Launch saga once when on app start */
@@ -24,7 +24,7 @@ const launchSaga = function* launchSaga() {
     }
 
     yield put(userFetchSuccess(data))
-    const { channels, contacts } = yield call([WS, WS.connect], data)
+    const { channels, contacts } = yield call([WS, WS.connect], data.id)
     yield put(initChannelsData(channels))
     yield put(initContactsData(contacts))
   } catch (error) {

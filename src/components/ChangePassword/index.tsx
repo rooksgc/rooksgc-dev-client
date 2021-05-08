@@ -2,7 +2,7 @@ import { FC, useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Form, Input, Button, Card, Alert } from 'antd'
 import { LockOutlined } from '@ant-design/icons'
-import authService from '../../services/auth'
+import authService from 'services/auth'
 
 interface ChangePasswordParams {
   code?: string

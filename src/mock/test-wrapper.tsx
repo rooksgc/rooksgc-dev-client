@@ -2,7 +2,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { render as rtlRender } from '@testing-library/react'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
-import rootReducer, { initialState as rootState } from '../modules'
+import rootReducer, { initialState as rootState } from 'modules'
 
 const store = createStore(rootReducer, rootState)
 

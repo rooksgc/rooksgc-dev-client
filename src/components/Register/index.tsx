@@ -6,7 +6,7 @@ import {
   MailOutlined,
   LoadingOutlined
 } from '@ant-design/icons'
-import authService from '../../services/auth'
+import authService from 'services/auth'
 
 interface FormValues {
   name: string

@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
 import { handleActions } from 'redux-actions'
-import { UserDTO } from '../../services/auth'
+import { UserDTO } from 'services/auth'
 import { userFetchSuccess, userFetchFailure } from './actions'
 
 export interface IAuthState {

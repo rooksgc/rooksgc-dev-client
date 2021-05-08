@@ -1,10 +1,12 @@
 import { FC } from 'react'
-import { Layout, Badge } from 'antd'
+import { Layout, Typography } from 'antd'
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons'
-import useShallowEqualSelector from 'src/hooks/useShallowEqualSelector'
-import MainMenu from '../../MainMenu'
-import UserMenu from '../../UserMenu'
-import PrivateContainer from '../../../containers/Private'
+import useShallowEqualSelector from 'hooks/useShallowEqualSelector'
+import MainMenu from 'components/MainMenu'
+import UserMenu from 'components/UserMenu'
+import PrivateContainer from 'containers/Private'
+
+const { Text } = Typography
 
 interface IHeaderProps {
   sidebarCollapsed: boolean
@@ -21,8 +23,7 @@ const Header: FC<IHeaderProps> = (props: IHeaderProps) => {
   const { onSidebarToggle, sidebarCollapsed } = props
 
   const onTriggerClick = () => {
-    const collapsedState = !sidebarCollapsed
-    onSidebarToggle(collapsedState)
+    onSidebarToggle(!sidebarCollapsed)
   }
 
   const menuTrigger = sidebarCollapsed ? (
@@ -41,14 +42,18 @@ const Header: FC<IHeaderProps> = (props: IHeaderProps) => {
   )
 
   const activeChannelLabel = activeChannel && (
-    <Badge
-      count={activeChannel.name}
-      style={{
-        marginBottom: '6px',
-        backgroundColor: '#E7F3FF',
-        color: '#000'
-      }}
-    />
+    <div className="active-channel">
+      <Text className="active-channel-text">{activeChannel.name}</Text>
+      {activeChannel.type === 'channel' ? (
+        <Text className="active-channel-text" type="secondary">
+          5 участников
+        </Text>
+      ) : (
+        <Text className="active-channel-text" type="secondary">
+          был(а) 1 час назад
+        </Text>
+      )}
+    </div>
   )
 
   return (

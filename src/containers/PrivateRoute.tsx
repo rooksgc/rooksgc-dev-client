@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Route, Redirect, RouteProps } from 'react-router-dom'
-import useShallowEqualSelector from '../hooks/useShallowEqualSelector'
-import { RootState } from '../modules'
+import useShallowEqualSelector from 'hooks/useShallowEqualSelector'
+import { RootState } from 'modules'
 
 interface PrivateRouteProps extends RouteProps {
   component?: any

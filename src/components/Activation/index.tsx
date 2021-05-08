@@ -1,7 +1,7 @@
 import { FC, useState, useEffect } from 'react'
 import { Card, Alert } from 'antd'
 import { Link, useParams } from 'react-router-dom'
-import authService from '../../services/auth'
+import authService from 'services/auth'
 
 interface ActivationParams {
   code?: string

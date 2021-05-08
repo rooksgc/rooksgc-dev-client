@@ -2,10 +2,10 @@ import { StrictMode } from 'react'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import { render } from 'react-dom'
-import App from './components/App'
-import './index.scss'
-import reportWebVitals from './reportWebVitals'
-import createAppStore from './modules/store'
+import App from 'components/App'
+import 'index.scss'
+import reportWebVitals from 'reportWebVitals'
+import createAppStore from 'modules/store'
 
 const store = createAppStore()
 
