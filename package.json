@@ -1,6 +1,6 @@
 {
   "name": "rooksgc-dev-client",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Client scripts",
   "repository": {
     "type": "git",
@@ -50,19 +50,19 @@
       "project": "./tsconfig.json"
     },
     "rules": {
-      "camelcase": 0,
-      "no-underscore-dangle": 0,
-      "no-nested-ternary": 0,
+      "camelcase": "off",
+      "no-underscore-dangle": "off",
+      "no-nested-ternary": "off",
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
-      "react/jsx-uses-react": 0,
-      "react/jsx-props-no-spreading": 0,
-      "react/react-in-jsx-scope": 0,
-      "import/extensions": 0,
-      "import/no-extraneous-dependencies": 0,
-      "import/no-named-default": 0,
-      "spaced-comment": 0,
-      "react/prop-types": 0
+      "react/jsx-uses-react": "off",
+      "react/jsx-props-no-spreading": "off",
+      "react/react-in-jsx-scope": "off",
+      "import/extensions": "off",
+      "import/no-extraneous-dependencies": "off",
+      "import/no-named-default": "off",
+      "spaced-comment": "off",
+      "react/prop-types": "off"
     }
   },
   "eslintIgnore": [
