@@ -1,5 +1,5 @@
 import { makeError, SERVER_UNAVAILABLE, AUTH_REJECTION_MESSAGE } from './api'
-import authService from './auth'
+import { authService } from './auth'
 
 describe('Auth service', () => {
   beforeEach(() => {

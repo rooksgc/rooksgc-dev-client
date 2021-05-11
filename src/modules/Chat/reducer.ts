@@ -72,8 +72,10 @@ const contacts = handleActions(
   null
 )
 
-export default combineReducers<IChatState>({
+const chatReducer = combineReducers<IChatState>({
   activeChannel,
   channels,
   contacts
 })
+
+export { chatReducer }

@@ -3,11 +3,11 @@ import { Form, Input, message, Upload, Button, Spin } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
 import ImgCrop from 'antd-img-crop'
 import { UserDTO } from 'services/auth'
-import useActions from 'hooks/useActions'
+import { useActions } from 'hooks/useActions'
 import { setActiveChannel, addChannel } from 'modules/Chat/actions'
-import channelService from 'services/channel'
-import useShallowEqualSelector from 'hooks/useShallowEqualSelector'
-import WS from 'services/socket'
+import { channelService } from 'services/channel'
+import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
+import { WS } from 'services/socket'
 
 // TODO move Upload image to separate component
 
@@ -219,4 +219,4 @@ const CreateChannel: FC<ICreateChannelProps> = (props) => {
   )
 }
 
-export default CreateChannel
+export { CreateChannel }

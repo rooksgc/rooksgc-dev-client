@@ -1,4 +1,4 @@
-import API, { ServerResponse } from './api'
+import { apiService as api, IServerResponse } from './api'
 
 interface ICreateChannelData {
   name: string
@@ -7,10 +7,12 @@ interface ICreateChannelData {
   ownerId: number
 }
 
-const ChannelService = {
+const channelService = {
   /** Создать новый канал */
-  createChannel: async (payload: ICreateChannelData): Promise<ServerResponse> =>
-    API.send({
+  createChannel: async (
+    payload: ICreateChannelData
+  ): Promise<IServerResponse> =>
+    api.send({
       method: 'put',
       endpoint: '/api/v1/chat/channel',
       payload
@@ -18,7 +20,7 @@ const ChannelService = {
 
   /** Редактировать канал */
   // updateChannel: async (payload: any): Promise<ServerResponse> =>
-  //   API.send({
+  //   api.send({
   //     method: 'patch',
   //     endpoint: '/api/v1/chat/channel',
   //     payload
@@ -26,15 +28,15 @@ const ChannelService = {
 
   // /** Удалить канал */
   // removeChannel: async (payload: any): Promise<ServerResponse> =>
-  //   API.send({
+  //   api.send({
   //     method: 'delete',
   //     endpoint: '/api/v1/chat/channel',
   //     payload
   //   }),
 
   /** Получить список каналов пользователя */
-  fetchUserChannels: async (userId: number): Promise<ServerResponse> =>
-    API.send({
+  fetchUserChannels: async (userId: number): Promise<IServerResponse> =>
+    api.send({
       method: 'get',
       endpoint: `/api/v1/chat/channels/${userId}`
     }),
@@ -42,7 +44,7 @@ const ChannelService = {
   /** Получить отформатированный список каналов */
   getUserChannels: async (userId: number): Promise<any> => {
     try {
-      const userChannelsData = await ChannelService.fetchUserChannels(userId)
+      const userChannelsData = await channelService.fetchUserChannels(userId)
       const userChannelsList = userChannelsData.data
 
       const userContactsList =
@@ -100,4 +102,4 @@ const ChannelService = {
   }
 }
 
-export default ChannelService
+export { channelService }

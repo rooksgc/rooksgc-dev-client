@@ -2,12 +2,12 @@ import { FC, useState } from 'react'
 import { Layout, Menu, Avatar } from 'antd'
 import { LockOutlined, UnlockOutlined, MessageFilled } from '@ant-design/icons'
 import { Scrollbars } from 'react-custom-scrollbars'
-import useEscape from 'hooks/useEscape'
-import useShallowEqualSelector from 'hooks/useShallowEqualSelector'
+import { useEscape } from 'hooks/useEscape'
+import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 import { setActiveChannel } from 'modules/Chat/actions'
-import useActions from 'hooks/useActions'
+import { useActions } from 'hooks/useActions'
 import { IChannelData } from 'components/Chat/Messages'
-import SidebarMenu from './SidebarMenu'
+import { SidebarMenu } from './SidebarMenu'
 
 const { Sider } = Layout
 
@@ -179,4 +179,4 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
   )
 }
 
-export default Sidebar
+export { Sidebar }

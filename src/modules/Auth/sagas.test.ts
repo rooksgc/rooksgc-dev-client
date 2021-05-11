@@ -4,15 +4,15 @@ import {
   userLoginRequestFlow,
   userLogoutWatcher,
   userLogoutRequestFlow,
-  default as mainGenerator
+  authSagas
 } from './sagas'
 import {
   userFetchSuccess,
   userLoginRequest,
   userLogoutRequest
 } from './actions'
-import authService from 'services/auth'
-import WS from 'services/socket'
+import { authService } from 'services/auth'
+import { WS } from 'services/socket'
 import { runSaga } from 'redux-saga'
 import {
   setActiveChannel,
@@ -25,8 +25,8 @@ beforeEach(() => {
 })
 
 describe('Auth saga', () => {
-  test('mainGenerator', async () => {
-    const generator = mainGenerator()
+  test('authSagas', async () => {
+    const generator = authSagas()
     expect(generator.next().value).toEqual(fork(userLoginWatcher))
     expect(generator.next().value).toEqual(fork(userLogoutWatcher))
   })

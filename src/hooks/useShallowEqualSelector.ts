@@ -1,7 +1,7 @@
 import { useSelector, shallowEqual } from 'react-redux'
-import { RootState } from 'modules'
+import { IRootState } from 'modules'
 
 const useShallowEqualSelector = (selector: any) =>
-  useSelector<RootState>(selector, shallowEqual)
+  useSelector<IRootState>(selector, shallowEqual)
 
-export default useShallowEqualSelector
+export { useShallowEqualSelector }

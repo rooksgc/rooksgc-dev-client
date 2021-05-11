@@ -1,6 +1,6 @@
 import { call, put } from 'redux-saga/effects'
-import authService from 'services/auth'
-import WS from 'services/socket'
+import { authService } from 'services/auth'
+import { WS } from 'services/socket'
 import { userFetchSuccess, userFetchFailure } from './Auth/actions'
 import { initChannelsData, initContactsData } from './Chat/actions'
 
@@ -33,4 +33,4 @@ const launchSaga = function* launchSaga() {
   }
 }
 
-export default launchSaga
+export { launchSaga }

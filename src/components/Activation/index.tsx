@@ -1,14 +1,14 @@
 import { FC, useState, useEffect } from 'react'
 import { Card, Alert } from 'antd'
 import { Link, useParams } from 'react-router-dom'
-import authService from 'services/auth'
+import { authService } from 'services/auth'
 
-interface ActivationParams {
+interface IActivationParams {
   code?: string
 }
 
 const Activation: FC = () => {
-  const { code }: ActivationParams = useParams()
+  const { code }: IActivationParams = useParams()
   const emptyMessage = { type: '', message: '' }
   const [alert, setAlert] = useState(emptyMessage)
 
@@ -43,4 +43,4 @@ const Activation: FC = () => {
   )
 }
 
-export default Activation
+export { Activation }

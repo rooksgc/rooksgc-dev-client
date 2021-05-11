@@ -1,8 +1,8 @@
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 import userEvent from '@testing-library/user-event'
-import { render, screen } from 'mock/test-wrapper'
-import Login from 'components/Login'
+import { render, screen } from 'testWrapper'
+import { Login } from 'components/Login'
 
 const server = setupServer(
   rest.post('/api/v1/auth/login', (_req, res, ctx) =>

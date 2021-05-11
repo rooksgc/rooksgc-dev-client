@@ -1,4 +1,4 @@
-import reducer, { initialState } from './reducer'
+import { authReducer as reducer, initialState } from './reducer'
 import { userFetchSuccess, userFetchFailure } from './actions'
 
 describe('Auth reducer', () => {

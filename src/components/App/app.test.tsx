@@ -1,12 +1,12 @@
-import { render, screen, fireEvent, store } from 'mock/test-wrapper'
-import App from 'components/App'
+import { render, screen, fireEvent, store } from 'testWrapper'
+import { App } from 'components/App'
 import { userFetchSuccess } from 'modules/Auth/actions'
 
 describe('App', () => {
   it('Should have correct layout structure when unauthorized', () => {
     render(<App />)
 
-    expect(screen.getByRole('banner')).toBeInTheDocument()
+    expect(screen.getByRole('banner1')).toBeInTheDocument()
     expect(screen.getByRole('banner')).toHaveClass('header')
 
     expect(screen.getByRole('main')).toBeInTheDocument()

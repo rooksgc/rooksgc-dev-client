@@ -7,8 +7,8 @@ import {
   ContactsOutlined,
   SettingOutlined
 } from '@ant-design/icons'
-import ModalWindow from 'containers/ModalWindow'
-import CreateChannel from '../CreateChannel'
+import { ModalWindow } from 'containers/ModalWindow'
+import { CreateChannel } from '../CreateChannel'
 
 const SidebarMenu: FC = () => {
   const [
@@ -65,4 +65,4 @@ const SidebarMenu: FC = () => {
   )
 }
 
-export default SidebarMenu
+export { SidebarMenu }

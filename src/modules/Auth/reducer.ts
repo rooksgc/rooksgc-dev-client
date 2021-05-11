@@ -19,6 +19,8 @@ const user = handleActions(
   null
 )
 
-export default combineReducers<IAuthState>({
+const authReducer = combineReducers<IAuthState>({
   user
 })
+
+export { authReducer }

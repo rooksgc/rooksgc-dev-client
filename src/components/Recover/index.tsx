@@ -1,9 +1,9 @@
 import { FC, useState } from 'react'
 import { Form, Input, Button, Card, Alert, Spin } from 'antd'
 import { MailOutlined, LoadingOutlined } from '@ant-design/icons'
-import authService from 'services/auth'
+import { authService } from 'services/auth'
 
-interface FormValues {
+interface IFormValues {
   email: string
 }
 
@@ -13,7 +13,7 @@ const Recover: FC = () => {
   const [alert, setAlert] = useState(emptyMessage)
   const [loading, setLoading] = useState(false)
 
-  const onFinish = async (values: FormValues) => {
+  const onFinish = async (values: IFormValues) => {
     try {
       setAlert(emptyMessage)
       setLoading(true)
@@ -103,4 +103,4 @@ const Recover: FC = () => {
   )
 }
 
-export default Recover
+export { Recover }

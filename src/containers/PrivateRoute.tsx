@@ -1,19 +1,19 @@
 import { FC } from 'react'
 import { Route, Redirect, RouteProps } from 'react-router-dom'
-import useShallowEqualSelector from 'hooks/useShallowEqualSelector'
-import { RootState } from 'modules'
+import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
+import { IRootState } from 'modules'
 
-interface PrivateRouteProps extends RouteProps {
+interface IPrivateRouteProps extends RouteProps {
   component?: any
   children?: any
 }
 
-const PrivateRoute: FC<PrivateRouteProps> = ({
+const PrivateRoute: FC<IPrivateRouteProps> = ({
   component: Component,
   children,
   ...rest
 }) => {
-  const user = useShallowEqualSelector((state: RootState) => state.auth.user)
+  const user = useShallowEqualSelector((state: IRootState) => state.auth.user)
 
   return (
     <Route
@@ -46,4 +46,4 @@ PrivateRoute.defaultProps = {
   component: undefined
 }
 
-export default PrivateRoute
+export { PrivateRoute }

@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 
-export interface ServerResponse {
+export interface IServerResponse {
   type: any
   message?: string
   data?: any
@@ -19,7 +19,7 @@ export const AUTH_TOKEN_STORAGE_KEY = 'auth'
 export const AUTH_REJECTION_MESSAGE =
   'Войдите или зарегистрируйтесь для просмотра данного содержимого.'
 
-export const makeError = (error: any): ServerResponse => {
+export const makeError = (error: any): IServerResponse => {
   const {
     response: { data, status }
   } = error
@@ -41,10 +41,14 @@ export const makeError = (error: any): ServerResponse => {
   return data
 }
 
-const APIService = {
+const apiService = {
   getToken: (): string | null => localStorage.getItem(AUTH_TOKEN_STORAGE_KEY),
 
-  send: async ({ method, endpoint, payload = {} }): Promise<ServerResponse> => {
+  send: async ({
+    method,
+    endpoint,
+    payload = {}
+  }): Promise<IServerResponse> => {
     try {
       const response: AxiosResponse = await axios[method](endpoint, payload)
       return response.data
@@ -56,7 +60,7 @@ const APIService = {
 
 axios.interceptors.request.use(
   (config: AxiosRequestConfig) => {
-    const token = APIService.getToken()
+    const token = apiService.getToken()
 
     if (token) {
       // eslint-disable-next-line no-param-reassign
@@ -70,4 +74,4 @@ axios.interceptors.request.use(
   (error) => makeError(error)
 )
 
-export default APIService
+export { apiService }

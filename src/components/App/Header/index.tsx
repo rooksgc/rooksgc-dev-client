@@ -1,10 +1,10 @@
 import { FC } from 'react'
 import { Layout, Typography } from 'antd'
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons'
-import useShallowEqualSelector from 'hooks/useShallowEqualSelector'
-import MainMenu from 'components/MainMenu'
-import UserMenu from 'components/UserMenu'
-import PrivateContainer from 'containers/Private'
+import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
+import { MainMenu } from 'components/MainMenu'
+import { UserMenu } from 'components/UserMenu'
+import { PrivateContainer } from 'containers/Private'
 
 const { Text } = Typography
 
@@ -73,4 +73,4 @@ const Header: FC<IHeaderProps> = (props: IHeaderProps) => {
   )
 }
 
-export default Header
+export { Header }

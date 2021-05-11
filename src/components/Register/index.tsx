@@ -6,9 +6,9 @@ import {
   MailOutlined,
   LoadingOutlined
 } from '@ant-design/icons'
-import authService from 'services/auth'
+import { authService } from 'services/auth'
 
-interface FormValues {
+interface IFormValues {
   name: string
   email: string
   password: string
@@ -20,7 +20,7 @@ const Register: FC = () => {
   const [alert, setAlert] = useState(emptyMessage)
   const [loading, setLoading] = useState(false)
 
-  const onFinish = async (values: FormValues) => {
+  const onFinish = async (values: IFormValues) => {
     try {
       setAlert(emptyMessage)
       setLoading(true)
@@ -153,4 +153,4 @@ const Register: FC = () => {
   )
 }
 
-export default Register
+export { Register }

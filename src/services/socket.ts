@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client'
-import channelService from './channel'
+import { channelService } from 'services/channel'
 
 const WS = {
   socket: undefined,
@@ -43,4 +43,4 @@ const WS = {
   }
 }
 
-export default WS
+export { WS }

@@ -1,4 +1,8 @@
-import API, { AUTH_TOKEN_STORAGE_KEY, ServerResponse } from './api'
+import {
+  apiService as api,
+  AUTH_TOKEN_STORAGE_KEY,
+  IServerResponse
+} from './api'
 
 export interface UserLoginRequestDTO {
   email: string
@@ -36,31 +40,31 @@ export interface UserFetchByTokenRequestDTO {
   token: string
 }
 
-const AuthService = {
+const authService = {
   /** Получить список всех пользователей */
-  getAllUsers: async (): Promise<ServerResponse> =>
-    API.send({
+  getAllUsers: async (): Promise<IServerResponse> =>
+    api.send({
       method: 'get',
       endpoint: '/api/v1/auth/users'
     }),
   /** Регистрация нового пользователя */
-  register: async (payload: UserCreateRequestDTO): Promise<ServerResponse> =>
-    API.send({
+  register: async (payload: UserCreateRequestDTO): Promise<IServerResponse> =>
+    api.send({
       method: 'put',
       endpoint: '/api/v1/auth/register',
       payload
     }),
 
   /** Активация пользователя по коду из письма */
-  activate: async (code: string): Promise<ServerResponse> =>
-    API.send({
+  activate: async (code: string): Promise<IServerResponse> =>
+    api.send({
       method: 'patch',
       endpoint: `/api/v1/auth/activate/${code}`
     }),
 
   /** Вход пользователя в систему и полуение токена */
-  login: async (payload: UserLoginRequestDTO): Promise<ServerResponse> =>
-    API.send({
+  login: async (payload: UserLoginRequestDTO): Promise<IServerResponse> =>
+    api.send({
       method: 'post',
       endpoint: '/api/v1/auth/login',
       payload
@@ -69,8 +73,8 @@ const AuthService = {
   /** Попытка получить объект пользователя по токену */
   fetchByToken: async (
     payload: UserFetchByTokenRequestDTO
-  ): Promise<ServerResponse> =>
-    API.send({
+  ): Promise<IServerResponse> =>
+    api.send({
       method: 'post',
       endpoint: '/api/v1/auth/fetch-by-token',
       payload
@@ -79,8 +83,8 @@ const AuthService = {
   /** Запрос на изменение пароля, отправка письма со ссылкой на email */
   recover: async (
     payload: UserRecoverPasswordRequestDTO
-  ): Promise<ServerResponse> =>
-    API.send({
+  ): Promise<IServerResponse> =>
+    api.send({
       method: 'post',
       endpoint: '/api/v1/auth/recover',
       payload
@@ -89,8 +93,8 @@ const AuthService = {
   /** Проверка секретного ключа для доступа к форме восстановления пароля */
   checkSecret: async (
     payload: CheckSecretRequestDTO
-  ): Promise<ServerResponse> =>
-    API.send({
+  ): Promise<IServerResponse> =>
+    api.send({
       method: 'post',
       endpoint: '/api/v1/auth/check-secret',
       payload
@@ -99,8 +103,8 @@ const AuthService = {
   /** Изменение пароля пользователя */
   changePassword: async (
     payload: ChangePasswordRequestDTO
-  ): Promise<ServerResponse> =>
-    API.send({
+  ): Promise<IServerResponse> =>
+    api.send({
       method: 'patch',
       endpoint: '/api/v1/auth/change-password',
       payload
@@ -114,4 +118,4 @@ const AuthService = {
   removeToken: (): void => localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY)
 }
 
-export default AuthService
+export { authService }

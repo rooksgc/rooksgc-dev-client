@@ -1,6 +1,6 @@
 import { takeLatest, put, call, fork } from 'redux-saga/effects'
-import authService from 'services/auth'
-import WS from 'services/socket'
+import { authService } from 'services/auth'
+import { WS } from 'services/socket'
 import {
   userLoginRequest,
   userLogoutRequest,
@@ -35,7 +35,9 @@ export function* userLogoutWatcher() {
   yield takeLatest(userLogoutRequest, userLogoutRequestFlow)
 }
 
-export default function* generator() {
+const authSagas = function* generator() {
   yield fork(userLoginWatcher)
   yield fork(userLogoutWatcher)
 }
+
+export { authSagas }

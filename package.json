@@ -10,7 +10,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --watchAll=false",
     "eject": "react-scripts eject",
     "lint": "eslint . --ext .jsx,.ts,.tsx",
     "lint:fix": "eslint . --fix --ext .jsx,.ts,.tsx"
@@ -59,8 +59,10 @@
       "react/jsx-props-no-spreading": "off",
       "react/react-in-jsx-scope": "off",
       "import/extensions": "off",
+      "import/prefer-default-export": "off",
       "import/no-extraneous-dependencies": "off",
       "import/no-named-default": "off",
+      "import/no-default-export": "error",
       "spaced-comment": "off",
       "react/prop-types": "off"
     }

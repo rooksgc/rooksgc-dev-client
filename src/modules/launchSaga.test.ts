@@ -1,8 +1,8 @@
 import { userFetchSuccess, userFetchFailure } from './Auth/actions'
-import authService from 'services/auth'
-import launchSaga from './launchSaga'
+import { authService } from 'services/auth'
+import { launchSaga } from './launchSaga'
 import { runSaga } from 'redux-saga'
-import WS from 'services/socket'
+import { WS } from 'services/socket'
 import { initChannelsData, initContactsData } from './Chat/actions'
 
 beforeEach(() => {

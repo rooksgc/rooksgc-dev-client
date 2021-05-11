@@ -2,11 +2,11 @@ import { FC, useState } from 'react'
 import { Form, Input, Button, Card, Alert, Spin } from 'antd'
 import { MailOutlined, LockOutlined, LoadingOutlined } from '@ant-design/icons'
 import { Link, useHistory } from 'react-router-dom'
-import useActions from 'hooks/useActions'
-import authService from 'services/auth'
+import { useActions } from 'hooks/useActions'
+import { authService } from 'services/auth'
 import { userLoginRequest } from 'modules/Auth/actions'
 
-interface FormValues {
+interface IFormValues {
   email: string
   password: string
 }
@@ -19,7 +19,7 @@ const Login: FC = () => {
   const [dispatchUserLoginRequest] = useActions([userLoginRequest], null)
   const history = useHistory()
 
-  const onFinish = async (values: FormValues) => {
+  const onFinish = async (values: IFormValues) => {
     try {
       setAlert(emptyMessage)
       setLoading(true)
@@ -115,4 +115,4 @@ const Login: FC = () => {
   )
 }
 
-export default Login
+export { Login }

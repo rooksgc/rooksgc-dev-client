@@ -42,4 +42,4 @@ const MainMenu: FC = () => {
   )
 }
 
-export default MainMenu
+export { MainMenu }

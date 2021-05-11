@@ -6,10 +6,10 @@ import {
   LogoutOutlined,
   ProfileOutlined
 } from '@ant-design/icons'
-import useActions from 'hooks/useActions'
-import ModalWindow from 'containers/ModalWindow'
+import { useActions } from 'hooks/useActions'
+import { ModalWindow } from 'containers/ModalWindow'
 import { userLogoutRequest } from 'modules/Auth/actions'
-import UserProfile from '../UserProfile'
+import { UserProfile } from '../UserProfile'
 
 const UserMenu: FC = () => {
   const [userProfileModalVisibility, setUserProfileModalVisibility] = useState(
@@ -62,4 +62,4 @@ const UserMenu: FC = () => {
   )
 }
 
-export default UserMenu
+export { UserMenu }

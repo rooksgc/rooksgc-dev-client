@@ -2,12 +2,12 @@ import { useCallback } from 'react'
 import { nanoid } from 'nanoid'
 import { UserDTO } from 'services/auth'
 import { Empty } from 'antd'
-import useShallowEqualSelector from 'hooks/useShallowEqualSelector'
+import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 import { sendChannelMessage, sendContactMessage } from 'modules/Chat/actions'
-import useActions from 'hooks/useActions'
-import WS from 'services/socket'
-import Messages from './Messages'
-import InputMessage from './InputMessage'
+import { useActions } from 'hooks/useActions'
+import { WS } from 'services/socket'
+import { Messages } from './Messages'
+import { InputMessage } from './InputMessage'
 
 const Chat = () => {
   const user = useShallowEqualSelector((state) => state.auth.user) as UserDTO
@@ -70,4 +70,4 @@ const Chat = () => {
   )
 }
 
-export default Chat
+export { Chat }

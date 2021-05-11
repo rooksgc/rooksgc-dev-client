@@ -36,4 +36,4 @@ const Messages: FC<IMessagesProps> = ({
     </div>
   )
 
-export default Messages
+export { Messages }

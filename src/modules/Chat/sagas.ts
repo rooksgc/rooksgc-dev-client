@@ -11,6 +11,8 @@ export function* addChannelMessageWatcher() {
   yield takeLatest(sendChannelMessage, addChannelMessageFlow)
 }
 
-export default function* generator() {
+const chatSagas = function* generator() {
   yield fork(addChannelMessageWatcher)
 }
+
+export { chatSagas }

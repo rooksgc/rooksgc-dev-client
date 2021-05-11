@@ -1,4 +1,4 @@
-import useShallowEqualSelector from 'hooks/useShallowEqualSelector'
+import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 import { UserDTO } from 'services/auth'
 
 const UserProfile = () => {
@@ -14,4 +14,4 @@ const UserProfile = () => {
   )
 }
 
-export default UserProfile
+export { UserProfile }

@@ -1,14 +1,14 @@
 import { FC, useState, useEffect, useRef } from 'react'
 import { UserDTO } from 'services/auth'
 import { Layout } from 'antd'
-import PrivateContainer from 'containers/Private'
+import { PrivateContainer } from 'containers/Private'
 import { sendChannelMessage, sendContactMessage } from 'modules/Chat/actions'
-import useShallowEqualSelector from 'hooks/useShallowEqualSelector'
-import useActions from 'hooks/useActions'
-import WS from 'services/socket'
-import Header from './Header'
-import Sidebar from './Sidebar'
-import Routes from '../Routes'
+import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
+import { useActions } from 'hooks/useActions'
+import { WS } from 'services/socket'
+import { Header } from './Header'
+import { Sidebar } from './Sidebar'
+import { Routes } from '../Routes'
 
 const { Content } = Layout
 
@@ -118,4 +118,4 @@ const App: FC = () => {
   )
 }
 
-export default App
+export { App }

@@ -2,19 +2,19 @@ import { FC, useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Form, Input, Button, Card, Alert } from 'antd'
 import { LockOutlined } from '@ant-design/icons'
-import authService from 'services/auth'
+import { authService } from 'services/auth'
 
-interface ChangePasswordParams {
+interface IChangePasswordParams {
   code?: string
 }
 
-interface FormValues {
+interface IFormValues {
   password: string
   confirmPassword: string
 }
 
 const ChangePassword: FC = () => {
-  const { code }: ChangePasswordParams = useParams()
+  const { code }: IChangePasswordParams = useParams()
   const emptyMessage = { type: '', message: '' }
   const [alert, setAlert] = useState(emptyMessage)
   const [secretError, setSecretError] = useState(false)
@@ -45,7 +45,7 @@ const ChangePassword: FC = () => {
     }
   }, [code])
 
-  const onFinish = async (values: FormValues) => {
+  const onFinish = async (values: IFormValues) => {
     try {
       setAlert(emptyMessage)
       setLoading(true)
@@ -148,4 +148,4 @@ const ChangePassword: FC = () => {
   )
 }
 
-export default ChangePassword
+export { ChangePassword }

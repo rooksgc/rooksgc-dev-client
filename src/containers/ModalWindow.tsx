@@ -43,4 +43,4 @@ const ModalWindow: FC<IModalWindowProps> = (props) => {
   )
 }
 
-export default ModalWindow
+export { ModalWindow }
