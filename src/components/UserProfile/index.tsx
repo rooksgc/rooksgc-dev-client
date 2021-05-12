@@ -16,13 +16,10 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
   const { onCancel, onOk } = props
   const [loading, setLoading] = useState(false)
   const [photo, setPhoto] = useState('')
-  const {
-    id,
-    name,
-    email,
-    photo: preloadedPhoto,
-    role
-  } = useShallowEqualSelector((state) => state.auth.user) as UserDTO
+  const { id, name, email, photo: preloadedPhoto } = useShallowEqualSelector(
+    (state) => state.auth.user
+  ) as UserDTO
+
   const [dispatchUserUpdatePhoto] = useActions([userUpdatePhoto], null)
 
   const onSaveChanges = async () => {
@@ -40,11 +37,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
       })
 
       if (serverMessage) {
-        if (type === 'success') {
-          message.success(serverMessage)
-        }
         if (type === 'error') {
-          message.error(serverMessage)
           setLoading(false)
           return
         }
@@ -68,7 +61,6 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
       />
       <p>Имя: {name}</p>
       <p>Email: {email}</p>
-      <p>Роль: {role}</p>
 
       <div className="form-footer">
         {loading && (
