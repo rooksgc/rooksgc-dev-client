@@ -13,10 +13,10 @@ import {
 } from '../Chat/actions'
 
 /** login */
-export function* userLoginRequestFlow({ payload: { data, token } }) {
-  yield put(userFetchSuccess(data))
+export function* userLoginRequestFlow({ payload: { data: user, token } }) {
+  yield put(userFetchSuccess(user))
   yield call([authService, authService.setToken], token)
-  const { channels, contacts } = yield call([WS, WS.connect], data.id)
+  const { channels, contacts } = yield call([WS, WS.connect], user)
   yield put(initChannelsData(channels))
   yield put(initContactsData(contacts))
 }

@@ -95,7 +95,7 @@ describe('Launch saga', () => {
     expect(fetchByToken.mock.results[0].value).toBe(fetchByTokenResponse)
 
     expect(connect).toHaveBeenCalledTimes(1)
-    expect(connect).toHaveBeenCalledWith(fakeUser.id)
+    expect(connect).toHaveBeenCalledWith(fakeUser)
     expect(connect.mock.results[0].value).toBe(connectResponse)
 
     expect(dispatchedActions.length).toBe(3)

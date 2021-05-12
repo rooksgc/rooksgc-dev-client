@@ -19,7 +19,10 @@ export interface UserDTO {
   id: number
   name: string
   email: string
+  photo: string
   role: string
+  channels: string
+  contacts: string
 }
 
 export interface UserRecoverPasswordRequestDTO {
@@ -38,6 +41,11 @@ export interface ChangePasswordRequestDTO {
 
 export interface UserFetchByTokenRequestDTO {
   token: string
+}
+
+export interface ChangePhotoRequestDTO {
+  id: number // userId
+  photo: string
 }
 
 const authService = {
@@ -107,6 +115,16 @@ const authService = {
     api.send({
       method: 'patch',
       endpoint: '/api/v1/auth/change-password',
+      payload
+    }),
+
+  /** Изменение фото пользователя */
+  changePhoto: async (
+    payload: ChangePhotoRequestDTO
+  ): Promise<IServerResponse> =>
+    api.send({
+      method: 'patch',
+      endpoint: '/api/v1/auth/change-photo',
       payload
     }),
 

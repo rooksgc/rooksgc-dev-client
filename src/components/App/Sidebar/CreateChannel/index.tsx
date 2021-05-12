@@ -1,7 +1,7 @@
 import { FC, useState } from 'react'
-import { Form, Input, message, Upload, Button, Spin } from 'antd'
+import { Form, Input, message, Button, Spin } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
-import ImgCrop from 'antd-img-crop'
+import { PhotoUploader } from 'components/PhotoUploader'
 import { UserDTO } from 'services/auth'
 import { useActions } from 'hooks/useActions'
 import { setActiveChannel, addChannel } from 'modules/Chat/actions'
@@ -9,9 +9,7 @@ import { channelService } from 'services/channel'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 import { WS } from 'services/socket'
 
-// TODO move Upload image to separate component
-
-interface FormValues {
+interface IFormValues {
   name: string
   description?: string
   photo?: string
@@ -20,53 +18,6 @@ interface FormValues {
 interface ICreateChannelProps {
   onCancel?: () => any
   onOk?: () => any
-}
-
-const beforeUpload = (file) => {
-  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
-  if (!isJpgOrPng) {
-    message.error('Допустимые форматы файлов: JPG или PNG!')
-  }
-  const isLt2M = file.size / 1024 / 1024 < 2
-  if (!isLt2M) {
-    message.error('Размер изображения не должен превышать 2Мб!')
-  }
-  return isJpgOrPng && isLt2M
-}
-
-const getBase64 = async (file): Promise<string> => {
-  let src = file.url
-  const resizeWidth = 300
-
-  if (!src) {
-    src = await new Promise((resolve) => {
-      const reader = new FileReader()
-      reader.readAsDataURL(file.originFileObj)
-      reader.onload = (event) => {
-        const img = new Image()
-        img.src = event.target.result as string
-        img.onload = (el: any) => {
-          const elem = document.createElement('canvas')
-          const scaleFactor = resizeWidth / el.target.width
-          elem.width = resizeWidth
-          elem.height = el.target.height * scaleFactor
-          const ctx = elem.getContext('2d')
-          ctx.drawImage(el.target, 0, 0, elem.width, elem.height)
-          const srcEncoded = ctx.canvas.toDataURL('image/jpeg', 0.3)
-          resolve(srcEncoded)
-        }
-      }
-    })
-  }
-  return src
-}
-
-const onPreview = async (file) => {
-  const src = await getBase64(file)
-  const image = new Image()
-  image.src = src
-  const imgWindow = window.open(src)
-  imgWindow.document.write(image.outerHTML)
 }
 
 const CreateChannel: FC<ICreateChannelProps> = (props) => {
@@ -80,7 +31,7 @@ const CreateChannel: FC<ICreateChannelProps> = (props) => {
     null
   )
 
-  const onFinish = async (values: FormValues) => {
+  const onFinish = async (values: IFormValues) => {
     try {
       const { name, description } = values
       setLoading(true)
@@ -126,52 +77,11 @@ const CreateChannel: FC<ICreateChannelProps> = (props) => {
     }
   }
 
-  const [fileList, setFileList] = useState([])
-
-  const onChange = async ({ fileList: newFileList }) => {
-    const file = newFileList[0]
-    if (file?.status === 'done') {
-      const imageUrl = await getBase64(file)
-      setPhoto(imageUrl)
-    }
-
-    setFileList(newFileList)
-  }
-
-  const customRequest = (options) => {
-    const { onSuccess, file } = options
-    onSuccess(null, file)
-  }
-
-  const resetForm = () => {
-    setPhoto(null)
-    setFileList([])
-    form.resetFields()
-    onCancel()
-  }
+  const resetForm = () => onCancel()
 
   return (
     <>
-      <div className="upload-channel-photo">
-        <ImgCrop
-          rotate
-          shape="round"
-          modalTitle="Редактировать изображение"
-          modalOk="Применить"
-          modalCancel="Отмена"
-        >
-          <Upload
-            listType="picture-card"
-            fileList={fileList}
-            onChange={onChange}
-            beforeUpload={beforeUpload}
-            onPreview={onPreview}
-            customRequest={customRequest}
-          >
-            {!fileList.length && 'Выбрать фото'}
-          </Upload>
-        </ImgCrop>
-      </div>
+      <PhotoUploader onChangePhoto={(imageUrl) => setPhoto(imageUrl)} />
       <Form
         form={form}
         name="createChannel"

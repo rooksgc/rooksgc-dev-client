@@ -82,7 +82,7 @@ describe('Auth saga', () => {
     expect(setToken).toHaveBeenCalledTimes(1)
     expect(setToken).toHaveBeenCalledWith(fakeToken)
     expect(connect).toHaveBeenCalledTimes(1)
-    expect(connect).toHaveBeenCalledWith(fakeUser.id)
+    expect(connect).toHaveBeenCalledWith(fakeUser)
   })
 
   test('userLogoutRequestFlow', async () => {

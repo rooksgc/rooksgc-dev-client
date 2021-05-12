@@ -1,26 +1,27 @@
 import { io } from 'socket.io-client'
 import { channelService } from 'services/channel'
+import { UserDTO } from './auth'
 
 const WS = {
   socket: undefined,
-  connect: async (userId: number) => {
+  connect: async (user: UserDTO) => {
     if (!WS.socket) {
       WS.socket = io('/chat', {
         autoConnect: false
       })
 
-      WS.socket.auth = { userId }
+      WS.socket.auth = { userId: user.id }
       WS.socket.connect()
     }
 
-    return WS.subscribeToChannels(userId)
+    return WS.subscribeToChannels(user)
   },
-  subscribeToChannels: async (userId: number) => {
+  subscribeToChannels: async (user: UserDTO) => {
     const {
       userChannelsList,
       userContactsList,
       data
-    } = await channelService.getUserChannels(userId)
+    } = await channelService.getUserChannels(user.channels)
 
     WS.socket.emit('channels:subscribe', { userChannelsList, userContactsList })
     return data

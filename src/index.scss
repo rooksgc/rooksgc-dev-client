@@ -137,19 +137,19 @@ code {
   height: 128px;
 }
 
-.upload-channel-photo {
+.photo-uploader {
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 16px;
 }
 
-.upload-channel-photo .ant-upload-picture-card-wrapper {
+.photo-uploader .ant-upload-picture-card-wrapper {
   width: auto;
 }
 
-.upload-channel-photo .ant-upload-list-picture-card-container,
-.upload-channel-photo .ant-upload-select-picture-card {
+.photo-uploader .ant-upload-list-picture-card-container,
+.photo-uploader .ant-upload-select-picture-card {
   width: 150px;
   height: 150px;
 }

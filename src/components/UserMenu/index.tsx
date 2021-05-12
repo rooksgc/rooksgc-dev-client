@@ -9,12 +9,17 @@ import {
 import { useActions } from 'hooks/useActions'
 import { ModalWindow } from 'containers/ModalWindow'
 import { userLogoutRequest } from 'modules/Auth/actions'
+import { UserDTO } from 'services/auth'
+import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 import { UserProfile } from '../UserProfile'
 
 const UserMenu: FC = () => {
   const [userProfileModalVisibility, setUserProfileModalVisibility] = useState(
     false
   )
+  const { photo } = useShallowEqualSelector(
+    (state) => state.auth.user
+  ) as UserDTO
   const history = useHistory()
   const [dispatchUserLogoutRequest] = useActions([userLogoutRequest], null)
 
@@ -49,14 +54,22 @@ const UserMenu: FC = () => {
   return (
     <>
       <Dropdown overlay={menu} trigger={['click']}>
-        <Avatar className="user-profile" icon={<UserOutlined />} />
+        <Avatar
+          className="user-profile"
+          src={photo && photo}
+          icon={<UserOutlined />}
+        />
       </Dropdown>
       <ModalWindow
         title="Профиль"
         visible={userProfileModalVisibility}
         onCancel={() => setUserProfileModalVisibility(false)}
+        onOk={() => setUserProfileModalVisibility(false)}
       >
-        <UserProfile />
+        <UserProfile
+          onCancel={() => setUserProfileModalVisibility(false)}
+          onOk={() => setUserProfileModalVisibility(false)}
+        />
       </ModalWindow>
     </>
   )

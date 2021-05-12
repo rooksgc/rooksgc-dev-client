@@ -13,18 +13,18 @@ const launchSaga = function* launchSaga() {
       yield put(userFetchFailure())
       return
     }
-    const { data } = yield call([authService, authService.fetchByToken], {
+    const { data: user } = yield call([authService, authService.fetchByToken], {
       token
     })
 
-    if (!data) {
+    if (!user) {
       yield call([authService, authService.removeToken])
       yield put(userFetchFailure())
       return
     }
 
-    yield put(userFetchSuccess(data))
-    const { channels, contacts } = yield call([WS, WS.connect], data.id)
+    yield put(userFetchSuccess(user))
+    const { channels, contacts } = yield call([WS, WS.connect], user)
     yield put(initChannelsData(channels))
     yield put(initContactsData(contacts))
   } catch (error) {

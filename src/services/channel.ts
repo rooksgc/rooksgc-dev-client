@@ -7,6 +7,10 @@ interface ICreateChannelData {
   ownerId: number
 }
 
+interface IPopulateUserChannelsData {
+  channels: string
+}
+
 const channelService = {
   /** Создать новый канал */
   createChannel: async (
@@ -34,35 +38,25 @@ const channelService = {
   //     payload
   //   }),
 
-  /** Получить список каналов пользователя */
-  fetchUserChannels: async (userId: number): Promise<IServerResponse> =>
+  /** Развернуть информацию о списке каналов пользователя */
+  populateUserChannels: async (
+    payload: IPopulateUserChannelsData
+  ): Promise<IServerResponse> =>
     api.send({
-      method: 'get',
-      endpoint: `/api/v1/chat/channels/${userId}`
+      method: 'post',
+      endpoint: `/api/v1/chat/channels`,
+      payload
     }),
 
   /** Получить отформатированный список каналов */
-  getUserChannels: async (userId: number): Promise<any> => {
+  getUserChannels: async (channelsData: string): Promise<any> => {
     try {
-      const userChannelsData = await channelService.fetchUserChannels(userId)
+      const userChannelsData = await channelService.populateUserChannels({
+        channels: channelsData
+      })
       const userChannelsList = userChannelsData.data
-
-      const userContactsList =
-        userId === 1
-          ? [
-              {
-                id: 2,
-                name: 'Demo',
-                type: 'contact'
-              }
-            ]
-          : [
-              {
-                id: 1,
-                name: 'Rooks',
-                type: 'contact'
-              }
-            ]
+      // todo populate Users
+      const userContactsList = []
 
       const channels = userChannelsList.reduce(
         (acc, { id, ownerId, name, members, photo }) => ({

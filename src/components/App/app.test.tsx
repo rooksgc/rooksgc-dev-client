@@ -6,7 +6,7 @@ describe('App', () => {
   it('Should have correct layout structure when unauthorized', () => {
     render(<App />)
 
-    expect(screen.getByRole('banner1')).toBeInTheDocument()
+    expect(screen.getByRole('banner')).toBeInTheDocument()
     expect(screen.getByRole('banner')).toHaveClass('header')
 
     expect(screen.getByRole('main')).toBeInTheDocument()

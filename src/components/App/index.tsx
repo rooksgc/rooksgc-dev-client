@@ -39,7 +39,7 @@ const App: FC = () => {
       if (reason === 'transport error' || reason === 'ping timeout') {
         if (!user) return
         WS.disconnect()
-        WS.connect(user.id)
+        WS.connect(user)
         setNeedRecreateRef((state) => state + 1)
       }
     })
