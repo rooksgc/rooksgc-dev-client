@@ -27,6 +27,20 @@ code {
   padding-right: 16px;
 }
 
+.header-username {
+  width: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: right;
+  font-size: 1rem;
+}
+
+@media only screen and (max-width: 768px) {
+  .header-username {
+    display: none;
+  }
+}
+
 .current-channel-badge {
   background-color: #1890ff;
 }
@@ -59,9 +73,16 @@ code {
 .active-channel {
   display: inline-flex;
   position: relative;
+  padding: 16px;
+
   top: -12px;
   flex-direction: column;
   align-items: flex-start;
+}
+
+.active-channel:hover {
+  cursor: pointer;
+  background-color: #f9f9f9;
 }
 
 .active-channel-text {
@@ -174,6 +195,11 @@ code {
   font-size: 1rem;
 }
 
+.channels-menu-item {
+  display: flex;
+  align-items: center;
+}
+
 .nocontent {
   color: #91969d;
   padding-left: 10px;
@@ -185,5 +211,8 @@ code {
 }
 
 .channel-name {
+  width: 150px;
   padding-left: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

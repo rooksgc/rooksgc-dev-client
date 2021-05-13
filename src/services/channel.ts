@@ -22,22 +22,6 @@ const channelService = {
       payload
     }),
 
-  /** Редактировать канал */
-  // updateChannel: async (payload: any): Promise<ServerResponse> =>
-  //   api.send({
-  //     method: 'patch',
-  //     endpoint: '/api/v1/chat/channel',
-  //     payload
-  //   }),
-
-  // /** Удалить канал */
-  // removeChannel: async (payload: any): Promise<ServerResponse> =>
-  //   api.send({
-  //     method: 'delete',
-  //     endpoint: '/api/v1/chat/channel',
-  //     payload
-  //   }),
-
   /** Развернуть информацию о списке каналов пользователя */
   populateUserChannels: async (
     payload: IPopulateUserChannelsData
@@ -51,10 +35,16 @@ const channelService = {
   /** Получить отформатированный список каналов */
   getUserChannels: async (channelsData: string): Promise<any> => {
     try {
-      const userChannelsData = await channelService.populateUserChannels({
-        channels: channelsData
-      })
-      const userChannelsList = userChannelsData.data
+      let userChannelsList
+      if (channelsData === '[]') {
+        userChannelsList = []
+      } else {
+        const populatedChannels = await channelService.populateUserChannels({
+          channels: channelsData
+        })
+        userChannelsList = populatedChannels.data
+      }
+
       // todo populate Users
       const userContactsList = []
 

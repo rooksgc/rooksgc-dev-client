@@ -5,6 +5,7 @@ import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 import { MainMenu } from 'components/MainMenu'
 import { UserMenu } from 'components/UserMenu'
 import { PrivateContainer } from 'containers/Private'
+import { UserDTO } from 'services/auth'
 
 const { Text } = Typography
 
@@ -16,6 +17,7 @@ interface IHeaderProps {
 const { Header: AntHeader } = Layout
 
 const Header: FC<IHeaderProps> = (props: IHeaderProps) => {
+  const user = useShallowEqualSelector((state) => state.auth.user) as UserDTO
   const activeChannel = useShallowEqualSelector(
     (state) => state.chat.activeChannel
   ) as any
@@ -66,6 +68,7 @@ const Header: FC<IHeaderProps> = (props: IHeaderProps) => {
       <div className="header-menu">
         <MainMenu />
         <PrivateContainer>
+          <span className="header-username">{user?.name}</span>
           <UserMenu />
         </PrivateContainer>
       </div>

@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Menu, Dropdown, Avatar } from 'antd'
 import {
@@ -7,6 +7,7 @@ import {
   ProfileOutlined
 } from '@ant-design/icons'
 import { useActions } from 'hooks/useActions'
+import { changeUserProfileModalState } from 'modules/Modals/actions'
 import { ModalWindow } from 'containers/ModalWindow'
 import { userLogoutRequest } from 'modules/Auth/actions'
 import { UserDTO } from 'services/auth'
@@ -14,21 +15,26 @@ import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 import { UserProfile } from '../UserProfile'
 
 const UserMenu: FC = () => {
-  const [userProfileModalVisibility, setUserProfileModalVisibility] = useState(
-    false
-  )
+  const history = useHistory()
+
   const { photo } = useShallowEqualSelector(
     (state) => state.auth.user
   ) as UserDTO
-  const history = useHistory()
-  const [dispatchUserLogoutRequest] = useActions([userLogoutRequest], null)
+  const { userProfile } = useShallowEqualSelector(
+    (state) => state.modals
+  ) as any
+
+  const [
+    dispatchUserLogoutRequest,
+    dispatchChangeUserProfileModalState
+  ] = useActions([userLogoutRequest, changeUserProfileModalState], null)
 
   const handleMenuClick = (event) => {
     const { key } = event
 
     switch (key) {
       case 'profile':
-        setUserProfileModalVisibility(true)
+        dispatchChangeUserProfileModalState(true)
         break
       case 'logout':
         dispatchUserLogoutRequest()
@@ -55,6 +61,7 @@ const UserMenu: FC = () => {
     <>
       <Dropdown overlay={menu} trigger={['click']}>
         <Avatar
+          size={40}
           className="user-profile"
           src={photo && photo}
           icon={<UserOutlined />}
@@ -62,13 +69,13 @@ const UserMenu: FC = () => {
       </Dropdown>
       <ModalWindow
         title="Профиль"
-        visible={userProfileModalVisibility}
-        onCancel={() => setUserProfileModalVisibility(false)}
-        onOk={() => setUserProfileModalVisibility(false)}
+        visible={userProfile}
+        onCancel={() => dispatchChangeUserProfileModalState(false)}
+        onOk={() => dispatchChangeUserProfileModalState(false)}
       >
         <UserProfile
-          onCancel={() => setUserProfileModalVisibility(false)}
-          onOk={() => setUserProfileModalVisibility(false)}
+          onCancel={() => dispatchChangeUserProfileModalState(false)}
+          onOk={() => dispatchChangeUserProfileModalState(false)}
         />
       </ModalWindow>
     </>

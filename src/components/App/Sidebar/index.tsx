@@ -1,12 +1,18 @@
 import { FC, useState } from 'react'
 import { Layout, Menu, Avatar } from 'antd'
-import { LockOutlined, UnlockOutlined, MessageFilled } from '@ant-design/icons'
+import {
+  LockOutlined,
+  UnlockOutlined,
+  MessageFilled,
+  PlusCircleOutlined
+} from '@ant-design/icons'
 import { Scrollbars } from 'react-custom-scrollbars'
 import { useEscape } from 'hooks/useEscape'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 import { setActiveChannel } from 'modules/Chat/actions'
 import { useActions } from 'hooks/useActions'
 import { IChannelData } from 'components/Chat/Messages'
+import { changeCreateChannelModalState } from 'modules/Modals/actions'
 import { SidebarMenu } from './SidebarMenu'
 
 const { Sider } = Layout
@@ -47,7 +53,10 @@ const renderThumbVertical = ({ style, ...ownProps }) => (
 const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
   const [sidebarLocked, setSidebarLocked] = useState(true)
   const { sidebarCollapsed, onSidebarToggle } = props
-  const [dispatchActiveChannel] = useActions([setActiveChannel], null)
+  const [
+    dispatchActiveChannel,
+    dispatchChangeCreateChannelModalState
+  ] = useActions([setActiveChannel, changeCreateChannelModalState], null)
   const chat = useShallowEqualSelector((state) => state.chat) as any
   const { activeChannel, channels, contacts } = chat
 
@@ -86,6 +95,7 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
         collapsedWidth={0}
         className="sider"
         theme="dark"
+        width="230"
         style={{
           overflow: 'auto',
           height: '100vh'
@@ -109,7 +119,15 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
         </div>
 
         <div className="channels-menu">
-          <span className="channels-menu-title">Каналы</span>
+          <div className="sidebar-top">
+            <span className="channels-menu-title">Каналы</span>
+            <PlusCircleOutlined
+              className="sidebar-icon"
+              title="Создать канал"
+              onClick={() => dispatchChangeCreateChannelModalState(true)}
+            />
+          </div>
+
           {(channels && Object.keys(channels).length && (
             <Scrollbars
               style={{ height: 'calc(50vh - 58px)' }}
@@ -127,11 +145,20 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
               >
                 {Object.entries(channels as IChannelData).map(
                   ([channelId, channel]) => (
-                    <Menu.Item key={`${channel.type}-${channelId}`}>
+                    <Menu.Item
+                      className="channels-menu-item"
+                      style={{ height: '50px' }}
+                      key={`${channel.type}-${channelId}`}
+                    >
                       {channel.photo ? (
-                        <Avatar className="channel-photo" src={channel.photo} />
+                        <Avatar
+                          size={40}
+                          className="channel-photo"
+                          src={channel.photo}
+                        />
                       ) : (
                         <Avatar
+                          size={40}
                           className="channel-photo"
                           icon={<MessageFilled style={{ color: '#fefefe' }} />}
                         />
@@ -147,7 +174,13 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
         </div>
 
         <div className="contacts-menu">
-          <span className="contacts-menu-title">Контакты</span>
+          <div className="sidebar-top">
+            <span className="contacts-menu-title">Контакты</span>
+            <PlusCircleOutlined
+              className="sidebar-icon"
+              title="Добавить контакт"
+            />
+          </div>
           {(contacts && Object.keys(contacts).length && (
             <Scrollbars
               style={{ height: 'calc(50vh - 58px)' }}

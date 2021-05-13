@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { Menu, Dropdown } from 'antd'
 import {
   MenuOutlined,
@@ -7,21 +7,30 @@ import {
   ContactsOutlined,
   SettingOutlined
 } from '@ant-design/icons'
+import { useActions } from 'hooks/useActions'
+import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
+import { changeCreateChannelModalState } from 'modules/Modals/actions'
 import { ModalWindow } from 'containers/ModalWindow'
 import { CreateChannel } from '../CreateChannel'
 
-const SidebarMenu: FC = () => {
-  const [
-    createChannelModalVisibility,
-    setCreateChannelModalVisibility
-  ] = useState(false)
+export interface ISidebarMenuProps {}
+
+const SidebarMenu: FC<ISidebarMenuProps> = () => {
+  const { createChannel } = useShallowEqualSelector(
+    (state) => state.modals
+  ) as any
+
+  const [dispatchChangeCreateChannelModalState] = useActions(
+    [changeCreateChannelModalState],
+    null
+  )
 
   const handleMenuClick = (event) => {
     const { key } = event
 
     switch (key) {
       case 'createChannel':
-        setCreateChannelModalVisibility(true)
+        dispatchChangeCreateChannelModalState(true)
         break
       default:
         break
@@ -53,12 +62,12 @@ const SidebarMenu: FC = () => {
       </Dropdown>
       <ModalWindow
         title="Создать канал"
-        visible={createChannelModalVisibility}
-        onCancel={() => setCreateChannelModalVisibility(false)}
+        visible={createChannel}
+        onCancel={() => dispatchChangeCreateChannelModalState(false)}
       >
         <CreateChannel
-          onCancel={() => setCreateChannelModalVisibility(false)}
-          onOk={() => setCreateChannelModalVisibility(false)}
+          onCancel={() => dispatchChangeCreateChannelModalState(false)}
+          onOk={() => dispatchChangeCreateChannelModalState(false)}
         />
       </ModalWindow>
     </>
