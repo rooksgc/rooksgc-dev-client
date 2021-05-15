@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { nanoid } from 'nanoid'
-import { UserDTO } from 'services/auth'
+import { UserDTO } from 'services/user'
 import { Empty } from 'antd'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 import { sendChannelMessage, sendContactMessage } from 'modules/Chat/actions'

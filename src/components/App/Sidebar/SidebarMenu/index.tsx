@@ -8,20 +8,21 @@ import {
   SettingOutlined
 } from '@ant-design/icons'
 import { useActions } from 'hooks/useActions'
-import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
-import { changeCreateChannelModalState } from 'modules/Modals/actions'
-import { ModalWindow } from 'containers/ModalWindow'
-import { CreateChannel } from '../CreateChannel'
+import {
+  changeCreateChannelModalState,
+  changeAddContactModalState
+} from 'modules/Modals/actions'
+import { CreateChannel } from 'components/Modals/CreateChannel'
+import { AddContact } from 'components/Modals/AddContact'
 
 export interface ISidebarMenuProps {}
 
 const SidebarMenu: FC<ISidebarMenuProps> = () => {
-  const { createChannel } = useShallowEqualSelector(
-    (state) => state.modals
-  ) as any
-
-  const [dispatchChangeCreateChannelModalState] = useActions(
-    [changeCreateChannelModalState],
+  const [
+    dispatchChangeCreateChannelModalState,
+    dispatchChangeAddContactModalState
+  ] = useActions(
+    [changeCreateChannelModalState, changeAddContactModalState],
     null
   )
 
@@ -31,6 +32,9 @@ const SidebarMenu: FC<ISidebarMenuProps> = () => {
     switch (key) {
       case 'createChannel':
         dispatchChangeCreateChannelModalState(true)
+        break
+      case 'addContact':
+        dispatchChangeAddContactModalState(true)
         break
       default:
         break
@@ -60,16 +64,8 @@ const SidebarMenu: FC<ISidebarMenuProps> = () => {
       <Dropdown overlay={menu} trigger={['click']}>
         <MenuOutlined className="sidebar-icon" />
       </Dropdown>
-      <ModalWindow
-        title="Создать канал"
-        visible={createChannel}
-        onCancel={() => dispatchChangeCreateChannelModalState(false)}
-      >
-        <CreateChannel
-          onCancel={() => dispatchChangeCreateChannelModalState(false)}
-          onOk={() => dispatchChangeCreateChannelModalState(false)}
-        />
-      </ModalWindow>
+      <CreateChannel />
+      <AddContact />
     </>
   )
 }

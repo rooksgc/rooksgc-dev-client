@@ -6,7 +6,8 @@ import {
   initContactsData,
   sendChannelMessage,
   sendContactMessage,
-  addChannel
+  addChannel,
+  addContact
 } from './actions'
 
 export interface IActiveChannel {
@@ -67,7 +68,8 @@ const channels = handleActions(
 const contacts = handleActions(
   {
     [initContactsData]: (_state, action) => action.payload,
-    [sendContactMessage]: addMessage
+    [sendContactMessage]: addMessage,
+    [addContact]: (_state) => _state
   },
   null
 )

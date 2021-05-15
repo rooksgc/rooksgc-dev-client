@@ -5,7 +5,7 @@ import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 import { MainMenu } from 'components/MainMenu'
 import { UserMenu } from 'components/UserMenu'
 import { PrivateContainer } from 'containers/Private'
-import { UserDTO } from 'services/auth'
+import { UserDTO } from 'services/user'
 
 const { Text } = Typography
 

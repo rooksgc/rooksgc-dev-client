@@ -6,13 +6,16 @@ import {
   MessageFilled,
   PlusCircleOutlined
 } from '@ant-design/icons'
-import { Scrollbars } from 'react-custom-scrollbars'
 import { useEscape } from 'hooks/useEscape'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 import { setActiveChannel } from 'modules/Chat/actions'
 import { useActions } from 'hooks/useActions'
-import { IChannelData } from 'components/Chat/Messages'
-import { changeCreateChannelModalState } from 'modules/Modals/actions'
+import { IChannelData, IContactData } from 'components/Chat/Messages'
+import {
+  changeCreateChannelModalState,
+  changeAddContactModalState
+} from 'modules/Modals/actions'
+import { Scrollbar } from 'containers/Scrollbar'
 import { SidebarMenu } from './SidebarMenu'
 
 const { Sider } = Layout
@@ -22,41 +25,21 @@ interface ISidebarProps {
   onSidebarToggle: (isCollapsed: boolean) => void
 }
 
-const renderTrackVertical = ({ style, ...ownProps }) => (
-  <div
-    {...ownProps}
-    className="scrollTrackVertical"
-    style={{
-      ...style,
-      backgroundColor: '#E5E5E5',
-      right: '2px',
-      bottom: '2px',
-      top: '2px',
-      borderRadius: '3px'
-    }}
-  />
-)
-
-const renderThumbVertical = ({ style, ...ownProps }) => (
-  <div
-    {...ownProps}
-    className="scrollThumbVertical"
-    style={{
-      ...style,
-      borderRadius: '4px',
-      boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.16)',
-      backgroundColor: '#9A9A9A'
-    }}
-  />
-)
-
 const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
   const [sidebarLocked, setSidebarLocked] = useState(true)
   const { sidebarCollapsed, onSidebarToggle } = props
   const [
     dispatchActiveChannel,
-    dispatchChangeCreateChannelModalState
-  ] = useActions([setActiveChannel, changeCreateChannelModalState], null)
+    dispatchChangeCreateChannelModalState,
+    dispatchChangeAddContactModalState
+  ] = useActions(
+    [
+      setActiveChannel,
+      changeCreateChannelModalState,
+      changeAddContactModalState
+    ],
+    null
+  )
   const chat = useShallowEqualSelector((state) => state.chat) as any
   const { activeChannel, channels, contacts } = chat
 
@@ -129,21 +112,14 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
           </div>
 
           {(channels && Object.keys(channels).length && (
-            <Scrollbars
-              style={{ height: 'calc(50vh - 58px)' }}
-              hideTracksWhenNotNeeded
-              autoHide
-              autoHideTimeout={400}
-              renderTrackVertical={renderTrackVertical}
-              renderThumbVertical={renderThumbVertical}
-            >
+            <Scrollbar style={{ height: 'calc(50vh - 100px)' }}>
               <Menu
                 theme="dark"
                 mode="inline"
                 selectedKeys={selectedMenuKey}
                 onClick={onClickMenu}
               >
-                {Object.entries(channels as IChannelData).map(
+                {Object.entries(channels as IChannelData[]).map(
                   ([channelId, channel]) => (
                     <Menu.Item
                       className="channels-menu-item"
@@ -169,7 +145,7 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
                   )
                 )}
               </Menu>
-            </Scrollbars>
+            </Scrollbar>
           )) || <p className="nocontent">нет каналов</p>}
         </div>
 
@@ -179,32 +155,44 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
             <PlusCircleOutlined
               className="sidebar-icon"
               title="Добавить контакт"
+              onClick={() => dispatchChangeAddContactModalState(true)}
             />
           </div>
           {(contacts && Object.keys(contacts).length && (
-            <Scrollbars
-              style={{ height: 'calc(50vh - 58px)' }}
-              hideTracksWhenNotNeeded
-              autoHide
-              autoHideTimeout={400}
-              renderTrackVertical={renderTrackVertical}
-              renderThumbVertical={renderThumbVertical}
-            >
+            <Scrollbar style={{ height: 'calc(50vh - 100px)' }}>
               <Menu
                 theme="dark"
                 mode="inline"
                 selectedKeys={selectedMenuKey}
                 onClick={onClickMenu}
               >
-                {Object.entries(contacts as IChannelData).map(
-                  ([channelId, channel]) => (
-                    <Menu.Item key={`${channel.type}-${channelId}`}>
-                      {channel.name}
+                {Object.entries(contacts as IContactData[]).map(
+                  ([contactId, contact]) => (
+                    <Menu.Item
+                      className="contacts-menu-item"
+                      style={{ height: '50px' }}
+                      key={`${contact.type}-${contactId}`}
+                    >
+                      {contact.photo ? (
+                        <Avatar
+                          size={40}
+                          className="contact-photo"
+                          src={contact.photo}
+                        />
+                      ) : (
+                        <Avatar
+                          size={40}
+                          className="contact-photo"
+                          icon={<MessageFilled style={{ color: '#fefefe' }} />}
+                        />
+                      )}
+
+                      <span className="channel-name">{contact.name}</span>
                     </Menu.Item>
                   )
                 )}
               </Menu>
-            </Scrollbars>
+            </Scrollbar>
           )) || <p className="nocontent">нет контактов</p>}
         </div>
       </Sider>

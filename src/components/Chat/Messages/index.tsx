@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import { Empty } from 'antd'
+import { Scrollbar } from 'containers/Scrollbar'
 
 interface IMessagesProps {
   channel: IChannelData
@@ -7,8 +8,18 @@ interface IMessagesProps {
 
 export interface IChannelData {
   id: number | string
+  ownerId: number
   name: string
-  type: string // contact(user) | channel
+  type: string
+  photo: string
+  members: string[]
+  messages: IMessage[]
+}
+
+export interface IContactData {
+  name: string
+  type: string
+  photo: string
   messages: IMessage[]
 }
 
@@ -28,11 +39,13 @@ const Messages: FC<IMessagesProps> = ({
     </div>
   )) || (
     <div className="chat-window">
-      {messages.map(({ id, text, from }) => (
-        <div key={id}>
-          <strong>{from}</strong>: {text}
-        </div>
-      ))}
+      <Scrollbar style={{ height: 'calc(100vh - 104px)' }}>
+        {messages.map(({ id, text, from }) => (
+          <div key={id}>
+            <strong>{from}</strong>: {text}
+          </div>
+        ))}
+      </Scrollbar>
     </div>
   )
 

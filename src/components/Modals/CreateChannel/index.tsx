@@ -1,11 +1,13 @@
 import { FC, useState } from 'react'
 import { Form, Input, message, Button, Spin } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
+import { ModalWindow } from 'containers/ModalWindow'
 import { PhotoUploader } from 'components/PhotoUploader'
-import { UserDTO } from 'services/auth'
+import { UserDTO } from 'services/user'
 import { useActions } from 'hooks/useActions'
 import { setActiveChannel, addChannel } from 'modules/Chat/actions'
-import { channelService } from 'services/channel'
+import { changeCreateChannelModalState } from 'modules/Modals/actions'
+import { chatService } from 'services/chat'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 import { WS } from 'services/socket'
 
@@ -15,19 +17,22 @@ interface IFormValues {
   photo?: string
 }
 
-interface ICreateChannelProps {
-  onCancel?: () => any
-  onOk?: () => any
-}
+interface ICreateChannelProps {}
 
-const CreateChannel: FC<ICreateChannelProps> = (props) => {
-  const { onCancel, onOk } = props
+const CreateChannel: FC<ICreateChannelProps> = () => {
+  const { createChannel } = useShallowEqualSelector(
+    (state) => state.modals
+  ) as any
   const user = useShallowEqualSelector((state) => state.auth.user) as UserDTO
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
   const [photo, setPhoto] = useState(null)
-  const [dispatchActiveChannel, dispatchAddChannel] = useActions(
-    [setActiveChannel, addChannel],
+  const [
+    dispatchActiveChannel,
+    dispatchAddChannel,
+    dispatchChangeCreateChannelModalState
+  ] = useActions(
+    [setActiveChannel, addChannel, changeCreateChannelModalState],
     null
   )
 
@@ -40,7 +45,7 @@ const CreateChannel: FC<ICreateChannelProps> = (props) => {
         type,
         message: serverMessage,
         data
-      } = await channelService.createChannel({
+      } = await chatService.createChannel({
         name,
         description,
         photo,
@@ -70,17 +75,21 @@ const CreateChannel: FC<ICreateChannelProps> = (props) => {
       WS.subscribeToChannel(data.channelId)
 
       setLoading(false)
-      onOk()
+      dispatchChangeCreateChannelModalState(false)
     } catch (error) {
       setLoading(false)
       message.error(error.message)
     }
   }
 
-  const resetForm = () => onCancel()
+  const resetForm = () => dispatchChangeCreateChannelModalState(false)
 
   return (
-    <>
+    <ModalWindow
+      title="Создать канал"
+      visible={createChannel}
+      onCancel={() => dispatchChangeCreateChannelModalState(false)}
+    >
       <PhotoUploader onChangePhoto={(imageUrl) => setPhoto(imageUrl)} />
       <Form
         form={form}
@@ -125,7 +134,7 @@ const CreateChannel: FC<ICreateChannelProps> = (props) => {
           </Button>
         </div>
       </Form>
-    </>
+    </ModalWindow>
   )
 }
 

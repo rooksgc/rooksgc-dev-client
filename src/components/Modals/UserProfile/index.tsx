@@ -1,37 +1,41 @@
 import { FC, useState } from 'react'
 import { Button, Spin, message } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
+import { ModalWindow } from 'containers/ModalWindow'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
-import { authService, UserDTO } from 'services/auth'
+import { userService, UserDTO } from 'services/user'
 import { PhotoUploader } from 'components/PhotoUploader'
 import { useActions } from 'hooks/useActions'
+import { changeUserProfileModalState } from 'modules/Modals/actions'
 import { userUpdatePhoto } from 'modules/Auth/actions'
 
-interface IUserProfileProps {
-  onCancel?: () => any
-  onOk?: () => any
-}
+interface IUserProfileProps {}
 
-const UserProfile: FC<IUserProfileProps> = (props) => {
-  const { onCancel, onOk } = props
+const UserProfile: FC<IUserProfileProps> = () => {
   const [loading, setLoading] = useState(false)
   const [photo, setPhoto] = useState('')
   const { id, name, email, photo: preloadedPhoto } = useShallowEqualSelector(
     (state) => state.auth.user
   ) as UserDTO
+  const { userProfile } = useShallowEqualSelector(
+    (state) => state.modals
+  ) as any
 
-  const [dispatchUserUpdatePhoto] = useActions([userUpdatePhoto], null)
+  const [
+    dispatchUserUpdatePhoto,
+    dispatchChangeUserProfileModalState
+  ] = useActions([userUpdatePhoto, changeUserProfileModalState], null)
 
   const onSaveChanges = async () => {
     if (photo === '') {
-      onOk()
+      dispatchChangeUserProfileModalState(false)
       return
     }
 
     try {
       setLoading(true)
 
-      const { type, message: serverMessage } = await authService.changePhoto({
+      const { type, message: serverMessage } = await userService.changePhoto({
         id,
         photo
       })
@@ -45,7 +49,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 
       setLoading(false)
       dispatchUserUpdatePhoto(photo)
-      onOk()
+      dispatchChangeUserProfileModalState(false)
     } catch (error) {
       setLoading(false)
       message.error(error.message)
@@ -53,7 +57,12 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
   }
 
   return (
-    <>
+    <ModalWindow
+      title="Профиль"
+      visible={userProfile}
+      onCancel={() => dispatchChangeUserProfileModalState(false)}
+      onOk={() => dispatchChangeUserProfileModalState(false)}
+    >
       <PhotoUploader
         preloadedPhoto={preloadedPhoto}
         onChangePhoto={(imageUrl) => setPhoto(imageUrl)}
@@ -70,14 +79,18 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
             delay={500}
           />
         )}
-        <Button key="back" onClick={() => onCancel()} disabled={loading}>
+        <Button
+          key="back"
+          onClick={() => dispatchChangeUserProfileModalState(false)}
+          disabled={loading}
+        >
           Отмена
         </Button>
         <Button type="primary" disabled={loading} onClick={onSaveChanges}>
           Сохранить
         </Button>
       </div>
-    </>
+    </ModalWindow>
   )
 }
 

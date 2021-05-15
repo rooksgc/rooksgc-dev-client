@@ -22,7 +22,8 @@ export const initialState: IRootState = {
   },
   modals: {
     createChannel: false,
-    userProfile: false
+    userProfile: false,
+    addContact: false
   }
 }
 

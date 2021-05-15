@@ -1,5 +1,5 @@
 import { FC, useState, useEffect, useRef } from 'react'
-import { UserDTO } from 'services/auth'
+import { UserDTO } from 'services/user'
 import { Layout } from 'antd'
 import { PrivateContainer } from 'containers/Private'
 import { sendChannelMessage, sendContactMessage } from 'modules/Chat/actions'

@@ -7,12 +7,8 @@ interface ICreateChannelData {
   ownerId: number
 }
 
-interface IPopulateUserChannelsData {
-  channels: string
-}
-
-const channelService = {
-  /** Создать новый канал */
+const chatService = {
+  /** Создать канал */
   createChannel: async (
     payload: ICreateChannelData
   ): Promise<IServerResponse> =>
@@ -22,31 +18,36 @@ const channelService = {
       payload
     }),
 
-  /** Развернуть информацию о списке каналов пользователя */
-  populateUserChannels: async (
-    payload: IPopulateUserChannelsData
-  ): Promise<IServerResponse> =>
-    api.send({
-      method: 'post',
-      endpoint: `/api/v1/chat/channels`,
-      payload
-    }),
-
-  /** Получить отформатированный список каналов */
-  getUserChannels: async (channelsData: string): Promise<any> => {
+  /** Получить список каналов и контакток для пользователя
+   *  и отформатировать для фронтенда
+   */
+  getSubscriptions: async ({ channelsData, contactsData }): Promise<any> => {
     try {
       let userChannelsList
-      if (channelsData === '[]') {
+      if (!channelsData) {
         userChannelsList = []
       } else {
-        const populatedChannels = await channelService.populateUserChannels({
-          channels: channelsData
+        const populatedChannels = await api.send({
+          method: 'post',
+          endpoint: `/api/v1/chat/channels`,
+          payload: { channels: channelsData }
         })
+
         userChannelsList = populatedChannels.data
       }
 
-      // todo populate Users
-      const userContactsList = []
+      let userContactsList
+      if (!contactsData) {
+        userContactsList = []
+      } else {
+        const populatedContacts = await api.send({
+          method: 'post',
+          endpoint: `/api/v1/user/contacts`,
+          payload: { contacts: contactsData }
+        })
+
+        userContactsList = populatedContacts.data
+      }
 
       const channels = userChannelsList.reduce(
         (acc, { id, ownerId, name, members, photo }) => ({
@@ -64,11 +65,12 @@ const channelService = {
       )
 
       const contacts = userContactsList.reduce(
-        (acc, { id, name, type }) => ({
+        (acc, { id, name, photo }) => ({
           ...acc,
           [id]: {
             name,
-            type,
+            photo,
+            type: 'contact',
             messages: []
           }
         }),
@@ -76,7 +78,7 @@ const channelService = {
       )
 
       const data = { channels, contacts }
-      return { userChannelsList, userContactsList, data }
+      return { userChannelsList, data }
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error)
@@ -86,4 +88,4 @@ const channelService = {
   }
 }
 
-export { channelService }
+export { chatService }

@@ -15,16 +15,6 @@ export interface UserCreateRequestDTO {
   password: string
 }
 
-export interface UserDTO {
-  id: number
-  name: string
-  email: string
-  photo: string
-  role: string
-  channels: string
-  contacts: string
-}
-
 export interface UserRecoverPasswordRequestDTO {
   email: string
 }
@@ -43,18 +33,7 @@ export interface UserFetchByTokenRequestDTO {
   token: string
 }
 
-export interface ChangePhotoRequestDTO {
-  id: number // userId
-  photo: string
-}
-
 const authService = {
-  /** Получить список всех пользователей */
-  getAllUsers: async (): Promise<IServerResponse> =>
-    api.send({
-      method: 'get',
-      endpoint: '/api/v1/auth/users'
-    }),
   /** Регистрация нового пользователя */
   register: async (payload: UserCreateRequestDTO): Promise<IServerResponse> =>
     api.send({
@@ -115,16 +94,6 @@ const authService = {
     api.send({
       method: 'patch',
       endpoint: '/api/v1/auth/change-password',
-      payload
-    }),
-
-  /** Изменение фото пользователя */
-  changePhoto: async (
-    payload: ChangePhotoRequestDTO
-  ): Promise<IServerResponse> =>
-    api.send({
-      method: 'patch',
-      endpoint: '/api/v1/auth/change-photo',
       payload
     }),
 

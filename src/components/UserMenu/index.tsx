@@ -8,11 +8,11 @@ import {
 } from '@ant-design/icons'
 import { useActions } from 'hooks/useActions'
 import { changeUserProfileModalState } from 'modules/Modals/actions'
-import { ModalWindow } from 'containers/ModalWindow'
+
 import { userLogoutRequest } from 'modules/Auth/actions'
-import { UserDTO } from 'services/auth'
+import { UserDTO } from 'services/user'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
-import { UserProfile } from '../UserProfile'
+import { UserProfile } from 'components/Modals/UserProfile'
 
 const UserMenu: FC = () => {
   const history = useHistory()
@@ -20,9 +20,6 @@ const UserMenu: FC = () => {
   const { photo } = useShallowEqualSelector(
     (state) => state.auth.user
   ) as UserDTO
-  const { userProfile } = useShallowEqualSelector(
-    (state) => state.modals
-  ) as any
 
   const [
     dispatchUserLogoutRequest,
@@ -67,17 +64,7 @@ const UserMenu: FC = () => {
           icon={<UserOutlined />}
         />
       </Dropdown>
-      <ModalWindow
-        title="Профиль"
-        visible={userProfile}
-        onCancel={() => dispatchChangeUserProfileModalState(false)}
-        onOk={() => dispatchChangeUserProfileModalState(false)}
-      >
-        <UserProfile
-          onCancel={() => dispatchChangeUserProfileModalState(false)}
-          onOk={() => dispatchChangeUserProfileModalState(false)}
-        />
-      </ModalWindow>
+      <UserProfile />
     </>
   )
 }

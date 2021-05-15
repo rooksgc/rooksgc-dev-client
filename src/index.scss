@@ -74,7 +74,6 @@ code {
   display: inline-flex;
   position: relative;
   padding: 16px;
-
   top: -12px;
   flex-direction: column;
   align-items: flex-start;
@@ -86,8 +85,18 @@ code {
 }
 
 .active-channel-text {
+  max-width: 250px;
   height: 20px;
   line-height: 28px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media only screen and (max-width: 768px) {
+  .active-channel-text {
+    max-width: 95px;
+  }
 }
 
 .user-profile {
@@ -126,11 +135,6 @@ code {
   display: flex;
   justify-content: center;
   margin: 10px 0;
-}
-
-.chat-window {
-  height: calc(100vh - 104px);
-  overflow-y: scroll;
 }
 
 .chat-empty {
@@ -195,7 +199,8 @@ code {
   font-size: 1rem;
 }
 
-.channels-menu-item {
+.channels-menu-item,
+.contacts-menu-item {
   display: flex;
   align-items: center;
 }
@@ -210,9 +215,14 @@ code {
   margin-top: -3px;
 }
 
-.channel-name {
+.channel-name,
+.contact-name {
   width: 150px;
   padding-left: 10px;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.add-contact-form {
+  margin-top: 10px;
 }
