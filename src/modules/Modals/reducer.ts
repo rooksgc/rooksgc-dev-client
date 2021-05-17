@@ -3,19 +3,25 @@ import { handleActions } from 'redux-actions'
 import {
   changeCreateChannelModalState,
   changeUserProfileModalState,
-  changeAddContactModalState
+  changeAddContactModalState,
+  changeContactInfoModalState,
+  changeChannelInfoModalState
 } from './actions'
 
 export interface IModalsState {
   createChannel: boolean
   userProfile: boolean
   addContact: boolean
+  contactInfo: boolean
+  channelInfo: boolean
 }
 
 export const initialState = {
   createChannel: false,
   userProfile: false,
-  addContact: false
+  addContact: false,
+  contactInfo: false,
+  channelInfo: false
 }
 
 const createChannel = handleActions(
@@ -33,10 +39,22 @@ const addContact = handleActions(
   false
 )
 
+const contactInfo = handleActions(
+  { [changeContactInfoModalState]: (_state, action) => action.payload },
+  false
+)
+
+const channelInfo = handleActions(
+  { [changeChannelInfoModalState]: (_state, action) => action.payload },
+  false
+)
+
 const modalsReducer = combineReducers<IModalsState>({
   createChannel,
   userProfile,
-  addContact
+  addContact,
+  contactInfo,
+  channelInfo
 })
 
 export { modalsReducer }

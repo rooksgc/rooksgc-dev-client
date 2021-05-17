@@ -5,7 +5,7 @@ import { PrivateContainer } from 'containers/Private'
 import { sendChannelMessage, sendContactMessage } from 'modules/Chat/actions'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 import { useActions } from 'hooks/useActions'
-import { WS } from 'services/socket'
+import { socketService } from 'services/socket'
 import { Header } from './Header'
 import { Sidebar } from './Sidebar'
 import { Routes } from '../Routes'
@@ -31,20 +31,20 @@ const App: FC = () => {
   }
 
   useEffect(() => {
-    if (!WS.socket) return null
-    SR.current = WS.socket
+    if (!socketService.socket) return null
+    SR.current = socketService.socket
 
     // Correct reconnection after server emits disconnected event
-    WS.socket.on('disconnect', (reason: string) => {
+    socketService.socket.on('disconnect', (reason: string) => {
       if (reason === 'transport error' || reason === 'ping timeout') {
         if (!user) return
-        WS.disconnect()
-        WS.connect(user)
+        socketService.disconnect()
+        socketService.connect(user)
         setNeedRecreateRef((state) => state + 1)
       }
     })
 
-    WS.socket.on('users:connected', () => {
+    socketService.socket.on('users:connected', () => {
       // users.forEach((user) => {
       // user.self = user.userId === WS.socket.id
       // initReactiveProperties(user)

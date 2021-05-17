@@ -173,20 +173,17 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
                       style={{ height: '50px' }}
                       key={`${contact.type}-${contactId}`}
                     >
-                      {contact.photo ? (
-                        <Avatar
-                          size={40}
-                          className="contact-photo"
-                          src={contact.photo}
-                        />
-                      ) : (
-                        <Avatar
-                          size={40}
-                          className="contact-photo"
-                          icon={<MessageFilled style={{ color: '#fefefe' }} />}
-                        />
-                      )}
-
+                      <Avatar
+                        size={40}
+                        className="contact-photo"
+                        src={
+                          contact.photo ? (
+                            contact.photo
+                          ) : (
+                            <MessageFilled style={{ color: '#fefefe' }} />
+                          )
+                        }
+                      />
                       <span className="channel-name">{contact.name}</span>
                     </Menu.Item>
                   )

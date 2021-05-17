@@ -18,67 +18,73 @@ const chatService = {
       payload
     }),
 
-  /** Получить список каналов и контакток для пользователя
-   *  и отформатировать для фронтенда
-   */
+  /** Получить список каналов пользователя с развернутыми данными */
+  getChannelsList: async (channelsData) => {
+    let channelsList = []
+
+    if (channelsData) {
+      const populatedChannels = await api.send({
+        method: 'post',
+        endpoint: `/api/v1/chat/channels`,
+        payload: { channels: channelsData }
+      })
+
+      channelsList = populatedChannels.data
+    }
+
+    return channelsList.reduce(
+      (acc, { id, ownerId, name, members, photo }) => ({
+        ...acc,
+        [id]: {
+          ownerId,
+          name,
+          members,
+          type: 'channel',
+          photo,
+          messages: [],
+          populated: false
+        }
+      }),
+      {}
+    )
+  },
+
+  /** Получить список контактов пользователя с развернутыми данными */
+  getContactsList: async (contactsData) => {
+    let contactsList = []
+
+    if (contactsData) {
+      const populatedContacts = await api.send({
+        method: 'post',
+        endpoint: `/api/v1/user/contacts`,
+        payload: { contacts: contactsData }
+      })
+
+      contactsList = populatedContacts.data
+    }
+
+    return contactsList.reduce(
+      (acc, { id, name, email, photo }) => ({
+        ...acc,
+        [id]: {
+          name,
+          email,
+          photo,
+          type: 'contact',
+          messages: []
+        }
+      }),
+      {}
+    )
+  },
+
+  /** Получить список каналов и контактов для пользователя */
   getSubscriptions: async ({ channelsData, contactsData }): Promise<any> => {
     try {
-      let userChannelsList
-      if (!channelsData) {
-        userChannelsList = []
-      } else {
-        const populatedChannels = await api.send({
-          method: 'post',
-          endpoint: `/api/v1/chat/channels`,
-          payload: { channels: channelsData }
-        })
+      const channels = await chatService.getChannelsList(channelsData)
+      const contacts = await chatService.getContactsList(contactsData)
 
-        userChannelsList = populatedChannels.data
-      }
-
-      let userContactsList
-      if (!contactsData) {
-        userContactsList = []
-      } else {
-        const populatedContacts = await api.send({
-          method: 'post',
-          endpoint: `/api/v1/user/contacts`,
-          payload: { contacts: contactsData }
-        })
-
-        userContactsList = populatedContacts.data
-      }
-
-      const channels = userChannelsList.reduce(
-        (acc, { id, ownerId, name, members, photo }) => ({
-          ...acc,
-          [id]: {
-            ownerId,
-            name,
-            members,
-            type: 'channel',
-            photo,
-            messages: []
-          }
-        }),
-        {}
-      )
-
-      const contacts = userContactsList.reduce(
-        (acc, { id, name, photo }) => ({
-          ...acc,
-          [id]: {
-            name,
-            photo,
-            type: 'contact',
-            messages: []
-          }
-        }),
-        {}
-      )
-
-      const data = { channels, contacts }
-      return { userChannelsList, data }
+      return { channels, contacts }
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error)

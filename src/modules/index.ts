@@ -1,12 +1,23 @@
 import { combineReducers } from 'redux'
 import { fork } from 'redux-saga/effects'
 import { authSagas } from 'modules/Auth/sagas'
-import { authReducer, IAuthState } from 'modules/Auth/reducer'
-import { chatReducer, IChatState } from 'modules/Chat/reducer'
-import { modalsReducer, IModalsState } from 'modules/Modals/reducer'
+import {
+  authReducer,
+  IAuthState,
+  initialState as authInitialState
+} from 'modules/Auth/reducer'
+import {
+  chatReducer,
+  IChatState,
+  initialState as chatInitialState
+} from 'modules/Chat/reducer'
+import {
+  modalsReducer,
+  IModalsState,
+  initialState as modalsInitialState
+} from 'modules/Modals/reducer'
 import { launchSaga } from 'modules/launchSaga'
 
-// Root state interface
 export interface IRootState {
   auth: IAuthState
   chat: IChatState
@@ -14,27 +25,17 @@ export interface IRootState {
 }
 
 export const initialState: IRootState = {
-  auth: { user: null },
-  chat: {
-    activeChannel: null,
-    channels: null,
-    contacts: null
-  },
-  modals: {
-    createChannel: false,
-    userProfile: false,
-    addContact: false
-  }
+  auth: authInitialState,
+  chat: chatInitialState,
+  modals: modalsInitialState
 }
 
-// Root reducer
 export const rootReducer = combineReducers({
   auth: authReducer,
   chat: chatReducer,
   modals: modalsReducer
 })
 
-// Root saga
 export function* rootSaga() {
   yield fork(authSagas)
   yield fork(launchSaga)

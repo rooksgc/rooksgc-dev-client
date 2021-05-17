@@ -17,8 +17,8 @@ interface IFormValues {
 interface IAddContactProps {}
 
 const AddContact: FC<IAddContactProps> = () => {
-  const { addContact: addContactModalState } = useShallowEqualSelector(
-    (state) => state.modals
+  const addContactModalState = useShallowEqualSelector(
+    (state) => state.modals.addContact
   ) as any
   const user = useShallowEqualSelector((state) => state.auth.user) as UserDTO
   const [form] = Form.useForm()

@@ -60,7 +60,7 @@ const UserMenu: FC = () => {
         <Avatar
           size={40}
           className="user-profile"
-          src={photo && photo}
+          src={photo}
           icon={<UserOutlined />}
         />
       </Dropdown>

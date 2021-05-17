@@ -12,3 +12,13 @@ export const changeUserProfileModalState: any = createAction(
 export const changeAddContactModalState: any = createAction(
   'MODALS/CHANGE_ADD_CONTACT_MODAL_STATE'
 )
+
+/** Модальное окно информации о контакте */
+export const changeContactInfoModalState: any = createAction(
+  'MODALS/CHANGE_CONTACT_INFO_MODAL_STATE'
+)
+
+/** Модальное окно информации о канале */
+export const changeChannelInfoModalState: any = createAction(
+  'MODALS/CHANGE_CHANNEL_INFO_MODAL_STATE'
+)

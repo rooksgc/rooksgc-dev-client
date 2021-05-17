@@ -20,7 +20,12 @@ export interface IAddContactRequestDTO {
   email: string
 }
 
+interface IUsersListData {
+  members: string
+}
+
 const userService = {
+  /** Изменить или удалить фото пользователя */
   changePhoto: async (
     payload: ChangePhotoRequestDTO
   ): Promise<IServerResponse> =>
@@ -30,12 +35,21 @@ const userService = {
       payload
     }),
 
+  /** Добавить новый контакт */
   addContact: async (
     payload: IAddContactRequestDTO
   ): Promise<IServerResponse> =>
     api.send({
       method: 'patch',
       endpoint: '/api/v1/user/contacts',
+      payload
+    }),
+
+  /** Получить информацию о нескольких пользователях */
+  getUsersList: async (payload: IUsersListData): Promise<IServerResponse> =>
+    api.send({
+      method: 'post',
+      endpoint: '/api/v1/user/list',
       payload
     })
 }

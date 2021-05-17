@@ -9,7 +9,7 @@ import { setActiveChannel, addChannel } from 'modules/Chat/actions'
 import { changeCreateChannelModalState } from 'modules/Modals/actions'
 import { chatService } from 'services/chat'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
-import { WS } from 'services/socket'
+import { socketService } from 'services/socket'
 
 interface IFormValues {
   name: string
@@ -20,8 +20,8 @@ interface IFormValues {
 interface ICreateChannelProps {}
 
 const CreateChannel: FC<ICreateChannelProps> = () => {
-  const { createChannel } = useShallowEqualSelector(
-    (state) => state.modals
+  const createChannel = useShallowEqualSelector(
+    (state) => state.modals.createChannel
   ) as any
   const user = useShallowEqualSelector((state) => state.auth.user) as UserDTO
   const [form] = Form.useForm()
@@ -72,7 +72,7 @@ const CreateChannel: FC<ICreateChannelProps> = () => {
         members: [user.id]
       })
       dispatchActiveChannel(activeChannelPayload)
-      WS.subscribeToChannel(data.channelId)
+      socketService.subscribeToChannel(data.channelId)
 
       setLoading(false)
       dispatchChangeCreateChannelModalState(false)

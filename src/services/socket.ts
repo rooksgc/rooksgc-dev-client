@@ -2,41 +2,46 @@ import { io } from 'socket.io-client'
 import { chatService } from 'services/chat'
 import { UserDTO } from './user'
 
-const WS = {
+const socketService = {
   socket: undefined,
   connect: async (user: UserDTO) => {
-    if (!WS.socket) {
-      WS.socket = io('/chat', { autoConnect: false })
-      WS.socket.auth = { userId: user.id }
-      WS.socket.connect()
+    if (!socketService.socket) {
+      socketService.socket = io('/chat', { autoConnect: false })
+      socketService.socket.auth = { userId: user.id }
+      socketService.socket.connect()
     }
 
-    return WS.subscribeToChannels(user)
+    return socketService.subscribeToChannels(user)
   },
   subscribeToChannels: async (user: UserDTO) => {
-    const { userChannelsList, data } = await chatService.getSubscriptions({
+    const { channels, contacts } = await chatService.getSubscriptions({
       channelsData: user.channels,
       contactsData: user.contacts
     })
-    WS.socket.emit('channels:subscribe', { userChannelsList })
-    return data
+
+    if (user.channels) {
+      const channelsList = Object.keys(channels)
+      socketService.socket.emit('channels:subscribe', channelsList)
+    }
+
+    return { channels, contacts }
   },
   subscribeToChannel: async (channelId: number) => {
-    WS.socket.emit('channel:subscribe', channelId)
+    socketService.socket.emit('channel:subscribe', channelId)
   },
   inviteToChannel: async (userId: number, channelId: number) => {
-    WS.socket.emit('channel:invite', { userId, channelId })
+    socketService.socket.emit('channel:invite', { userId, channelId })
   },
   sendChannelMessage: (payload) => {
-    WS.socket.emit('channel:message:send', payload)
+    socketService.socket.emit('channel:message:send', payload)
   },
   sendContactMessage: (payload) => {
-    WS.socket.emit('contact:message:send', payload)
+    socketService.socket.emit('contact:message:send', payload)
   },
   disconnect: () => {
-    WS.socket.disconnect()
-    WS.socket = undefined
+    socketService.socket.disconnect()
+    socketService.socket = undefined
   }
 }
 
-export { WS }
+export { socketService }

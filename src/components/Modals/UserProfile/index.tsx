@@ -17,8 +17,8 @@ const UserProfile: FC<IUserProfileProps> = () => {
   const { id, name, email, photo: preloadedPhoto } = useShallowEqualSelector(
     (state) => state.auth.user
   ) as UserDTO
-  const { userProfile } = useShallowEqualSelector(
-    (state) => state.modals
+  const userProfile = useShallowEqualSelector(
+    (state) => state.modals.userProfile
   ) as any
 
   const [

@@ -6,6 +6,8 @@ export const addChannel: any = createAction('CHAT/ADD_CHANNEL')
 export const setActiveChannel: any = createAction('CHAT/SET_ACTIVE_CHANNEL')
 /** Начальное состояние каналов на момент захода пользователя */
 export const initChannelsData: any = createAction('CHAT/INIT_CHANNELS_DATA')
+/** Дополнить данные о канале */
+export const populateChannel: any = createAction('CHAT/POPULATE_CHANNEL')
 
 /** Добавление нового контакта */
 export const addContact: any = createAction('CHAT/ADD_CONTACT')

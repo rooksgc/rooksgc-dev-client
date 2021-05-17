@@ -1,6 +1,6 @@
 import { takeLatest, put, call, fork } from 'redux-saga/effects'
 import { authService } from 'services/auth'
-import { WS } from 'services/socket'
+import { socketService } from 'services/socket'
 import {
   userLoginRequest,
   userLogoutRequest,
@@ -16,7 +16,10 @@ import {
 export function* userLoginRequestFlow({ payload: { data: user, token } }) {
   yield put(userFetchSuccess(user))
   yield call([authService, authService.setToken], token)
-  const { channels, contacts } = yield call([WS, WS.connect], user)
+  const { channels, contacts } = yield call(
+    [socketService, socketService.connect],
+    user
+  )
   yield put(initChannelsData(channels))
   yield put(initContactsData(contacts))
 }
@@ -29,7 +32,7 @@ export function* userLogoutRequestFlow() {
   yield call([authService, authService.removeToken])
   yield put(userFetchSuccess(false))
   yield put(setActiveChannel(null))
-  yield call([WS, WS.disconnect])
+  yield call([socketService, socketService.disconnect])
 }
 export function* userLogoutWatcher() {
   yield takeLatest(userLogoutRequest, userLogoutRequestFlow)

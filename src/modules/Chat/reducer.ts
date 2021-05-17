@@ -7,11 +7,12 @@ import {
   sendChannelMessage,
   sendContactMessage,
   addChannel,
-  addContact
+  addContact,
+  populateChannel
 } from './actions'
 
 export interface IActiveChannel {
-  id: number | null
+  id: number
   name: string
   type: string
 }
@@ -59,6 +60,15 @@ const channels = handleActions(
         photo: action.payload.photo,
         type: action.payload.type,
         messages: []
+      }
+    }),
+    [populateChannel]: (state, action) => ({
+      ...state,
+      [action.payload.id]: {
+        ...state[action.payload.id],
+        owner: action.payload.owner,
+        members: action.payload.members,
+        populated: true
       }
     })
   },

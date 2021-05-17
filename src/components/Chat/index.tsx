@@ -5,7 +5,7 @@ import { Empty } from 'antd'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 import { sendChannelMessage, sendContactMessage } from 'modules/Chat/actions'
 import { useActions } from 'hooks/useActions'
-import { WS } from 'services/socket'
+import { socketService } from 'services/socket'
 import { Messages } from './Messages'
 import { InputMessage } from './InputMessage'
 
@@ -34,12 +34,16 @@ const Chat = () => {
 
       if (activeChannel.type === 'channel') {
         dispatchSendChannelMessage(payload)
-        WS.sendChannelMessage(payload)
+        socketService.sendChannelMessage(payload)
       }
 
       if (activeChannel.type === 'contact') {
         dispatchSendContactMessage(payload)
-        WS.sendContactMessage({ from: user.id, to: activeChannel.id, message })
+        socketService.sendContactMessage({
+          from: user.id,
+          to: activeChannel.id,
+          message
+        })
       }
     },
     [

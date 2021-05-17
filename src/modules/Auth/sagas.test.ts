@@ -12,7 +12,7 @@ import {
   userLogoutRequest
 } from './actions'
 import { authService } from 'services/auth'
-import { WS } from 'services/socket'
+import { socketService } from 'services/socket'
 import { runSaga } from 'redux-saga'
 import {
   setActiveChannel,
@@ -68,7 +68,7 @@ describe('Auth saga', () => {
     })
 
     authService.setToken = setToken
-    WS.connect = connect
+    socketService.connect = connect
 
     await runSaga(fakeStore, userLoginRequestFlow, {
       payload: { data: fakeUser, token: fakeToken }
@@ -94,7 +94,7 @@ describe('Auth saga', () => {
     authService.removeToken = removeToken
 
     const disconnect = jest.fn()
-    WS.disconnect = disconnect
+    socketService.disconnect = disconnect
 
     await runSaga(fakeStore, userLogoutRequestFlow)
 

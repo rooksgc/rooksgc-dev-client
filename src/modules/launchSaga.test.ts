@@ -2,7 +2,7 @@ import { userFetchSuccess, userFetchFailure } from './Auth/actions'
 import { authService } from 'services/auth'
 import { launchSaga } from './launchSaga'
 import { runSaga } from 'redux-saga'
-import { WS } from 'services/socket'
+import { socketService } from 'services/socket'
 import { initChannelsData, initContactsData } from './Chat/actions'
 
 beforeEach(() => {
@@ -83,7 +83,7 @@ describe('Launch saga', () => {
 
     authService.getToken = getToken
     authService.fetchByToken = fetchByToken
-    WS.connect = connect
+    socketService.connect = connect
 
     await runSaga(fakeStore, launchSaga)
 
