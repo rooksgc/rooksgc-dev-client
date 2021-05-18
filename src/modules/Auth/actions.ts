@@ -14,3 +14,9 @@ export const userFetchFailure: any = createAction('AUTH/USER_FETCH_FAILURE')
 
 /** Обновление объекта пользователя (фото) */
 export const userUpdatePhoto: any = createAction('AUTH/USER_UPDATE_PHOTO')
+
+/** Добавление контакта пользователя */
+export const userAddContact: any = createAction('AUTH/USER_ADD_CONTACT')
+
+/** Удаление контакта пользователя */
+export const userRemoveContact: any = createAction('AUTH/USER_REMOVE_CONTACT')

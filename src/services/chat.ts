@@ -20,7 +20,7 @@ const chatService = {
 
   /** Получить список каналов пользователя с развернутыми данными */
   getChannelsList: async (channelsData) => {
-    let channelsList = []
+    let channelsList = null
 
     if (channelsData) {
       const populatedChannels = await api.send({
@@ -29,29 +29,29 @@ const chatService = {
         payload: { channels: channelsData }
       })
 
-      channelsList = populatedChannels.data
+      channelsList = populatedChannels.data.reduce(
+        (acc, { id, ownerId, name, members, photo }) => ({
+          ...acc,
+          [id]: {
+            ownerId,
+            name,
+            members,
+            type: 'channel',
+            photo,
+            messages: [],
+            populated: false
+          }
+        }),
+        {}
+      )
     }
 
-    return channelsList.reduce(
-      (acc, { id, ownerId, name, members, photo }) => ({
-        ...acc,
-        [id]: {
-          ownerId,
-          name,
-          members,
-          type: 'channel',
-          photo,
-          messages: [],
-          populated: false
-        }
-      }),
-      {}
-    )
+    return channelsList
   },
 
   /** Получить список контактов пользователя с развернутыми данными */
   getContactsList: async (contactsData) => {
-    let contactsList = []
+    let contactsList = null
 
     if (contactsData) {
       const populatedContacts = await api.send({
@@ -60,22 +60,22 @@ const chatService = {
         payload: { contacts: contactsData }
       })
 
-      contactsList = populatedContacts.data
+      contactsList = populatedContacts.data.reduce(
+        (acc, { id, name, email, photo }) => ({
+          ...acc,
+          [id]: {
+            name,
+            email,
+            photo,
+            type: 'contact',
+            messages: []
+          }
+        }),
+        {}
+      )
     }
 
-    return contactsList.reduce(
-      (acc, { id, name, email, photo }) => ({
-        ...acc,
-        [id]: {
-          name,
-          email,
-          photo,
-          type: 'contact',
-          messages: []
-        }
-      }),
-      {}
-    )
+    return contactsList
   },
 
   /** Получить список каналов и контактов для пользователя */

@@ -1,11 +1,23 @@
-import { FC } from 'react'
-import { Button, message, Avatar, Typography, Row, Col, Divider } from 'antd'
+import { FC, useState } from 'react'
+import {
+  Button,
+  message,
+  Avatar,
+  Typography,
+  Row,
+  Col,
+  Divider,
+  Spin
+} from 'antd'
+import { LoadingOutlined } from '@ant-design/icons'
 import { ModalWindow } from 'containers/ModalWindow'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
-import { UserDTO } from 'services/user'
+import { UserDTO, userService } from 'services/user'
 import { useActions } from 'hooks/useActions'
 import { changeContactInfoModalState } from 'modules/Modals/actions'
 import { IActiveChannel } from 'modules/Chat/reducer'
+import { removeContact, setActiveChannel } from 'modules/Chat/actions'
+import { userRemoveContact } from 'modules/Auth/actions'
 
 const { Title, Paragraph } = Typography
 
@@ -15,11 +27,24 @@ interface IContactInfoProps {
 
 const ContactInfo: FC<IContactInfoProps> = (props) => {
   const { activeContact } = props
+  const [loading, setLoading] = useState(false)
 
-  const [dispatchChangeContactInfoModalState] = useActions(
-    [changeContactInfoModalState],
+  const [
+    dispatchChangeContactInfoModalState,
+    dispatchRemoveContact,
+    dispatchUserRemoveContact,
+    dispatchActiveChannel
+  ] = useActions(
+    [
+      changeContactInfoModalState,
+      removeContact,
+      userRemoveContact,
+      setActiveChannel
+    ],
     null
   )
+
+  const user = useShallowEqualSelector((state) => state.auth.user) as UserDTO
 
   const contacts = useShallowEqualSelector(
     (state) => state.chat.contacts
@@ -29,16 +54,38 @@ const ContactInfo: FC<IContactInfoProps> = (props) => {
     (state) => state.modals.contactInfo
   ) as any
 
-  const contact = activeContact && contacts[activeContact.id]
+  const contact = activeContact && contacts && contacts[activeContact.id]
 
   if (!contact) return null
 
   const { name, email, photo } = contact as UserDTO
 
   const removeContactHandler = async () => {
-    // Удалить контакт
     try {
+      setLoading(true)
+
+      const { type, message: serverMessage } = await userService.removeContact({
+        userId: user.id,
+        contactId: activeContact.id
+      })
+
+      if (serverMessage) {
+        if (type === 'success') {
+          message.success(serverMessage)
+        }
+        if (type === 'error') {
+          message.error(serverMessage)
+          setLoading(false)
+          return
+        }
+      }
+
+      dispatchRemoveContact(activeContact.id)
+      dispatchUserRemoveContact(activeContact.id)
+      dispatchActiveChannel(null)
       dispatchChangeContactInfoModalState(false)
+
+      setLoading(false)
     } catch (error) {
       message.error(error.message)
     }
@@ -63,7 +110,20 @@ const ContactInfo: FC<IContactInfoProps> = (props) => {
       </Row>
       <Divider />
       <div className="form-footer">
-        <Button block danger type="default" onClick={removeContactHandler}>
+        {loading && (
+          <Spin
+            className="center"
+            indicator={<LoadingOutlined style={{ fontSize: 40 }} spin />}
+            delay={500}
+          />
+        )}
+        <Button
+          block
+          danger
+          type="default"
+          onClick={removeContactHandler}
+          disabled={loading}
+        >
           Удалить контакт
         </Button>
       </div>

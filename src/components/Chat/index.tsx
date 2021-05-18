@@ -62,7 +62,8 @@ const Chat = () => {
     )
 
   const { type, id } = activeChannel
-  const channelData = type === 'channel' ? channels[id] : contacts[id]
+  const channelData =
+    type === 'channel' ? channels && channels[id] : contacts && contacts[id]
 
   if (!channelData) return null
 

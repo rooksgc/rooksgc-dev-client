@@ -4,7 +4,8 @@ import { LoadingOutlined, MailOutlined } from '@ant-design/icons'
 import { ModalWindow } from 'containers/ModalWindow'
 import { userService, UserDTO } from 'services/user'
 import { useActions } from 'hooks/useActions'
-import { addContact } from 'modules/Chat/actions'
+import { addContact, setActiveChannel } from 'modules/Chat/actions'
+import { userAddContact } from 'modules/Auth/actions'
 import { changeAddContactModalState } from 'modules/Modals/actions'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 
@@ -23,8 +24,13 @@ const AddContact: FC<IAddContactProps> = () => {
   const user = useShallowEqualSelector((state) => state.auth.user) as UserDTO
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
-  const [dispatchChangeAddContactModalState, dispatchAddContact] = useActions(
-    [changeAddContactModalState, addContact],
+  const [
+    dispatchChangeAddContactModalState,
+    dispatchAddContact,
+    dispatchUserAddContact,
+    dispatchActiveChannel
+  ] = useActions(
+    [changeAddContactModalState, addContact, userAddContact, setActiveChannel],
     null
   )
 
@@ -53,10 +59,14 @@ const AddContact: FC<IAddContactProps> = () => {
         }
       }
 
-      dispatchAddContact(data)
+      form.resetFields()
+
+      dispatchAddContact({ ...data, type: 'contact', messages: [] })
+      dispatchUserAddContact(data.id)
+      dispatchActiveChannel({ id: data.id, name: data.name, type: 'contact' })
+      dispatchChangeAddContactModalState(false)
 
       setLoading(false)
-      dispatchChangeAddContactModalState(false)
     } catch (error) {
       setLoading(false)
       message.error(error.message)

@@ -111,7 +111,7 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
             />
           </div>
 
-          {(channels && Object.keys(channels).length && (
+          {(channels && (
             <Scrollbar style={{ height: 'calc(50vh - 100px)' }}>
               <Menu
                 theme="dark"
@@ -158,7 +158,7 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
               onClick={() => dispatchChangeAddContactModalState(true)}
             />
           </div>
-          {(contacts && Object.keys(contacts).length && (
+          {(contacts && (
             <Scrollbar style={{ height: 'calc(50vh - 100px)' }}>
               <Menu
                 theme="dark"

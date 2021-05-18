@@ -24,6 +24,11 @@ interface IUsersListData {
   members: string
 }
 
+interface IRemoveContactData {
+  userId: number
+  contactId: number
+}
+
 const userService = {
   /** Изменить или удалить фото пользователя */
   changePhoto: async (
@@ -44,6 +49,17 @@ const userService = {
       endpoint: '/api/v1/user/contacts',
       payload
     }),
+
+  /** Удалить контакт */
+  removeContact: async (
+    payload: IRemoveContactData
+  ): Promise<IServerResponse> => {
+    const { userId, contactId } = payload
+    return api.send({
+      method: 'delete',
+      endpoint: `/api/v1/user/${userId}/contact/${contactId}`
+    })
+  },
 
   /** Получить информацию о нескольких пользователях */
   getUsersList: async (payload: IUsersListData): Promise<IServerResponse> =>

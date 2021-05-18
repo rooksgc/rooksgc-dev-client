@@ -11,6 +11,8 @@ export const populateChannel: any = createAction('CHAT/POPULATE_CHANNEL')
 
 /** Добавление нового контакта */
 export const addContact: any = createAction('CHAT/ADD_CONTACT')
+/** Удаление контакта */
+export const removeContact: any = createAction('CHAT/REMOVE_CONTACT')
 /** Начальное состояние контактов на момент захода пользователя */
 export const initContactsData: any = createAction('CHAT/INIT_CONTACTS_DATA')
 /** Отправить сообщение в чат канала */

@@ -8,7 +8,8 @@ import {
   sendContactMessage,
   addChannel,
   addContact,
-  populateChannel
+  populateChannel,
+  removeContact
 } from './actions'
 
 export interface IActiveChannel {
@@ -79,7 +80,24 @@ const contacts = handleActions(
   {
     [initContactsData]: (_state, action) => action.payload,
     [sendContactMessage]: addMessage,
-    [addContact]: (_state) => _state
+    [addContact]: (state, action) => {
+      const contact = {
+        [action.payload.id]: {
+          ...action.payload
+        }
+      }
+      delete contact[action.payload.id].id
+
+      return state ? { ...state, ...contact } : { ...contact }
+    },
+    [removeContact]: (state, action) => {
+      let newState = { ...state }
+      delete newState[action.payload]
+      if (!Object.keys(newState).length) {
+        newState = null
+      }
+      return newState
+    }
   },
   null
 )
