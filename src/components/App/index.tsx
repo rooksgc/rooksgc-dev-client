@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useRef } from 'react'
+import { FC, useState, useEffect } from 'react'
 import { UserDTO } from 'services/user'
 import { Layout } from 'antd'
 import { PrivateContainer } from 'containers/Private'
@@ -13,10 +13,7 @@ import { Routes } from '../Routes'
 const { Content } = Layout
 
 const App: FC = () => {
-  const [needRecreateRef, setNeedRecreateRef] = useState(0)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  // const [onlineUsers, setOnlineUsers] = useState([])
-  const SR = useRef(null)
   const [dispatchSendChannelMessage, dispatchSendContactMessage] = useActions(
     [sendChannelMessage, sendContactMessage],
     null
@@ -31,41 +28,9 @@ const App: FC = () => {
   }
 
   useEffect(() => {
-    if (!socketService.socket) return null
-    SR.current = socketService.socket
+    socketService.subscribeToDisconnect(user)
 
-    // Correct reconnection after server emits disconnected event
-    socketService.socket.on('disconnect', (reason: string) => {
-      if (reason === 'transport error' || reason === 'ping timeout') {
-        if (!user) return
-        socketService.disconnect()
-        socketService.connect(user)
-        setNeedRecreateRef((state) => state + 1)
-      }
-    })
-
-    socketService.socket.on('users:connected', () => {
-      // users.forEach((user) => {
-      // user.self = user.userId === WS.socket.id
-      // initReactiveProperties(user)
-      // dispatchUpdateUsersOnline(users)
-      // })
-      // put the current user first, and then sort by username
-      // setOnlineUsers(
-      //   users.sort((a, b) => {
-      //     if (a.self) return -1
-      //     if (b.self) return 1
-      //     if (a.username < b.username) return -1
-      //     return a.username > b.username ? 1 : 0
-      //   })
-      // )
-      // dispatchUpdateUsersOnline(users)
-      // eslint-disable-next-line no-console
-      // console.log(onlineUsers)
-    })
-
-    SR.current.on(
-      'channel:message:broadcast',
+    socketService.subscribeToChannelMessageBroadcast(
       ({ activeChannelId: channelId, message }) => {
         dispatchSendChannelMessage({
           activeChannelId: channelId,
@@ -74,10 +39,7 @@ const App: FC = () => {
       }
     )
 
-    SR.current.on('contact:message:private', ({ message, from }) => {
-      // eslint-disable-next-line no-console
-      console.log('contact:message:private', message, `from: ${from}`)
-
+    socketService.subscribeToContactMessagePrivate((message, from) => {
       dispatchSendContactMessage({
         activeChannelId: from,
         message
@@ -85,15 +47,16 @@ const App: FC = () => {
     })
 
     return () => {
-      SR.current.off('channel:message:broadcast')
-      SR.current.off('contact:message:private')
+      socketService.unsubscribeFrom([
+        'channel:message:broadcast',
+        'contact:message:private'
+      ])
     }
   }, [
     user,
     activeChannel,
     dispatchSendChannelMessage,
-    dispatchSendContactMessage,
-    needRecreateRef
+    dispatchSendContactMessage
   ])
 
   return (

@@ -1,16 +1,26 @@
 import { apiService as api, IServerResponse } from './api'
 
-interface ICreateChannelData {
+export interface ICreateChannelPayload {
   name: string
   description?: string
   photo?: string
   ownerId: number
 }
 
+export interface IAddContactRequestPayload {
+  from: number
+  email: string
+}
+
+export interface IRemoveContactPayload {
+  userId: number
+  contactId: number
+}
+
 const chatService = {
   /** Создать канал */
   createChannel: async (
-    payload: ICreateChannelData
+    payload: ICreateChannelPayload
   ): Promise<IServerResponse> =>
     api.send({
       method: 'put',
@@ -19,14 +29,14 @@ const chatService = {
     }),
 
   /** Получить список каналов пользователя с развернутыми данными */
-  getChannelsList: async (channelsData) => {
+  getChannels: async (channels) => {
     let channelsList = null
 
-    if (channelsData) {
+    if (channels) {
       const populatedChannels = await api.send({
         method: 'post',
-        endpoint: `/api/v1/chat/channels`,
-        payload: { channels: channelsData }
+        endpoint: `/api/v1/chat/channels/populate`,
+        payload: { channels }
       })
 
       channelsList = populatedChannels.data.reduce(
@@ -50,14 +60,14 @@ const chatService = {
   },
 
   /** Получить список контактов пользователя с развернутыми данными */
-  getContactsList: async (contactsData) => {
+  getContacts: async (contacts) => {
     let contactsList = null
 
-    if (contactsData) {
+    if (contacts) {
       const populatedContacts = await api.send({
         method: 'post',
-        endpoint: `/api/v1/user/contacts`,
-        payload: { contacts: contactsData }
+        endpoint: `/api/v1/chat/contacts/populate`,
+        payload: { contacts }
       })
 
       contactsList = populatedContacts.data.reduce(
@@ -78,19 +88,25 @@ const chatService = {
     return contactsList
   },
 
-  /** Получить список каналов и контактов для пользователя */
-  getSubscriptions: async ({ channelsData, contactsData }): Promise<any> => {
-    try {
-      const channels = await chatService.getChannelsList(channelsData)
-      const contacts = await chatService.getContactsList(contactsData)
+  /** Добавить новый контакт */
+  addContact: async (
+    payload: IAddContactRequestPayload
+  ): Promise<IServerResponse> =>
+    api.send({
+      method: 'patch',
+      endpoint: '/api/v1/chat/contacts',
+      payload
+    }),
 
-      return { channels, contacts }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error)
-    }
-
-    return null
+  /** Удалить контакт */
+  removeContact: async (
+    payload: IRemoveContactPayload
+  ): Promise<IServerResponse> => {
+    const { userId, contactId } = payload
+    return api.send({
+      method: 'delete',
+      endpoint: `/api/v1/chat/${userId}/contact/${contactId}`
+    })
   }
 }
 

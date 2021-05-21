@@ -10,29 +10,19 @@ export interface UserDTO {
   contacts: string
 }
 
-export interface ChangePhotoRequestDTO {
-  id: number // userId
+export interface IChangePhotoRequestPayload {
+  id: number
   photo: string
 }
 
-export interface IAddContactRequestDTO {
-  from: number // user.id who adding contact
-  email: string
-}
-
-interface IUsersListData {
-  members: string
-}
-
-interface IRemoveContactData {
-  userId: number
-  contactId: number
+export interface IPopulateUsersPayload {
+  ids: string
 }
 
 const userService = {
   /** Изменить или удалить фото пользователя */
   changePhoto: async (
-    payload: ChangePhotoRequestDTO
+    payload: IChangePhotoRequestPayload
   ): Promise<IServerResponse> =>
     api.send({
       method: 'patch',
@@ -40,32 +30,13 @@ const userService = {
       payload
     }),
 
-  /** Добавить новый контакт */
-  addContact: async (
-    payload: IAddContactRequestDTO
+  /** Получить информацию о нескольких пользователях */
+  populateUsers: async (
+    payload: IPopulateUsersPayload
   ): Promise<IServerResponse> =>
     api.send({
-      method: 'patch',
-      endpoint: '/api/v1/user/contacts',
-      payload
-    }),
-
-  /** Удалить контакт */
-  removeContact: async (
-    payload: IRemoveContactData
-  ): Promise<IServerResponse> => {
-    const { userId, contactId } = payload
-    return api.send({
-      method: 'delete',
-      endpoint: `/api/v1/user/${userId}/contact/${contactId}`
-    })
-  },
-
-  /** Получить информацию о нескольких пользователях */
-  getUsersList: async (payload: IUsersListData): Promise<IServerResponse> =>
-    api.send({
       method: 'post',
-      endpoint: '/api/v1/user/list',
+      endpoint: '/api/v1/users/populate',
       payload
     })
 }

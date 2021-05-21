@@ -36,8 +36,8 @@ const ChannelInfo: FC<IChannelInfoProps> = (props) => {
     if (!channel || channel.populated) return
 
     const getChannelData = async () => {
-      const { members, ownerId } = channel
-      const { data } = await userService.getUsersList({ members })
+      const { members: ids, ownerId } = channel
+      const { data } = await userService.populateUsers({ ids })
       const owner = data.find((member) => member.id === ownerId)
       disaptchPopulateChannel({ id: activeChannel?.id, members: data, owner })
     }

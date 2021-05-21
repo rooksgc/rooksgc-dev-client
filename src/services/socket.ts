@@ -14,10 +14,8 @@ const socketService = {
     return socketService.subscribeToChannels(user)
   },
   subscribeToChannels: async (user: UserDTO) => {
-    const { channels, contacts } = await chatService.getSubscriptions({
-      channelsData: user.channels,
-      contactsData: user.contacts
-    })
+    const channels = await chatService.getChannels(user.channels)
+    const contacts = await chatService.getContacts(user.contacts)
 
     if (user.channels) {
       const channelsList = Object.keys(channels)
@@ -41,6 +39,39 @@ const socketService = {
   disconnect: () => {
     socketService.socket.disconnect()
     socketService.socket = undefined
+  },
+  /** Correct reconnection after server emits disconnected event */
+  subscribeToDisconnect: (user) => {
+    if (!socketService.socket) return
+
+    socketService.socket.on('disconnect', (reason: string) => {
+      if (reason === 'transport error' || reason === 'ping timeout') {
+        if (!user) return
+        socketService.disconnect()
+        socketService.connect(user)
+      }
+    })
+  },
+  subscribeToChannelMessageBroadcast: (cb) => {
+    if (!socketService.socket) return
+
+    socketService.socket.on('channel:message:broadcast', () => {
+      cb()
+    })
+  },
+  subscribeToContactMessagePrivate: (cb) => {
+    if (!socketService.socket) return
+
+    socketService.socket.on('contact:message:private', ({ message, from }) => {
+      cb(message, from)
+    })
+  },
+  unsubscribeFrom: (socketEvents: string[]) => {
+    if (!socketService.socket || !socketEvents.length) return
+
+    socketEvents.forEach((event) => {
+      socketService.socket.off(event)
+    })
   }
 }
 

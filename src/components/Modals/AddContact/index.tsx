@@ -2,7 +2,8 @@ import { FC, useState } from 'react'
 import { Form, Input, message, Button, Spin, Typography } from 'antd'
 import { LoadingOutlined, MailOutlined } from '@ant-design/icons'
 import { ModalWindow } from 'containers/ModalWindow'
-import { userService, UserDTO } from 'services/user'
+import { UserDTO } from 'services/user'
+import { chatService } from 'services/chat'
 import { useActions } from 'hooks/useActions'
 import { addContact, setActiveChannel } from 'modules/Chat/actions'
 import { userAddContact } from 'modules/Auth/actions'
@@ -43,7 +44,7 @@ const AddContact: FC<IAddContactProps> = () => {
         type,
         message: serverMessage,
         data
-      } = await userService.addContact({
+      } = await chatService.addContact({
         from: user.id,
         email
       })

@@ -12,7 +12,8 @@ import {
 import { LoadingOutlined } from '@ant-design/icons'
 import { ModalWindow } from 'containers/ModalWindow'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
-import { UserDTO, userService } from 'services/user'
+import { UserDTO } from 'services/user'
+import { chatService } from 'services/chat'
 import { useActions } from 'hooks/useActions'
 import { changeContactInfoModalState } from 'modules/Modals/actions'
 import { IActiveChannel } from 'modules/Chat/reducer'
@@ -64,7 +65,7 @@ const ContactInfo: FC<IContactInfoProps> = (props) => {
     try {
       setLoading(true)
 
-      const { type, message: serverMessage } = await userService.removeContact({
+      const { type, message: serverMessage } = await chatService.removeContact({
         userId: user.id,
         contactId: activeContact.id
       })
