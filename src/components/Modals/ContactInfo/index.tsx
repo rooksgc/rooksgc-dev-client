@@ -20,7 +20,7 @@ import { IActiveChannel } from 'modules/Chat/reducer'
 import { removeContact, setActiveChannel } from 'modules/Chat/actions'
 import { userRemoveContact } from 'modules/Auth/actions'
 
-const { Title, Paragraph } = Typography
+const { Title, Paragraph, Text } = Typography
 
 interface IContactInfoProps {
   activeContact: IActiveChannel
@@ -56,7 +56,6 @@ const ContactInfo: FC<IContactInfoProps> = (props) => {
   ) as any
 
   const contact = activeContact && contacts && contacts[activeContact.id]
-
   if (!contact) return null
 
   const { name, email, photo } = contact as UserDTO
@@ -92,6 +91,36 @@ const ContactInfo: FC<IContactInfoProps> = (props) => {
     }
   }
 
+  const cancelAddContactHandler = async () => {
+    try {
+      setLoading(true)
+
+      const { type, message: serverMessage } = await chatService.removeInvite({
+        inviterId: user.id,
+        userId: activeContact.id
+      })
+
+      if (serverMessage) {
+        if (type === 'success') {
+          message.success(serverMessage)
+        }
+        if (type === 'error') {
+          message.error(serverMessage)
+          setLoading(false)
+          return
+        }
+      }
+
+      dispatchRemoveContact(activeContact.id)
+      dispatchActiveChannel(null)
+      dispatchChangeContactInfoModalState(false)
+
+      setLoading(false)
+    } catch (error) {
+      message.error(error.message)
+    }
+  }
+
   return (
     <ModalWindow
       title="Информация"
@@ -100,13 +129,19 @@ const ContactInfo: FC<IContactInfoProps> = (props) => {
       onOk={() => dispatchChangeContactInfoModalState(false)}
     >
       <Row align="middle">
-        <Col flex="150px">
-          <Avatar size={128} src={photo} />
-        </Col>
+        {!contact.isInvite && (
+          <Col flex="150px">
+            <Avatar size={128} src={photo} />
+          </Col>
+        )}
         <Col flex="auto">
           <Title level={4}>{name}</Title>
-          <Paragraph>ID: {activeContact.id}</Paragraph>
-          <Paragraph>Email: {email}</Paragraph>
+          {email && <Paragraph>Email: {email}</Paragraph>}
+          {contact.isInvite && (
+            <Text type="secondary">
+              Отправлен запрос на добавление в список контактов
+            </Text>
+          )}
         </Col>
       </Row>
       <Divider />
@@ -118,15 +153,27 @@ const ContactInfo: FC<IContactInfoProps> = (props) => {
             delay={500}
           />
         )}
-        <Button
-          block
-          danger
-          type="default"
-          onClick={removeContactHandler}
-          disabled={loading}
-        >
-          Удалить контакт
-        </Button>
+        {contact.isInvite ? (
+          <Button
+            block
+            danger
+            type="default"
+            onClick={cancelAddContactHandler}
+            disabled={loading}
+          >
+            Отменить запрос за добавление
+          </Button>
+        ) : (
+          <Button
+            block
+            danger
+            type="default"
+            onClick={removeContactHandler}
+            disabled={loading}
+          >
+            Удалить контакт
+          </Button>
+        )}
       </div>
     </ModalWindow>
   )

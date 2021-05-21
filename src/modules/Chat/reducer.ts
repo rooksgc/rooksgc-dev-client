@@ -16,6 +16,8 @@ export interface IActiveChannel {
   id: number
   name: string
   type: string
+  isInvite?: boolean
+  text?: string
 }
 
 export interface IChatState {

@@ -15,7 +15,7 @@ const socketService = {
   },
   subscribeToChannels: async (user: UserDTO) => {
     const channels = await chatService.getChannels(user.channels)
-    const contacts = await chatService.getContacts(user.contacts)
+    const contacts = await chatService.getContacts(user)
 
     if (user.channels) {
       const channelsList = Object.keys(channels)

@@ -1,13 +1,15 @@
 import { useCallback } from 'react'
 import { nanoid } from 'nanoid'
 import { UserDTO } from 'services/user'
-import { Empty } from 'antd'
+import { Empty, Alert, Typography } from 'antd'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 import { sendChannelMessage, sendContactMessage } from 'modules/Chat/actions'
 import { useActions } from 'hooks/useActions'
 import { socketService } from 'services/socket'
 import { Messages } from './Messages'
 import { InputMessage } from './InputMessage'
+
+const { Text, Title } = Typography
 
 const Chat = () => {
   const user = useShallowEqualSelector((state) => state.auth.user) as UserDTO
@@ -61,7 +63,30 @@ const Chat = () => {
       </div>
     )
 
-  const { type, id } = activeChannel
+  const { id, type, name, isInvite, text } = activeChannel
+  const description = `Запрос на добавление в контакты отправлен пользователю ${name}`
+
+  if (isInvite) {
+    return (
+      <>
+        <Alert
+          showIcon
+          message="Ожидание подтверждения"
+          description={description}
+          type="info"
+        />
+        {text && (
+          <div className="invitation-text">
+            <Title level={5}>Ваше сообщение пользователю:</Title>
+            <Text>
+              <blockquote>{text}</blockquote>
+            </Text>
+          </div>
+        )}
+      </>
+    )
+  }
+
   const channelData =
     type === 'channel' ? channels && channels[id] : contacts && contacts[id]
 

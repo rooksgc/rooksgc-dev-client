@@ -6,14 +6,15 @@ import { UserDTO } from 'services/user'
 import { chatService } from 'services/chat'
 import { useActions } from 'hooks/useActions'
 import { addContact, setActiveChannel } from 'modules/Chat/actions'
-import { userAddContact } from 'modules/Auth/actions'
 import { changeAddContactModalState } from 'modules/Modals/actions'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 
 const { Text } = Typography
+const { TextArea } = Input
 
 interface IFormValues {
   email: string
+  text?: string
 }
 
 interface IAddContactProps {}
@@ -28,25 +29,27 @@ const AddContact: FC<IAddContactProps> = () => {
   const [
     dispatchChangeAddContactModalState,
     dispatchAddContact,
-    dispatchUserAddContact,
     dispatchActiveChannel
   ] = useActions(
-    [changeAddContactModalState, addContact, userAddContact, setActiveChannel],
+    [changeAddContactModalState, addContact, setActiveChannel],
     null
   )
 
   const onFinish = async (values: IFormValues) => {
     try {
-      const { email } = values
+      const { email, text } = values
       setLoading(true)
 
       const {
         type,
         message: serverMessage,
-        data
-      } = await chatService.addContact({
-        from: user.id,
-        email
+        data: invitedUser
+      } = await chatService.inviteToContacts({
+        inviterId: user.id,
+        inviterEmail: user.email,
+        inviterContacts: user.contacts,
+        email,
+        text
       })
 
       if (serverMessage) {
@@ -62,9 +65,20 @@ const AddContact: FC<IAddContactProps> = () => {
 
       form.resetFields()
 
-      dispatchAddContact({ ...data, type: 'contact', messages: [] })
-      dispatchUserAddContact(data.id)
-      dispatchActiveChannel({ id: data.id, name: data.name, type: 'contact' })
+      dispatchAddContact({
+        ...invitedUser,
+        type: 'contact',
+        messages: [],
+        isInvite: true,
+        text
+      })
+      dispatchActiveChannel({
+        id: invitedUser.id,
+        name: invitedUser.name,
+        type: 'contact',
+        isInvite: true,
+        text
+      })
       dispatchChangeAddContactModalState(false)
 
       setLoading(false)
@@ -100,6 +114,13 @@ const AddContact: FC<IAddContactProps> = () => {
           ]}
         >
           <Input prefix={<MailOutlined />} placeholder="Email" size="large" />
+        </Form.Item>
+
+        <Form.Item name="text">
+          <TextArea
+            rows={4}
+            placeholder="Сообщение для пользователя (необязательно)"
+          />
         </Form.Item>
 
         <div className="form-footer">

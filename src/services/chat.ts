@@ -17,6 +17,19 @@ export interface IRemoveContactPayload {
   contactId: number
 }
 
+export interface IInviteToContactsRequestPayload {
+  inviterId: number
+  inviterEmail: string
+  inviterContacts: string
+  email: string
+  text?: string
+}
+
+export interface ICancelAddContactPayload {
+  inviterId: number
+  userId: number
+}
+
 const chatService = {
   /** Создать канал */
   createChannel: async (
@@ -60,29 +73,35 @@ const chatService = {
   },
 
   /** Получить список контактов пользователя с развернутыми данными */
-  getContacts: async (contacts) => {
+  getContacts: async (user) => {
     let contactsList = null
+    const { id: userId, contacts } = user
 
-    if (contacts) {
-      const populatedContacts = await api.send({
-        method: 'post',
-        endpoint: `/api/v1/chat/contacts/populate`,
-        payload: { contacts }
-      })
+    const populatedContacts = await api.send({
+      method: 'post',
+      endpoint: `/api/v1/chat/contacts/populate`,
+      payload: { userId, contacts }
+    })
 
+    if (populatedContacts.data?.length) {
       contactsList = populatedContacts.data.reduce(
-        (acc, { id, name, email, photo }) => ({
+        (acc, { id, name, email, photo, role, isInvite, text }) => ({
           ...acc,
           [id]: {
             name,
             email,
             photo,
+            role,
+            isInvite,
+            text,
             type: 'contact',
             messages: []
           }
         }),
         {}
       )
+    } else {
+      contactsList = null
     }
 
     return contactsList
@@ -98,6 +117,16 @@ const chatService = {
       payload
     }),
 
+  /** Запрос на добавление в контакты */
+  inviteToContacts: async (
+    payload: IInviteToContactsRequestPayload
+  ): Promise<IServerResponse> =>
+    api.send({
+      method: 'put',
+      endpoint: '/api/v1/chat/contact/invite',
+      payload
+    }),
+
   /** Удалить контакт */
   removeContact: async (
     payload: IRemoveContactPayload
@@ -106,6 +135,17 @@ const chatService = {
     return api.send({
       method: 'delete',
       endpoint: `/api/v1/chat/${userId}/contact/${contactId}`
+    })
+  },
+
+  /** Отмена добавления в контакты */
+  removeInvite: async (
+    payload: ICancelAddContactPayload
+  ): Promise<IServerResponse> => {
+    const { inviterId, userId } = payload
+    return api.send({
+      method: 'delete',
+      endpoint: `/api/v1/chat/inviter/${inviterId}/contact/${userId}`
     })
   }
 }

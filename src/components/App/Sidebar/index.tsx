@@ -3,7 +3,7 @@ import { Layout, Menu, Avatar } from 'antd'
 import {
   LockOutlined,
   UnlockOutlined,
-  MessageFilled,
+  ClockCircleTwoTone,
   PlusCircleOutlined
 } from '@ant-design/icons'
 import { useEscape } from 'hooks/useEscape'
@@ -56,10 +56,10 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
 
     const [channelType, channelId] = key.split('-')
     const place = channelType === 'channel' ? channels : contacts
-    const { name, type } = place[channelId]
-
+    const { name, type, isInvite, text } = place[channelId]
     const intChannelId = parseInt(channelId, 10)
-    dispatchActiveChannel({ id: intChannelId, name, type })
+
+    dispatchActiveChannel({ id: intChannelId, name, type, isInvite, text })
 
     if (!sidebarLocked) {
       onSidebarToggle(true)
@@ -136,10 +136,11 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
                         <Avatar
                           size={40}
                           className="channel-photo"
-                          icon={<MessageFilled style={{ color: '#fefefe' }} />}
+                          icon={
+                            <ClockCircleTwoTone style={{ color: '#fefefe' }} />
+                          }
                         />
                       )}
-
                       <span className="channel-name">{channel.name}</span>
                     </Menu.Item>
                   )
@@ -180,7 +181,7 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
                           contact.photo ? (
                             contact.photo
                           ) : (
-                            <MessageFilled style={{ color: '#fefefe' }} />
+                            <ClockCircleTwoTone style={{ fontSize: '40px' }} />
                           )
                         }
                       />
