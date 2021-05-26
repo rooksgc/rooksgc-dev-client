@@ -16,7 +16,7 @@ export interface IActiveChannel {
   id: number
   name: string
   type: string
-  isInvite?: boolean
+  isContactRequest?: boolean
   text?: string
 }
 
@@ -39,16 +39,20 @@ const activeChannel = handleActions(
   null
 )
 
-const addMessage = (state, action) => ({
-  ...state,
-  [action.payload.activeChannelId]: {
-    ...state[action.payload.activeChannelId],
-    messages: [
-      ...state[action.payload.activeChannelId].messages,
-      action.payload.message
-    ]
+const addMessage = (state, action) => {
+  if (!state) return state
+
+  return {
+    ...state,
+    [action.payload.activeChannelId]: {
+      ...state[action.payload.activeChannelId],
+      messages: [
+        ...state[action.payload.activeChannelId].messages,
+        action.payload.message
+      ]
+    }
   }
-})
+}
 
 const channels = handleActions(
   {

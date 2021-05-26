@@ -1,11 +1,20 @@
 import { useCallback } from 'react'
 import { nanoid } from 'nanoid'
 import { UserDTO } from 'services/user'
-import { Empty, Alert, Typography } from 'antd'
+import { Empty, Alert, Typography, Button } from 'antd'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
-import { sendChannelMessage, sendContactMessage } from 'modules/Chat/actions'
+import {
+  sendChannelMessage,
+  sendContactMessage,
+  removeContact,
+  setActiveChannel,
+  addContact
+} from 'modules/Chat/actions'
+import { userRemoveContact } from 'modules/Auth/actions'
 import { useActions } from 'hooks/useActions'
 import { socketService } from 'services/socket'
+import { notify } from 'services/notification'
+import { chatService } from 'services/chat'
 import { Messages } from './Messages'
 import { InputMessage } from './InputMessage'
 
@@ -13,8 +22,22 @@ const { Text, Title } = Typography
 
 const Chat = () => {
   const user = useShallowEqualSelector((state) => state.auth.user) as UserDTO
-  const [dispatchSendChannelMessage, dispatchSendContactMessage] = useActions(
-    [sendChannelMessage, sendContactMessage],
+  const [
+    dispatchSendChannelMessage,
+    dispatchSendContactMessage,
+    dispatchRemoveContact,
+    dispatchUserRemoveContact,
+    dispatchActiveChannel,
+    dispatchAddContact
+  ] = useActions(
+    [
+      sendChannelMessage,
+      sendContactMessage,
+      removeContact,
+      userRemoveContact,
+      setActiveChannel,
+      addContact
+    ],
     null
   )
   const { activeChannel, channels, contacts } = useShallowEqualSelector(
@@ -63,16 +86,15 @@ const Chat = () => {
       </div>
     )
 
-  const { id, type, name, isInvite, text } = activeChannel
-  const description = `Запрос на добавление в контакты отправлен пользователю ${name}`
+  const { id, type, name, isContactRequest, isInvite, text } = activeChannel
 
-  if (isInvite) {
+  if (isContactRequest) {
     return (
       <>
         <Alert
           showIcon
           message="Ожидание подтверждения"
-          description={description}
+          description={`Запрос на добавление в контакты отправлен пользователю ${name}`}
           type="info"
         />
         {text && (
@@ -83,6 +105,112 @@ const Chat = () => {
             </Text>
           </div>
         )}
+      </>
+    )
+  }
+
+  const removeInviteHandler = async () => {
+    try {
+      const { type: responseType, message } = await chatService.removeInvite({
+        inviterId: activeChannel.id,
+        userId: user.id
+      })
+
+      if (message) {
+        if (responseType === 'success') {
+          notify.success(message)
+        }
+        if (responseType === 'error') {
+          notify.error(message)
+          return
+        }
+      }
+
+      dispatchRemoveContact(activeChannel.id)
+      dispatchActiveChannel(null)
+
+      socketService.removeInviteRequest({ to: activeChannel.id, contact: user })
+    } catch (error) {
+      notify.error(error.message)
+    }
+  }
+
+  const addContactHandler = async () => {
+    try {
+      const {
+        type: responseType,
+        message: serverMessage,
+        data
+      } = await chatService.addContact({
+        inviterId: activeChannel.id,
+        userId: user.id
+      })
+
+      if (serverMessage) {
+        if (responseType === 'success') {
+          dispatchAddContact({
+            ...data,
+            type: 'contact',
+            messages: []
+          })
+          dispatchActiveChannel({
+            ...data,
+            type: 'contact'
+          })
+
+          socketService.addContactRequest({
+            to: data.id,
+            contact: {
+              ...user,
+              type: 'contact',
+              messages: []
+            }
+          })
+
+          notify.success(serverMessage)
+        }
+
+        if (responseType === 'error') {
+          // @todo refactor
+          if (serverMessage === 'Пользователь отменил свое приглашение') {
+            dispatchRemoveContact(activeChannel.id)
+            dispatchUserRemoveContact(activeChannel.id)
+            dispatchActiveChannel(null)
+          }
+
+          notify.error(serverMessage)
+        }
+      }
+    } catch (error) {
+      notify.error(error.message)
+    }
+  }
+
+  if (isInvite) {
+    return (
+      <>
+        <Alert
+          showIcon
+          message="Запрос на добавление в контакты"
+          description={`Пользователь ${name} хочет добавить Вас в свой список контактов`}
+          type="info"
+        />
+        {text && (
+          <div className="invitation-text">
+            <Title level={5}>Приветственное сообщение:</Title>
+            <Text>
+              <blockquote>{text}</blockquote>
+            </Text>
+          </div>
+        )}
+        <div className="stretch-container">
+          <Button block onClick={addContactHandler}>
+            Добавить
+          </Button>
+          <Button block danger onClick={removeInviteHandler}>
+            Отказать
+          </Button>
+        </div>
       </>
     )
   }

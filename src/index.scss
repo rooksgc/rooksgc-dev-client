@@ -230,3 +230,9 @@ code {
 .invitation-text {
   padding: 15px 15px 15px 24px;
 }
+
+.stretch-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

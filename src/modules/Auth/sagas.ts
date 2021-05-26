@@ -1,4 +1,4 @@
-import { takeLatest, put, call, fork } from 'redux-saga/effects'
+import { takeEvery, put, call, fork } from 'redux-saga/effects'
 import { authService } from 'services/auth'
 import { socketService } from 'services/socket'
 import {
@@ -7,8 +7,8 @@ import {
   userFetchSuccess
 } from './actions'
 import {
-  initChannelsData,
-  initContactsData,
+  // initChannelsData,
+  // initContactsData,
   setActiveChannel
 } from '../Chat/actions'
 
@@ -16,15 +16,17 @@ import {
 export function* userLoginRequestFlow({ payload: { data: user, token } }) {
   yield put(userFetchSuccess(user))
   yield call([authService, authService.setToken], token)
-  const { channels, contacts } = yield call(
-    [socketService, socketService.connect],
-    user
-  )
-  yield put(initChannelsData(channels))
-  yield put(initContactsData(contacts))
+
+  // const { channels, contacts } = yield call(
+  //   [socketService, socketService.connect],
+  //   user
+  // )
+
+  // yield put(initChannelsData(channels))
+  // yield put(initContactsData(contacts))
 }
 export function* userLoginWatcher() {
-  yield takeLatest(userLoginRequest, userLoginRequestFlow)
+  yield takeEvery(userLoginRequest, userLoginRequestFlow)
 }
 
 /** logout */
@@ -35,7 +37,7 @@ export function* userLogoutRequestFlow() {
   yield call([socketService, socketService.disconnect])
 }
 export function* userLogoutWatcher() {
-  yield takeLatest(userLogoutRequest, userLogoutRequestFlow)
+  yield takeEvery(userLogoutRequest, userLogoutRequestFlow)
 }
 
 const authSagas = function* generator() {

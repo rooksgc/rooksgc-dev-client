@@ -8,6 +8,15 @@ export interface IServerResponse {
   token?: string
 }
 
+interface IServerError {
+  response: IErrorResponse
+}
+
+interface IErrorResponse {
+  data?: any
+  status: number
+}
+
 /** Сообщение при недоступном соединении */
 export const SERVER_UNAVAILABLE =
   'Сервер не отвечает или временно недоступен. Попробуйте повторить запрос позднее.'
@@ -19,10 +28,9 @@ export const AUTH_TOKEN_STORAGE_KEY = 'auth'
 export const AUTH_REJECTION_MESSAGE =
   'Войдите или зарегистрируйтесь для просмотра данного содержимого.'
 
-export const makeError = (error: any): IServerResponse => {
-  const {
-    response: { data, status }
-  } = error
+export const makeError = (error: IServerError): IServerResponse => {
+  const data = error?.response?.data
+  const status = error?.response?.status
 
   if (typeof data === 'string' && (status === 502 || status === 500)) {
     return {

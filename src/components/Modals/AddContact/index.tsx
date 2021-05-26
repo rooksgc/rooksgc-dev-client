@@ -1,9 +1,11 @@
 import { FC, useState } from 'react'
-import { Form, Input, message, Button, Spin, Typography } from 'antd'
+import { Form, Input, Button, Spin, Typography } from 'antd'
 import { LoadingOutlined, MailOutlined } from '@ant-design/icons'
 import { ModalWindow } from 'containers/ModalWindow'
 import { UserDTO } from 'services/user'
 import { chatService } from 'services/chat'
+import { socketService } from 'services/socket'
+import { notify } from 'services/notification'
 import { useActions } from 'hooks/useActions'
 import { addContact, setActiveChannel } from 'modules/Chat/actions'
 import { changeAddContactModalState } from 'modules/Modals/actions'
@@ -46,6 +48,7 @@ const AddContact: FC<IAddContactProps> = () => {
         data: invitedUser
       } = await chatService.inviteToContacts({
         inviterId: user.id,
+        inviterName: user.name,
         inviterEmail: user.email,
         inviterContacts: user.contacts,
         email,
@@ -54,10 +57,10 @@ const AddContact: FC<IAddContactProps> = () => {
 
       if (serverMessage) {
         if (type === 'success') {
-          message.success(serverMessage)
+          notify.success(serverMessage)
         }
         if (type === 'error') {
-          message.error(serverMessage)
+          notify.error(serverMessage)
           setLoading(false)
           return
         }
@@ -65,26 +68,45 @@ const AddContact: FC<IAddContactProps> = () => {
 
       form.resetFields()
 
-      dispatchAddContact({
+      const addContactPayload = {
         ...invitedUser,
         type: 'contact',
-        messages: [],
-        isInvite: true,
-        text
-      })
-      dispatchActiveChannel({
+        messages: []
+      }
+
+      const activeChannelPayload: any = {
         id: invitedUser.id,
         name: invitedUser.name,
-        type: 'contact',
-        isInvite: true,
-        text
-      })
+        type: 'contact'
+      }
+
+      if (!invitedUser.contactAdded) {
+        addContactPayload.isContactRequest = true
+        addContactPayload.text = text
+        activeChannelPayload.isContactRequest = true
+        activeChannelPayload.text = text
+      }
+
+      dispatchAddContact(addContactPayload)
+      dispatchActiveChannel(activeChannelPayload)
       dispatchChangeAddContactModalState(false)
+
+      socketService.inviteContactRequest({
+        to: invitedUser.id,
+        contact: {
+          ...user,
+          isInvite: true,
+          photo: null,
+          text,
+          type: 'contact',
+          messages: []
+        }
+      })
 
       setLoading(false)
     } catch (error) {
       setLoading(false)
-      message.error(error.message)
+      notify.error(error.message)
     }
   }
 

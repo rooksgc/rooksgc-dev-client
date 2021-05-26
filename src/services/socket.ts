@@ -4,15 +4,15 @@ import { UserDTO } from './user'
 
 const socketService = {
   socket: undefined,
+
   connect: async (user: UserDTO) => {
     if (!socketService.socket) {
       socketService.socket = io('/chat', { autoConnect: false })
       socketService.socket.auth = { userId: user.id }
       socketService.socket.connect()
     }
-
-    return socketService.subscribeToChannels(user)
   },
+
   subscribeToChannels: async (user: UserDTO) => {
     const channels = await chatService.getChannels(user.channels)
     const contacts = await chatService.getContacts(user)
@@ -24,23 +24,29 @@ const socketService = {
 
     return { channels, contacts }
   },
+
   subscribeToChannel: async (channelId: number) => {
     socketService.socket.emit('channel:subscribe', channelId)
   },
+
   inviteToChannel: async (userId: number, channelId: number) => {
     socketService.socket.emit('channel:invite', { userId, channelId })
   },
+
   sendChannelMessage: (payload) => {
     socketService.socket.emit('channel:message:send', payload)
   },
+
   sendContactMessage: (payload) => {
     socketService.socket.emit('contact:message:send', payload)
   },
+
   disconnect: () => {
     socketService.socket.disconnect()
     socketService.socket = undefined
   },
-  /** Correct reconnection after server emits disconnected event */
+
+  /** Ручное пересоздание соединения в случае дисконнекта с серверной стороны */
   subscribeToDisconnect: (user) => {
     if (!socketService.socket) return
 
@@ -52,6 +58,7 @@ const socketService = {
       }
     })
   },
+
   subscribeToChannelMessageBroadcast: (cb) => {
     if (!socketService.socket) return
 
@@ -59,6 +66,7 @@ const socketService = {
       cb()
     })
   },
+
   subscribeToContactMessagePrivate: (cb) => {
     if (!socketService.socket) return
 
@@ -66,10 +74,72 @@ const socketService = {
       cb(message, from)
     })
   },
-  unsubscribeFrom: (socketEvents: string[]) => {
-    if (!socketService.socket || !socketEvents.length) return
 
-    socketEvents.forEach((event) => {
+  inviteContactRequest: ({ to, contact }) => {
+    socketService.socket.emit('contact:invite:request', { to, contact })
+  },
+
+  subscribeToInviteContact: (cb) => {
+    if (!socketService.socket) return
+
+    socketService.socket.on('contact:invite', (payload) => {
+      cb(payload)
+    })
+  },
+
+  addContactRequest: ({ to, contact }) => {
+    socketService.socket.emit('contact:add:request', { to, contact })
+  },
+
+  removeInviteRequest: ({ to, contact }) => {
+    socketService.socket.emit('invite:remove:request', { to, contact })
+  },
+
+  subscribeToRemoveInvite: (cb) => {
+    if (!socketService.socket) return
+
+    socketService.socket.on('invite:remove', (payload) => {
+      cb(payload)
+    })
+  },
+
+  cancelInviteRequest: ({ to, contact }) => {
+    socketService.socket.emit('invite:cancel:request', { to, contact })
+  },
+
+  subscribeToCancelInvite: (cb) => {
+    if (!socketService.socket) return
+
+    socketService.socket.on('invite:cancel', (payload) => {
+      cb(payload)
+    })
+  },
+
+  subscribeToAddContact: (cb) => {
+    if (!socketService.socket) return
+
+    socketService.socket.on('contact:add', (payload) => {
+      cb(payload)
+    })
+  },
+
+  unsubscribeFromSocketEvents: () => {
+    if (!socketService.socket) return
+
+    const events = [
+      'channel:message:send',
+      'channel:message:broadcast',
+      'contact:message:private',
+      'contact:message:send',
+      'contact:invite:request',
+      'contact:invite',
+      'contact:add:request',
+      'contact:add',
+      'invite:remove:request',
+      'invite:remove'
+    ]
+
+    events.forEach((event) => {
       socketService.socket.off(event)
     })
   }

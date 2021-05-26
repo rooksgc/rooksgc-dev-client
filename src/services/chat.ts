@@ -8,8 +8,8 @@ export interface ICreateChannelPayload {
 }
 
 export interface IAddContactRequestPayload {
-  from: number
-  email: string
+  inviterId: number
+  userId: number
 }
 
 export interface IRemoveContactPayload {
@@ -19,6 +19,7 @@ export interface IRemoveContactPayload {
 
 export interface IInviteToContactsRequestPayload {
   inviterId: number
+  inviterName: string
   inviterEmail: string
   inviterContacts: string
   email: string
@@ -52,7 +53,7 @@ const chatService = {
         payload: { channels }
       })
 
-      channelsList = populatedChannels.data.reduce(
+      channelsList = populatedChannels?.data.reduce(
         (acc, { id, ownerId, name, members, photo }) => ({
           ...acc,
           [id]: {
@@ -83,15 +84,19 @@ const chatService = {
       payload: { userId, contacts }
     })
 
-    if (populatedContacts.data?.length) {
+    if (populatedContacts?.data?.length) {
       contactsList = populatedContacts.data.reduce(
-        (acc, { id, name, email, photo, role, isInvite, text }) => ({
+        (
+          acc,
+          { id, name, email, photo, role, isContactRequest, isInvite, text }
+        ) => ({
           ...acc,
           [id]: {
             name,
             email,
             photo,
             role,
+            isContactRequest,
             isInvite,
             text,
             type: 'contact',
@@ -107,7 +112,7 @@ const chatService = {
     return contactsList
   },
 
-  /** Добавить новый контакт */
+  /** Добавление нового контакта */
   addContact: async (
     payload: IAddContactRequestPayload
   ): Promise<IServerResponse> =>
@@ -138,7 +143,7 @@ const chatService = {
     })
   },
 
-  /** Отмена добавления в контакты */
+  /** Отмена инвайта */
   removeInvite: async (
     payload: ICancelAddContactPayload
   ): Promise<IServerResponse> => {

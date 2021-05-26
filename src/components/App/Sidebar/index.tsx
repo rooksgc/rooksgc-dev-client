@@ -56,10 +56,17 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
 
     const [channelType, channelId] = key.split('-')
     const place = channelType === 'channel' ? channels : contacts
-    const { name, type, isInvite, text } = place[channelId]
+    const { name, type, isContactRequest, isInvite, text } = place[channelId]
     const intChannelId = parseInt(channelId, 10)
 
-    dispatchActiveChannel({ id: intChannelId, name, type, isInvite, text })
+    dispatchActiveChannel({
+      id: intChannelId,
+      name,
+      type,
+      isContactRequest,
+      isInvite,
+      text
+    })
 
     if (!sidebarLocked) {
       onSidebarToggle(true)

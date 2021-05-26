@@ -1,14 +1,5 @@
 import { FC, useState } from 'react'
-import {
-  Button,
-  message,
-  Avatar,
-  Typography,
-  Row,
-  Col,
-  Divider,
-  Spin
-} from 'antd'
+import { Button, Avatar, Typography, Row, Col, Divider, Spin } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
 import { ModalWindow } from 'containers/ModalWindow'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
@@ -17,8 +8,14 @@ import { chatService } from 'services/chat'
 import { useActions } from 'hooks/useActions'
 import { changeContactInfoModalState } from 'modules/Modals/actions'
 import { IActiveChannel } from 'modules/Chat/reducer'
-import { removeContact, setActiveChannel } from 'modules/Chat/actions'
+import {
+  removeContact,
+  setActiveChannel,
+  addContact
+} from 'modules/Chat/actions'
 import { userRemoveContact } from 'modules/Auth/actions'
+import { socketService } from 'services/socket'
+import { notify } from 'services/notification'
 
 const { Title, Paragraph, Text } = Typography
 
@@ -34,13 +31,15 @@ const ContactInfo: FC<IContactInfoProps> = (props) => {
     dispatchChangeContactInfoModalState,
     dispatchRemoveContact,
     dispatchUserRemoveContact,
-    dispatchActiveChannel
+    dispatchActiveChannel,
+    dispatchAddContact
   ] = useActions(
     [
       changeContactInfoModalState,
       removeContact,
       userRemoveContact,
-      setActiveChannel
+      setActiveChannel,
+      addContact
     ],
     null
   )
@@ -71,10 +70,10 @@ const ContactInfo: FC<IContactInfoProps> = (props) => {
 
       if (serverMessage) {
         if (type === 'success') {
-          message.success(serverMessage)
+          notify.success(serverMessage)
         }
         if (type === 'error') {
-          message.error(serverMessage)
+          notify.success(serverMessage)
           setLoading(false)
           return
         }
@@ -87,11 +86,11 @@ const ContactInfo: FC<IContactInfoProps> = (props) => {
 
       setLoading(false)
     } catch (error) {
-      message.error(error.message)
+      notify.error(error.message)
     }
   }
 
-  const cancelAddContactHandler = async () => {
+  const cancelInviteHandler = async () => {
     try {
       setLoading(true)
 
@@ -102,10 +101,10 @@ const ContactInfo: FC<IContactInfoProps> = (props) => {
 
       if (serverMessage) {
         if (type === 'success') {
-          message.success(serverMessage)
+          notify.success(serverMessage)
         }
         if (type === 'error') {
-          message.error(serverMessage)
+          notify.error(serverMessage)
           setLoading(false)
           return
         }
@@ -115,9 +114,98 @@ const ContactInfo: FC<IContactInfoProps> = (props) => {
       dispatchActiveChannel(null)
       dispatchChangeContactInfoModalState(false)
 
+      socketService.cancelInviteRequest({ to: activeContact.id, contact: user })
+
       setLoading(false)
     } catch (error) {
-      message.error(error.message)
+      notify.error(error.message)
+    }
+  }
+
+  const removeInviteHandler = async () => {
+    try {
+      setLoading(true)
+
+      const { type, message: serverMessage } = await chatService.removeInvite({
+        inviterId: activeContact.id,
+        userId: user.id
+      })
+
+      if (serverMessage) {
+        if (type === 'success') {
+          notify.success(serverMessage)
+        }
+        if (type === 'error') {
+          notify.error(serverMessage)
+          setLoading(false)
+          return
+        }
+      }
+
+      dispatchRemoveContact(activeContact.id)
+      dispatchActiveChannel(null)
+      dispatchChangeContactInfoModalState(false)
+
+      socketService.removeInviteRequest({ to: activeContact.id, contact: user })
+
+      setLoading(false)
+    } catch (error) {
+      notify.error(error.message)
+    }
+  }
+
+  const addContactHandler = async () => {
+    try {
+      setLoading(true)
+
+      const {
+        type,
+        message: serverMessage,
+        data
+      } = await chatService.addContact({
+        inviterId: activeContact.id,
+        userId: user.id
+      })
+
+      if (serverMessage) {
+        if (type === 'success') {
+          dispatchAddContact({
+            ...data,
+            type: 'contact',
+            messages: []
+          })
+          dispatchActiveChannel({
+            ...data,
+            type: 'contact'
+          })
+
+          socketService.addContactRequest({
+            to: data.id,
+            contact: {
+              ...user,
+              type: 'contact',
+              messages: []
+            }
+          })
+
+          notify.success(serverMessage)
+        }
+        if (type === 'error') {
+          // @todo refactor
+          if (serverMessage === 'Пользователь отменил свое приглашение') {
+            dispatchRemoveContact(activeContact.id)
+            dispatchUserRemoveContact(activeContact.id)
+            dispatchActiveChannel(null)
+          }
+
+          notify.error(serverMessage)
+        }
+      }
+
+      dispatchChangeContactInfoModalState(false)
+      setLoading(false)
+    } catch (error) {
+      notify.error(error.message)
     }
   }
 
@@ -129,7 +217,7 @@ const ContactInfo: FC<IContactInfoProps> = (props) => {
       onOk={() => dispatchChangeContactInfoModalState(false)}
     >
       <Row align="middle">
-        {!contact.isInvite && (
+        {!contact.isContactRequest && !contact.isInvite && (
           <Col flex="150px">
             <Avatar size={128} src={photo} />
           </Col>
@@ -137,9 +225,14 @@ const ContactInfo: FC<IContactInfoProps> = (props) => {
         <Col flex="auto">
           <Title level={4}>{name}</Title>
           {email && <Paragraph>Email: {email}</Paragraph>}
-          {contact.isInvite && (
+          {contact.isContactRequest && (
             <Text type="secondary">
               Отправлен запрос на добавление в список контактов
+            </Text>
+          )}
+          {contact.isInvite && (
+            <Text type="secondary">
+              Пользователь хочет добавить Вас в свой список контактов
             </Text>
           )}
         </Col>
@@ -153,16 +246,30 @@ const ContactInfo: FC<IContactInfoProps> = (props) => {
             delay={500}
           />
         )}
-        {contact.isInvite ? (
+        {contact.isContactRequest ? (
           <Button
             block
             danger
             type="default"
-            onClick={cancelAddContactHandler}
+            onClick={cancelInviteHandler}
             disabled={loading}
           >
             Отменить запрос за добавление
           </Button>
+        ) : contact.isInvite ? (
+          <div className="stretch-container">
+            <Button block onClick={addContactHandler} disabled={loading}>
+              Добавить
+            </Button>
+            <Button
+              block
+              danger
+              onClick={removeInviteHandler}
+              disabled={loading}
+            >
+              Отказать
+            </Button>
+          </div>
         ) : (
           <Button
             block

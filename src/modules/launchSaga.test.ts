@@ -3,7 +3,6 @@ import { authService } from 'services/auth'
 import { launchSaga } from './launchSaga'
 import { runSaga } from 'redux-saga'
 import { socketService } from 'services/socket'
-import { initChannelsData, initContactsData } from './Chat/actions'
 
 beforeEach(() => {
   jest.resetAllMocks()
@@ -70,20 +69,12 @@ describe('Launch saga', () => {
       type: 'success',
       data: fakeUser
     }
-    const connectResponse = {
-      type: 'success',
-      data: fakeUser
-    }
 
     const getToken = jest.fn(() => fakeToken)
     const fetchByToken = jest.fn((): any => fetchByTokenResponse)
-    const connect = jest.fn((): any => {
-      return connectResponse
-    })
 
     authService.getToken = getToken
     authService.fetchByToken = fetchByToken
-    socketService.connect = connect
 
     await runSaga(fakeStore, launchSaga)
 
@@ -94,14 +85,8 @@ describe('Launch saga', () => {
     expect(fetchByToken).toHaveBeenCalledWith({ token: fakeToken })
     expect(fetchByToken.mock.results[0].value).toBe(fetchByTokenResponse)
 
-    expect(connect).toHaveBeenCalledTimes(1)
-    expect(connect).toHaveBeenCalledWith(fakeUser)
-    expect(connect.mock.results[0].value).toBe(connectResponse)
-
-    expect(dispatchedActions.length).toBe(3)
+    expect(dispatchedActions.length).toBe(1)
     expect(dispatchedActions[0].type).toBe(userFetchSuccess().type)
-    expect(dispatchedActions[1].type).toBe(initChannelsData().type)
-    expect(dispatchedActions[2].type).toBe(initContactsData().type)
   })
 
   test('Test flow if token wrong or expired', async () => {

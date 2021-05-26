@@ -23,7 +23,12 @@ const user = handleActions(
     [userFetchFailure]: () => false,
     [userUpdatePhoto]: (state, action) => ({ ...state, photo: action.payload }),
     [userRemoveContact]: (state, action) => {
+      if (!state.contacts) {
+        return state
+      }
+
       const oldContacts = JSON.parse(state.contacts)
+
       let updatedContacts = oldContacts.filter(
         (id: number) => action.payload !== id
       )
