@@ -30,7 +30,7 @@ const ChannelInfo: FC<IChannelInfoProps> = (props) => {
     (state) => state.modals.channelInfo
   ) as any
 
-  const channel = activeChannel && channels[activeChannel.id]
+  const channel = activeChannel && channels && channels[activeChannel.id]
 
   useEffect(() => {
     if (!channel || channel.populated) return

@@ -1,6 +1,7 @@
 import { FC, memo } from 'react'
 import { Form, Input, Button } from 'antd'
 import { SendOutlined } from '@ant-design/icons'
+import { notify } from 'services/notification'
 
 interface IFormValues {
   text: string
@@ -19,8 +20,7 @@ const InputMessage: FC<IChatInputProps> = memo(({ sendMessage }) => {
       sendMessage(text)
       form.resetFields()
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error)
+      notify.error(error.message)
     }
   }
   return (
