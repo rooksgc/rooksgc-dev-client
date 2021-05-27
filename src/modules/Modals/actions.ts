@@ -22,3 +22,8 @@ export const changeContactInfoModalState: any = createAction(
 export const changeChannelInfoModalState: any = createAction(
   'MODALS/CHANGE_CHANNEL_INFO_MODAL_STATE'
 )
+
+/** Модальное окно добавления пользователя в канал */
+export const changeAddToChannelModalState: any = createAction(
+  'MODALS/CHANGE_ADD_TO_CHANNEL_MODAL_STATE'
+)

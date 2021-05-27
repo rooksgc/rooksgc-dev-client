@@ -62,9 +62,12 @@ const socketService = {
   subscribeToChannelMessageBroadcast: (cb) => {
     if (!socketService.socket) return
 
-    socketService.socket.on('channel:message:broadcast', () => {
-      cb()
-    })
+    socketService.socket.on(
+      'channel:message:broadcast',
+      ({ activeChannelId, message }) => {
+        cb({ activeChannelId, message })
+      }
+    )
   },
 
   subscribeToContactMessagePrivate: (cb) => {
@@ -119,6 +122,22 @@ const socketService = {
     if (!socketService.socket) return
 
     socketService.socket.on('contact:add', (payload) => {
+      cb(payload)
+    })
+  },
+
+  addToChannelRequest: ({ to, inviterName, channel }) => {
+    socketService.socket.emit('channel:adduser:request', {
+      to,
+      inviterName,
+      channel
+    })
+  },
+
+  subscribeToAddToChannel: (cb) => {
+    if (!socketService.socket) return
+
+    socketService.socket.on('channel:adduser', (payload) => {
       cb(payload)
     })
   },

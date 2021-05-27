@@ -31,6 +31,12 @@ export interface ICancelAddContactPayload {
   userId: number
 }
 
+export interface IAddToChannelPayload {
+  channelId: number
+  channelName: string
+  email: string
+}
+
 const chatService = {
   /** Создать канал */
   createChannel: async (
@@ -152,7 +158,17 @@ const chatService = {
       method: 'delete',
       endpoint: `/api/v1/chat/inviter/${inviterId}/contact/${userId}`
     })
-  }
+  },
+
+  /** Добавление пользователя в канал */
+  addToChannel: async (
+    payload: IAddToChannelPayload
+  ): Promise<IServerResponse> =>
+    api.send({
+      method: 'patch',
+      endpoint: '/api/v1/chat/channel/adduser',
+      payload
+    })
 }
 
 export { chatService }

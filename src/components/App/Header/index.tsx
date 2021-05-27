@@ -8,11 +8,13 @@ import { PrivateContainer } from 'containers/Private'
 import { UserDTO } from 'services/user'
 import { ContactInfo } from 'components/Modals/ContactInfo'
 import { ChannelInfo } from 'components/Modals/ChannelInfo'
+import { AddToChannel } from 'components/Modals/AddToChannel'
 import { useActions } from 'hooks/useActions'
 import {
   changeContactInfoModalState,
   changeChannelInfoModalState
 } from 'modules/Modals/actions'
+import { IActiveChannel } from 'modules/Chat/reducer'
 
 const { Text } = Typography
 
@@ -37,7 +39,7 @@ const Header: FC<IHeaderProps> = (props: IHeaderProps) => {
   const chatInfoRef = useRef(null)
   const activeChannel = useShallowEqualSelector(
     (state) => state.chat.activeChannel
-  ) as any
+  ) as IActiveChannel
 
   const { onSidebarToggle, sidebarCollapsed } = props
 
@@ -75,6 +77,17 @@ const Header: FC<IHeaderProps> = (props: IHeaderProps) => {
     }
   }
 
+  let membersCount = 0
+  const channels = useShallowEqualSelector(
+    (state) => state.chat.channels
+  ) as any
+
+  if (activeChannel?.type === 'channel') {
+    const members =
+      activeChannel && channels && channels[activeChannel.id].members
+    membersCount = members && Object.keys(members).length
+  }
+
   const activeChat = activeChannel && (
     <div
       className="active-channel"
@@ -87,7 +100,7 @@ const Header: FC<IHeaderProps> = (props: IHeaderProps) => {
       <Text className="active-channel-text">{activeChannel.name}</Text>
       {activeChannel.type === 'channel' ? (
         <Text className="active-channel-text" type="secondary">
-          5 участников
+          {membersCount} участников
         </Text>
       ) : (
         <Text className="active-channel-text" type="secondary">
@@ -104,6 +117,7 @@ const Header: FC<IHeaderProps> = (props: IHeaderProps) => {
         {activeChat}
         <ContactInfo activeContact={activeChannel} />
         <ChannelInfo activeChannel={activeChannel} />
+        <AddToChannel activeChannel={activeChannel} />
       </PrivateContainer>
 
       <div className="header-menu">

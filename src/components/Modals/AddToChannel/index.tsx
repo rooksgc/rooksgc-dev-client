@@ -7,52 +7,47 @@ import { chatService } from 'services/chat'
 import { socketService } from 'services/socket'
 import { notify } from 'services/notification'
 import { useActions } from 'hooks/useActions'
-import { addContact, setActiveChannel } from 'modules/Chat/actions'
-import { changeAddContactModalState } from 'modules/Modals/actions'
+import { changeAddToChannelModalState } from 'modules/Modals/actions'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
+import { IActiveChannel } from 'modules/Chat/reducer'
+import { addChannelMember } from 'modules/Chat/actions'
 
 const { Text } = Typography
-const { TextArea } = Input
 
 interface IFormValues {
   email: string
-  text?: string
 }
 
-interface IAddContactProps {}
+interface IAddToChannelProps {
+  activeChannel: IActiveChannel
+}
 
-const AddContact: FC<IAddContactProps> = () => {
-  const addContactModalState = useShallowEqualSelector(
-    (state) => state.modals.addContact
+const AddToChannel: FC<IAddToChannelProps> = (props) => {
+  const { activeChannel } = props
+  const addToChannelModalState = useShallowEqualSelector(
+    (state) => state.modals.addToChannel
   ) as any
   const user = useShallowEqualSelector((state) => state.auth.user) as UserDTO
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
   const [
-    dispatchChangeAddContactModalState,
-    dispatchAddContact,
-    dispatchActiveChannel
-  ] = useActions(
-    [changeAddContactModalState, addContact, setActiveChannel],
-    null
-  )
+    dispatchChangeAddToChannelModalState,
+    dispatchAddChannelMember
+  ] = useActions([changeAddToChannelModalState, addChannelMember], null)
 
-  const addContactHandler = async (values: IFormValues) => {
+  const addToChannelHandler = async (values: IFormValues) => {
     try {
-      const { email, text } = values
+      const { email } = values
       setLoading(true)
 
       const {
         type,
         message: serverMessage,
-        data: invitedUser
-      } = await chatService.inviteToContacts({
-        inviterId: user.id,
-        inviterName: user.name,
-        inviterEmail: user.email,
-        inviterContacts: user.contacts,
-        email,
-        text
+        data
+      } = await chatService.addToChannel({
+        channelId: activeChannel.id,
+        channelName: activeChannel.name,
+        email
       })
 
       if (serverMessage) {
@@ -68,41 +63,22 @@ const AddContact: FC<IAddContactProps> = () => {
 
       form.resetFields()
 
-      const addContactPayload = {
-        ...invitedUser,
-        type: 'contact',
-        messages: []
-      }
-
-      const activeChannelPayload: any = {
-        id: invitedUser.id,
-        name: invitedUser.name,
-        type: 'contact'
-      }
-
-      if (!invitedUser.contactAdded) {
-        addContactPayload.isContactRequest = true
-        addContactPayload.text = text
-        activeChannelPayload.isContactRequest = true
-        activeChannelPayload.text = text
-      }
-
-      dispatchAddContact(addContactPayload)
-      dispatchActiveChannel(activeChannelPayload)
-      dispatchChangeAddContactModalState(false)
-
-      socketService.inviteContactRequest({
-        to: invitedUser.id,
-        contact: {
-          ...user,
-          isInvite: true,
-          photo: null,
-          text,
-          type: 'contact',
+      socketService.addToChannelRequest({
+        to: data.invitedUser.id,
+        inviterName: user.name,
+        channel: {
+          ...data.channel,
+          type: 'channel',
           messages: []
         }
       })
 
+      dispatchAddChannelMember({
+        id: data.channel.id,
+        member: data.invitedUser
+      })
+
+      dispatchChangeAddToChannelModalState(false)
       setLoading(false)
     } catch (error) {
       setLoading(false)
@@ -112,17 +88,19 @@ const AddContact: FC<IAddContactProps> = () => {
 
   return (
     <ModalWindow
-      title="Добавить контакт"
-      visible={addContactModalState}
-      onCancel={() => dispatchChangeAddContactModalState(false)}
+      title="Добавить пользователя в канал"
+      visible={addToChannelModalState}
+      onCancel={() => dispatchChangeAddToChannelModalState(false)}
     >
-      <Text>Введите Email контакта, которого Вы хотели добавить</Text>
+      <Text>
+        Введите Email пользователя, которого Вы хотели добавить в канал
+      </Text>
       <Form
         form={form}
-        name="addContact"
-        className="add-contact-form"
+        name="addToChannel"
+        className="add-to-channel-form"
         layout="vertical"
-        onFinish={addContactHandler}
+        onFinish={addToChannelHandler}
       >
         <Form.Item
           name="email"
@@ -138,13 +116,6 @@ const AddContact: FC<IAddContactProps> = () => {
           <Input prefix={<MailOutlined />} placeholder="Email" size="large" />
         </Form.Item>
 
-        <Form.Item name="text">
-          <TextArea
-            rows={4}
-            placeholder="Сообщение для пользователя (необязательно)"
-          />
-        </Form.Item>
-
         <div className="form-footer">
           {loading && (
             <Spin
@@ -155,7 +126,7 @@ const AddContact: FC<IAddContactProps> = () => {
           )}
           <Button
             key="back"
-            onClick={() => dispatchChangeAddContactModalState(false)}
+            onClick={() => dispatchChangeAddToChannelModalState(false)}
             disabled={loading}
           >
             Отмена
@@ -174,4 +145,4 @@ const AddContact: FC<IAddContactProps> = () => {
   )
 }
 
-export { AddContact }
+export { AddToChannel }

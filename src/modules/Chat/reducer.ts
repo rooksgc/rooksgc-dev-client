@@ -9,7 +9,8 @@ import {
   addChannel,
   addContact,
   populateChannel,
-  removeContact
+  removeContact,
+  addChannelMember
 } from './actions'
 
 export interface IActiveChannel {
@@ -76,6 +77,13 @@ const channels = handleActions(
         owner: action.payload.owner,
         members: action.payload.members,
         populated: true
+      }
+    }),
+    [addChannelMember]: (state, action) => ({
+      ...state,
+      [action.payload.id]: {
+        ...state[action.payload.id],
+        members: [...state[action.payload.id].members, action.payload.member]
       }
     })
   },

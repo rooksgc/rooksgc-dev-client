@@ -9,7 +9,8 @@ import {
   initContactsData,
   addContact,
   setActiveChannel,
-  removeContact
+  removeContact,
+  addChannel
 } from 'modules/Chat/actions'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 import { useActions } from 'hooks/useActions'
@@ -30,7 +31,8 @@ const App: FC = () => {
     dispatchInitContactsData,
     dispatchAddContact,
     dispatchActiveChannel,
-    dispatchRemoveContact
+    dispatchRemoveContact,
+    dispatchAddChannel
   ] = useActions(
     [
       sendChannelMessage,
@@ -39,7 +41,8 @@ const App: FC = () => {
       initContactsData,
       addContact,
       setActiveChannel,
-      removeContact
+      removeContact,
+      addChannel
     ],
     null
   )
@@ -66,11 +69,8 @@ const App: FC = () => {
       socketService.subscribeToDisconnect(user)
 
       socketService.subscribeToChannelMessageBroadcast(
-        ({ activeChannelId: channelId, message }) => {
-          dispatchSendChannelMessage({
-            activeChannelId: channelId,
-            message
-          })
+        ({ activeChannelId, message }) => {
+          dispatchSendChannelMessage({ activeChannelId, message })
         }
       )
 
@@ -118,6 +118,20 @@ const App: FC = () => {
         notify.error(
           'Отмена добавления в контакты',
           `Пользователь ${name} отменил запрос на добавление в контакты`
+        )
+      })
+
+      socketService.subscribeToAddToChannel((payload) => {
+        const { inviterName, channel } = payload
+        socketService.subscribeToChannel(channel.id)
+        dispatchAddChannel(channel)
+
+        const { id, name, type } = channel
+        dispatchActiveChannel({ id, name, type })
+
+        notify.success(
+          'Добавление в канал',
+          `Пользователь ${inviterName} добавил(а) Вас в канал ${name}`
         )
       })
     }

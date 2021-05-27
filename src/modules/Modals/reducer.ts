@@ -5,7 +5,8 @@ import {
   changeUserProfileModalState,
   changeAddContactModalState,
   changeContactInfoModalState,
-  changeChannelInfoModalState
+  changeChannelInfoModalState,
+  changeAddToChannelModalState
 } from './actions'
 
 export interface IModalsState {
@@ -14,6 +15,7 @@ export interface IModalsState {
   addContact: boolean
   contactInfo: boolean
   channelInfo: boolean
+  addToChannel: boolean
 }
 
 export const initialState = {
@@ -21,7 +23,8 @@ export const initialState = {
   userProfile: false,
   addContact: false,
   contactInfo: false,
-  channelInfo: false
+  channelInfo: false,
+  addToChannel: false
 }
 
 const createChannel = handleActions(
@@ -49,12 +52,18 @@ const channelInfo = handleActions(
   false
 )
 
+const addToChannel = handleActions(
+  { [changeAddToChannelModalState]: (_state, action) => action.payload },
+  false
+)
+
 const modalsReducer = combineReducers<IModalsState>({
   createChannel,
   userProfile,
   addContact,
   contactInfo,
-  channelInfo
+  channelInfo,
+  addToChannel
 })
 
 export { modalsReducer }

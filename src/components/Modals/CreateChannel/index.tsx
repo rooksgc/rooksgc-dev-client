@@ -36,7 +36,7 @@ const CreateChannel: FC<ICreateChannelProps> = () => {
     null
   )
 
-  const onFinish = async (values: IFormValues) => {
+  const createChannelHandler = async (values: IFormValues) => {
     try {
       const { name, description } = values
       setLoading(true)
@@ -96,20 +96,20 @@ const CreateChannel: FC<ICreateChannelProps> = () => {
         name="createChannel"
         className="create-channel-form"
         layout="vertical"
-        onFinish={onFinish}
+        onFinish={createChannelHandler}
       >
         <Form.Item
           name="name"
           rules={[
             { required: true, message: 'Введите название канала' },
-            { max: 20, message: 'Не более 20 символов' }
+            { max: 100, message: 'Не более 100 символов' }
           ]}
         >
           <Input placeholder="Название канала" />
         </Form.Item>
         <Form.Item
           name="description"
-          rules={[{ max: 50, message: 'Не более 50 символов' }]}
+          rules={[{ max: 250, message: 'Не более 250 символов' }]}
         >
           <Input placeholder="Описание (не обязательно)" type="textarea" />
         </Form.Item>
