@@ -10,7 +10,9 @@ import {
   addContact,
   populateChannel,
   removeContact,
-  addChannelMember
+  addChannelMember,
+  removeChannel,
+  removeChannelMember
 } from './actions'
 
 export interface IActiveChannel {
@@ -70,6 +72,14 @@ const channels = handleActions(
         messages: []
       }
     }),
+    [removeChannel]: (state, action) => {
+      let newState = { ...state }
+      delete newState[action.payload]
+      if (!Object.keys(newState).length) {
+        newState = null
+      }
+      return newState
+    },
     [populateChannel]: (state, action) => ({
       ...state,
       [action.payload.id]: {
@@ -85,7 +95,24 @@ const channels = handleActions(
         ...state[action.payload.id],
         members: [...state[action.payload.id].members, action.payload.member]
       }
-    })
+    }),
+    [removeChannelMember]: (state, action) => {
+      const oldMembers = [...state[action.payload.channelId].members]
+      let updatedMembers = oldMembers.filter(
+        (member) => member.id !== action.payload.userId
+      )
+      if (!updatedMembers.length) {
+        updatedMembers = null
+      }
+
+      return {
+        ...state,
+        [action.payload.channelId]: {
+          ...state[action.payload.channelId],
+          members: updatedMembers
+        }
+      }
+    }
   },
   null
 )

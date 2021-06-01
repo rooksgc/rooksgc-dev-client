@@ -241,3 +241,9 @@ code {
   float: right;
   font-size: 24px;
 }
+
+.channel-info__title {
+  padding-left: 24px;
+  overflow-y: hidden;
+  max-height: 150px;
+}

@@ -10,7 +10,8 @@ import {
   addContact,
   setActiveChannel,
   removeContact,
-  addChannel
+  addChannel,
+  removeChannelMember
 } from 'modules/Chat/actions'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 import { useActions } from 'hooks/useActions'
@@ -32,7 +33,8 @@ const App: FC = () => {
     dispatchAddContact,
     dispatchActiveChannel,
     dispatchRemoveContact,
-    dispatchAddChannel
+    dispatchAddChannel,
+    dispatchRemoveChannelMember
   ] = useActions(
     [
       sendChannelMessage,
@@ -42,7 +44,8 @@ const App: FC = () => {
       addContact,
       setActiveChannel,
       removeContact,
-      addChannel
+      addChannel,
+      removeChannelMember
     ],
     null
   )
@@ -134,6 +137,17 @@ const App: FC = () => {
           `Пользователь ${inviterName} добавил(а) Вас в канал ${name}`
         )
       })
+
+      socketService.subscribeToChannelMemberLeave(
+        ({ channelId, channelName, userId, userName }) => {
+          dispatchRemoveChannelMember({ channelId, userId })
+
+          notify.info(
+            'Изменение в канале',
+            `Пользователь ${userName} покинул(а) канал ${channelName}`
+          )
+        }
+      )
     }
 
     subscribeToSocketEvents()

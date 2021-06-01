@@ -5,6 +5,7 @@ import { UserDTO } from './user'
 const socketService = {
   socket: undefined,
 
+  // Соединение по WebSocket
   connect: async (user: UserDTO) => {
     if (!socketService.socket) {
       socketService.socket = io('/chat', { autoConnect: false })
@@ -13,11 +14,12 @@ const socketService = {
     }
   },
 
+  // Подписка на список каналов
   subscribeToChannels: async (user: UserDTO) => {
     const channels = await chatService.getChannels(user.channels)
     const contacts = await chatService.getContacts(user)
 
-    if (user.channels) {
+    if (channels) {
       const channelsList = Object.keys(channels)
       socketService.socket.emit('channels:subscribe', channelsList)
     }
@@ -25,22 +27,37 @@ const socketService = {
     return { channels, contacts }
   },
 
+  // Подписка на канал
   subscribeToChannel: async (channelId: number) => {
     socketService.socket.emit('channel:subscribe', channelId)
   },
 
+  // Пользователь покинул канал
+  leaveChannel: async ({ channelId, channelName, userId, userName }) => {
+    socketService.socket.emit('channel:leave', {
+      channelId,
+      channelName,
+      userId,
+      userName
+    })
+  },
+
+  // Приглашение пользователя в канал
   inviteToChannel: async (userId: number, channelId: number) => {
     socketService.socket.emit('channel:invite', { userId, channelId })
   },
 
+  // Отправка сообщения в канал
   sendChannelMessage: (payload) => {
     socketService.socket.emit('channel:message:send', payload)
   },
 
+  // Отправка сообщения выбранному пользователю (ЛС)
   sendContactMessage: (payload) => {
     socketService.socket.emit('contact:message:send', payload)
   },
 
+  // Ручное отключение от WebSocket
   disconnect: () => {
     socketService.socket.disconnect()
     socketService.socket = undefined
@@ -142,6 +159,14 @@ const socketService = {
     })
   },
 
+  subscribeToChannelMemberLeave: (cb) => {
+    if (!socketService.socket) return
+
+    socketService.socket.on('channel:member:leave', (payload) => {
+      cb(payload)
+    })
+  },
+
   unsubscribeFromSocketEvents: () => {
     if (!socketService.socket) return
 
@@ -149,13 +174,18 @@ const socketService = {
       'channel:message:send',
       'channel:message:broadcast',
       'contact:message:private',
+      'channel:member:leave',
+      'channel:adduser:request',
+      'channel:adduser',
       'contact:message:send',
       'contact:invite:request',
       'contact:invite',
       'contact:add:request',
       'contact:add',
       'invite:remove:request',
-      'invite:remove'
+      'invite:remove',
+      'invite:cancel:request',
+      'invite:cancel'
     ]
 
     events.forEach((event) => {

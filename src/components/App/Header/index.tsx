@@ -84,7 +84,7 @@ const Header: FC<IHeaderProps> = (props: IHeaderProps) => {
 
   if (activeChannel?.type === 'channel') {
     const members =
-      activeChannel && channels && channels[activeChannel.id].members
+      activeChannel && channels && channels[activeChannel.id]?.members
     membersCount = members && Object.keys(members).length
   }
 

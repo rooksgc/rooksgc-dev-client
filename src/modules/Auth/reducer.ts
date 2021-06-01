@@ -6,7 +6,8 @@ import {
   userFetchFailure,
   userUpdatePhoto,
   userRemoveContact,
-  userAddContact
+  userAddContact,
+  userRemoveChannel
 } from './actions'
 
 export interface IAuthState {
@@ -39,6 +40,24 @@ const user = handleActions(
       }
 
       return { ...state, contacts: updatedContacts }
+    },
+    [userRemoveChannel]: (state, action) => {
+      if (!state.channels) {
+        return state
+      }
+
+      const oldChannels = JSON.parse(state.channels)
+
+      let updatedChannels = oldChannels.filter(
+        (id: number) => action.payload !== id
+      )
+      if (!updatedChannels.length) {
+        updatedChannels = null
+      } else {
+        updatedChannels = JSON.stringify(updatedChannels)
+      }
+
+      return { ...state, channels: updatedChannels }
     },
     [userAddContact]: (state, action) => {
       let contacts

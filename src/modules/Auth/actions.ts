@@ -20,3 +20,6 @@ export const userAddContact: any = createAction('AUTH/USER_ADD_CONTACT')
 
 /** Удаление контакта пользователя */
 export const userRemoveContact: any = createAction('AUTH/USER_REMOVE_CONTACT')
+
+/** Удаление канала у пользователя */
+export const userRemoveChannel: any = createAction('AUTH/USER_REMOVE_CHANNEL')

@@ -37,6 +37,11 @@ export interface IAddToChannelPayload {
   email: string
 }
 
+export interface ILeaveChannelPayload {
+  channelId: number
+  userId: number
+}
+
 const chatService = {
   /** Создать канал */
   createChannel: async (
@@ -59,21 +64,25 @@ const chatService = {
         payload: { channels }
       })
 
-      channelsList = populatedChannels?.data.reduce(
-        (acc, { id, ownerId, name, members, photo }) => ({
-          ...acc,
-          [id]: {
-            ownerId,
-            name,
-            members,
-            type: 'channel',
-            photo,
-            messages: [],
-            populated: false
-          }
-        }),
-        {}
-      )
+      if (populatedChannels?.data?.length) {
+        channelsList = populatedChannels?.data.reduce(
+          (acc, { id, ownerId, name, members, photo }) => ({
+            ...acc,
+            [id]: {
+              ownerId,
+              name,
+              members,
+              type: 'channel',
+              photo,
+              messages: [],
+              populated: false
+            }
+          }),
+          {}
+        )
+      } else {
+        channelsList = null
+      }
     }
 
     return channelsList
@@ -167,6 +176,16 @@ const chatService = {
     api.send({
       method: 'patch',
       endpoint: '/api/v1/chat/channel/adduser',
+      payload
+    }),
+
+  /** Покидание канал пользователем */
+  leaveChannel: async (
+    payload: ILeaveChannelPayload
+  ): Promise<IServerResponse> =>
+    api.send({
+      method: 'patch',
+      endpoint: '/api/v1/chat/channel/leave',
       payload
     })
 }

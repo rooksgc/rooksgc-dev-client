@@ -16,6 +16,7 @@ interface IModalWindowProps {
 const ModalWindow: FC<IModalWindowProps> = (props) => {
   const {
     children,
+    centered = true,
     title = '',
     visible = false,
     onOk = null,
@@ -28,7 +29,7 @@ const ModalWindow: FC<IModalWindowProps> = (props) => {
 
   return (
     <Modal
-      centered
+      centered={centered}
       title={title}
       visible={visible}
       onOk={onOk}

@@ -1,6 +1,15 @@
 import { FC, useState } from 'react'
-import { Button, Avatar, Typography, Row, Col, Divider, Spin } from 'antd'
-import { LoadingOutlined } from '@ant-design/icons'
+import {
+  Button,
+  Avatar,
+  Typography,
+  Row,
+  Col,
+  Divider,
+  Spin,
+  Popconfirm
+} from 'antd'
+import { LoadingOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import { ModalWindow } from 'containers/ModalWindow'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 import { UserDTO } from 'services/user'
@@ -271,15 +280,17 @@ const ContactInfo: FC<IContactInfoProps> = (props) => {
             </Button>
           </div>
         ) : (
-          <Button
-            block
-            danger
-            type="default"
-            onClick={removeContactHandler}
-            disabled={loading}
+          <Popconfirm
+            title="Вы уверены?"
+            icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+            okText="Да"
+            cancelText="Нет"
+            onConfirm={removeContactHandler}
           >
-            Удалить контакт
-          </Button>
+            <Button block danger type="default" disabled={loading}>
+              Удалить контакт
+            </Button>
+          </Popconfirm>
         )}
       </div>
     </ModalWindow>
