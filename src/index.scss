@@ -73,8 +73,8 @@ code {
 .active-channel {
   display: inline-flex;
   position: relative;
-  padding: 16px;
-  top: -12px;
+  padding: 12px;
+  top: -13px;
   flex-direction: column;
   align-items: flex-start;
 }
@@ -87,7 +87,7 @@ code {
 .active-channel-text {
   max-width: 250px;
   height: 20px;
-  line-height: 28px;
+  line-height: 20px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
