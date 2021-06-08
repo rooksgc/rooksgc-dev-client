@@ -3,8 +3,6 @@ name: deploy-to-vps
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
   workflow_dispatch:
 
