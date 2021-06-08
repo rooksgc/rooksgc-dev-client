@@ -90,7 +90,10 @@ const CreateChannel: FC<ICreateChannelProps> = () => {
       visible={createChannel}
       onCancel={() => dispatchChangeCreateChannelModalState(false)}
     >
-      <PhotoUploader onChangePhoto={(imageUrl) => setPhoto(imageUrl)} />
+      <PhotoUploader
+        onChangePhoto={(imageUrl) => setPhoto(imageUrl)}
+        onRemovePhoto={() => setPhoto(null)}
+      />
       <Form
         form={form}
         name="createChannel"
