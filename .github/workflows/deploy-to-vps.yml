@@ -13,13 +13,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2.3.1
 
       - name: Install and Build
-          run: |
-            npm install
-            npm run build
+        run: |
+          npm install
+          npm run build
 
       - name: Install SSH Key
           uses: shimataro/ssh-key-action@v2
