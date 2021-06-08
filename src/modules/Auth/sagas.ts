@@ -1,27 +1,32 @@
-import { takeLatest, put, call, fork } from 'redux-saga/effects'
+import { takeEvery, put, call, fork } from 'redux-saga/effects'
+import { authService } from 'services/auth'
+import { socketService } from 'services/socket'
 import {
   userLoginRequest,
   userLogoutRequest,
   userFetchSuccess
 } from './actions'
 import {
-  initChannelsData,
-  initContactsData,
+  // initChannelsData,
+  // initContactsData,
   setActiveChannel
 } from '../Chat/actions'
-import authService from '../../services/auth'
-import WS from '../../services/socket'
 
-/** login success */
-export function* userLoginRequestFlow({ payload: { data, token } }) {
-  yield put(userFetchSuccess(data))
+/** login */
+export function* userLoginRequestFlow({ payload: { data: user, token } }) {
+  yield put(userFetchSuccess(user))
   yield call([authService, authService.setToken], token)
-  const { channels, contacts } = yield call([WS, WS.connect], data)
-  yield put(initChannelsData(channels))
-  yield put(initContactsData(contacts))
+
+  // const { channels, contacts } = yield call(
+  //   [socketService, socketService.connect],
+  //   user
+  // )
+
+  // yield put(initChannelsData(channels))
+  // yield put(initContactsData(contacts))
 }
 export function* userLoginWatcher() {
-  yield takeLatest(userLoginRequest, userLoginRequestFlow)
+  yield takeEvery(userLoginRequest, userLoginRequestFlow)
 }
 
 /** logout */
@@ -29,13 +34,15 @@ export function* userLogoutRequestFlow() {
   yield call([authService, authService.removeToken])
   yield put(userFetchSuccess(false))
   yield put(setActiveChannel(null))
-  yield call([WS, WS.disconnect])
+  yield call([socketService, socketService.disconnect])
 }
 export function* userLogoutWatcher() {
-  yield takeLatest(userLogoutRequest, userLogoutRequestFlow)
+  yield takeEvery(userLogoutRequest, userLogoutRequestFlow)
 }
 
-export default function* generator() {
+const authSagas = function* generator() {
   yield fork(userLoginWatcher)
   yield fork(userLogoutWatcher)
 }
+
+export { authSagas }

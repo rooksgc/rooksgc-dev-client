@@ -1,6 +1,6 @@
-import { render, screen, fireEvent, store } from '../../mock/test-wrapper'
-import App from '.'
-import { userFetchSuccess } from '../../modules/Auth/actions'
+import { render, screen, fireEvent, store } from 'testWrapper'
+import { App } from 'components/App'
+import { userFetchSuccess } from 'modules/Auth/actions'
 
 describe('App', () => {
   it('Should have correct layout structure when unauthorized', () => {
@@ -13,7 +13,7 @@ describe('App', () => {
     expect(screen.getByRole('main')).toHaveClass('content')
   })
 
-  xit('Should have correct layout structure when authorized', () => {
+  it('Should have correct layout structure when authorized', () => {
     render(<App />)
 
     store.dispatch(
@@ -34,14 +34,14 @@ describe('App', () => {
     expect(screen.getByRole('main')).toBeInTheDocument()
     expect(screen.getByRole('main')).toHaveClass('content')
 
-    const collapseMenu = screen.getByRole('img', { name: 'bars' })
+    const collapseMenu = screen.getByRole('img', { name: 'menu-fold' })
     expect(collapseMenu).toBeInTheDocument()
 
-    expect(screen.getByRole('complementary')).toBeInTheDocument()
-    expect(screen.getByRole('complementary')).toHaveClass('sider')
+    const userMenu = screen.getByRole('img', { name: 'user' })
+    expect(userMenu).toBeInTheDocument()
   })
 
-  xit('Trigger button should collapse and expand sidebar', () => {
+  it('Trigger button should collapse sidebar', () => {
     render(<App />)
 
     store.dispatch(
@@ -53,16 +53,12 @@ describe('App', () => {
       })
     )
 
-    const collapseMenu = screen.getByRole('img', { name: 'bars' })
-    expect(collapseMenu).toBeInTheDocument()
-    expect(collapseMenu).toHaveClass('anticon-bars')
+    fireEvent.click(screen.getByRole('img', { name: 'menu-fold' }))
 
-    expect(screen.getByRole('complementary')).toBeInTheDocument()
-    expect(screen.getByRole('complementary')).toHaveClass('sider')
-
-    fireEvent.click(collapseMenu)
-
-    const expandMenu = screen.getByRole('img', { name: 'bars' })
-    expect(expandMenu).toHaveClass('anticon-bars')
+    const expandMenu = screen.getByRole('img', { name: 'menu-unfold' })
+    expect(expandMenu).toHaveClass('anticon-menu-unfold')
+    expect(screen.getByRole('complementary')).toHaveClass(
+      'ant-layout-sider-collapsed'
+    )
   })
 })

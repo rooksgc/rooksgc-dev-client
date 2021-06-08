@@ -1,13 +1,13 @@
 import { FC } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 
-import Chat from '../Chat'
-import Login from '../Login'
-import Register from '../Register'
-import Recover from '../Recover'
-import ChangePassword from '../ChangePassword'
-import Activation from '../Activation'
-import PrivateRoute from '../../containers/PrivateRoute'
+import { PrivateRoute } from 'containers/PrivateRoute'
+import { Login } from 'components/Auth/Login'
+import { ChangePassword } from 'components/Auth/ChangePassword'
+import { Activation } from 'components/Auth/Activation'
+import { Register } from 'components/Auth/Register'
+import { Recover } from 'components/Auth/Recover'
+import { Chat } from '../Chat'
 
 const Routes: FC = () => (
   <Switch>
@@ -23,4 +23,4 @@ const Routes: FC = () => (
   </Switch>
 )
 
-export default Routes
+export { Routes }

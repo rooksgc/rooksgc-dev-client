@@ -1,24 +1,41 @@
 import { combineReducers } from 'redux'
 import { fork } from 'redux-saga/effects'
-import authSagas from './Auth/sagas'
-import auth, { IAuthState } from './Auth/reducer'
-import chat, { IChatState } from './Chat/reducer'
-import launchSaga from './launchSaga'
+import { authSagas } from 'modules/Auth/sagas'
+import {
+  authReducer,
+  IAuthState,
+  initialState as authInitialState
+} from 'modules/Auth/reducer'
+import {
+  chatReducer,
+  IChatState,
+  initialState as chatInitialState
+} from 'modules/Chat/reducer'
+import {
+  modalsReducer,
+  IModalsState,
+  initialState as modalsInitialState
+} from 'modules/Modals/reducer'
+import { launchSaga } from 'modules/launchSaga'
 
-// Root state interface
-export interface RootState {
+export interface IRootState {
   auth: IAuthState
   chat: IChatState
+  modals: IModalsState
 }
 
-export const initialState = {
-  auth: { user: null }
+export const initialState: IRootState = {
+  auth: authInitialState,
+  chat: chatInitialState,
+  modals: modalsInitialState
 }
 
-// Root reducer
-export default combineReducers({ auth, chat })
+export const rootReducer = combineReducers({
+  auth: authReducer,
+  chat: chatReducer,
+  modals: modalsReducer
+})
 
-// Root saga
 export function* rootSaga() {
   yield fork(authSagas)
   yield fork(launchSaga)

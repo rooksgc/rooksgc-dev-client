@@ -1,4 +1,4 @@
-import useShallowEqualSelector from '../hooks/useShallowEqualSelector'
+import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 
 const PrivateContainer = ({ children }) => {
   const user = useShallowEqualSelector((state) => state.auth.user)
@@ -7,4 +7,4 @@ const PrivateContainer = ({ children }) => {
   return children
 }
 
-export default PrivateContainer
+export { PrivateContainer }

@@ -13,4 +13,4 @@ const useEscape = (onEscape: () => any) => {
   }, [onEscape])
 }
 
-export default useEscape
+export { useEscape }

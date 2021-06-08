@@ -27,23 +27,37 @@ code {
   padding-right: 16px;
 }
 
+.header-username {
+  width: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: right;
+  font-size: 1rem;
+}
+
+@media only screen and (max-width: 768px) {
+  .header-username {
+    display: none;
+  }
+}
+
 .current-channel-badge {
   background-color: #1890ff;
 }
 
 .sidebar-top {
   display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.sidebar-locker {
+.sidebar-icon {
   color: #fff;
   padding: 22px;
   font-size: 20px;
 }
 
-.sidebar-locker:hover {
+.sidebar-icon:hover {
   cursor: pointer;
   color: #a0d0ff;
 }
@@ -54,6 +68,35 @@ code {
   align-items: center;
   justify-content: flex-end;
   height: 100%;
+}
+
+.active-channel {
+  display: inline-flex;
+  position: relative;
+  padding: 12px;
+  top: -13px;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.active-channel:hover {
+  cursor: pointer;
+  background-color: #f9f9f9;
+}
+
+.active-channel-text {
+  max-width: 250px;
+  height: 20px;
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media only screen and (max-width: 768px) {
+  .active-channel-text {
+    max-width: 95px;
+  }
 }
 
 .user-profile {
@@ -94,11 +137,6 @@ code {
   margin: 10px 0;
 }
 
-.chat-window {
-  height: calc(100vh - 104px);
-  overflow-y: scroll;
-}
-
 .chat-empty {
   display: flex;
   height: calc(100vh - 104px);
@@ -117,4 +155,95 @@ code {
 
 .send-button {
   margin-bottom: 0;
+}
+
+.avatar-uploader > .ant-upload {
+  width: 128px;
+  height: 128px;
+}
+
+.photo-uploader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.photo-uploader .ant-upload-picture-card-wrapper {
+  width: auto;
+}
+
+.photo-uploader .ant-upload-list-picture-card-container,
+.photo-uploader .ant-upload-select-picture-card {
+  width: 150px;
+  height: 150px;
+}
+
+.form-footer {
+  text-align: right;
+}
+
+.form-footer .ant-btn + .ant-btn {
+  margin-bottom: 0;
+  margin-left: 8px;
+}
+
+.contacts-menu {
+  border-top: 1px solid #6b6f74;
+}
+
+.channels-menu-title,
+.contacts-menu-title {
+  padding-left: 10px;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.channels-menu-item,
+.contacts-menu-item {
+  display: flex;
+  align-items: center;
+}
+
+.nocontent {
+  color: #91969d;
+  padding-left: 10px;
+}
+
+.channel-photo,
+.contact-photo {
+  margin-top: -3px;
+}
+
+.channel-name,
+.contact-name {
+  width: 150px;
+  padding-left: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.add-contact-form {
+  margin-top: 10px;
+}
+
+.invitation-text {
+  padding: 15px 15px 15px 24px;
+}
+
+.stretch-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-to-channel {
+  float: right;
+  font-size: 24px;
+}
+
+.channel-info__title {
+  padding-left: 24px;
+  overflow-y: hidden;
+  max-height: 150px;
 }

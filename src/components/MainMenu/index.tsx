@@ -2,7 +2,6 @@ import { FC } from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
 import { Menu } from 'antd'
 import { PieChartOutlined } from '@ant-design/icons'
-import useShallowEqualSelector from '../../hooks/useShallowEqualSelector'
 
 const menuItems = [
   {
@@ -22,10 +21,9 @@ const menuItems = [
 const MainMenu: FC = () => {
   const location = useLocation()
   const history = useHistory()
-  const user = useShallowEqualSelector((state) => state.auth.user)
 
   const key = menuItems.find((item) => location.pathname === item.path)?.key
-  if (user && !key) return null
+  if (!key) return null
 
   const onClickMenu = (item) => {
     if (item.key === key) return
@@ -44,4 +42,4 @@ const MainMenu: FC = () => {
   )
 }
 
-export default MainMenu
+export { MainMenu }

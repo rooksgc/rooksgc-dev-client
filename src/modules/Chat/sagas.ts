@@ -1,5 +1,5 @@
 import { takeLatest, fork } from 'redux-saga/effects'
-import { addChannelMessage } from './actions'
+import { sendChannelMessage } from './actions'
 
 /** Отправка сообщения в канал */
 // eslint-disable-next-line require-yield
@@ -8,9 +8,11 @@ export function* addChannelMessageFlow(payload: any) {
   console.log(payload)
 }
 export function* addChannelMessageWatcher() {
-  yield takeLatest(addChannelMessage, addChannelMessageFlow)
+  yield takeLatest(sendChannelMessage, addChannelMessageFlow)
 }
 
-export default function* generator() {
+const chatSagas = function* generator() {
   yield fork(addChannelMessageWatcher)
 }
+
+export { chatSagas }

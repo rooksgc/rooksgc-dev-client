@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Menu, Dropdown, Avatar } from 'antd'
 import {
@@ -6,24 +6,32 @@ import {
   LogoutOutlined,
   ProfileOutlined
 } from '@ant-design/icons'
-import useActions from '../../hooks/useActions'
-import { userLogoutRequest } from '../../modules/Auth/actions'
-import UserProfile from '../UserProfile'
-import ModalWindow from '../../containers/ModalWindow'
+import { useActions } from 'hooks/useActions'
+import { changeUserProfileModalState } from 'modules/Modals/actions'
+
+import { userLogoutRequest } from 'modules/Auth/actions'
+import { UserDTO } from 'services/user'
+import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
+import { UserProfile } from 'components/Modals/UserProfile'
 
 const UserMenu: FC = () => {
-  const [userProfileModalVisibility, setUserProfileModalVisibility] = useState(
-    false
-  )
   const history = useHistory()
-  const [dispatchUserLogoutRequest] = useActions([userLogoutRequest], null)
+
+  const { photo } = useShallowEqualSelector(
+    (state) => state.auth.user
+  ) as UserDTO
+
+  const [
+    dispatchUserLogoutRequest,
+    dispatchChangeUserProfileModalState
+  ] = useActions([userLogoutRequest, changeUserProfileModalState], null)
 
   const handleMenuClick = (event) => {
     const { key } = event
 
     switch (key) {
       case 'profile':
-        setUserProfileModalVisibility(true)
+        dispatchChangeUserProfileModalState(true)
         break
       case 'logout':
         dispatchUserLogoutRequest()
@@ -49,17 +57,16 @@ const UserMenu: FC = () => {
   return (
     <>
       <Dropdown overlay={menu} trigger={['click']}>
-        <Avatar className="user-profile" icon={<UserOutlined />} />
+        <Avatar
+          size={40}
+          className="user-profile"
+          src={photo}
+          icon={<UserOutlined />}
+        />
       </Dropdown>
-      <ModalWindow
-        title="Профиль"
-        visible={userProfileModalVisibility}
-        onCancel={() => setUserProfileModalVisibility(false)}
-      >
-        <UserProfile />
-      </ModalWindow>
+      <UserProfile />
     </>
   )
 }
 
-export default UserMenu
+export { UserMenu }

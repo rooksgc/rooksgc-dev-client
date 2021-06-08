@@ -1,25 +1,55 @@
-import { FC, useState, useEffect, useRef } from 'react'
-import { UserDTO } from 'src/services/auth'
+import { FC, useState, useEffect } from 'react'
+import { UserDTO } from 'services/user'
 import { Layout } from 'antd'
-import Header from './Header'
-import Sidebar from './Sidebar'
-import Routes from '../Routes'
-import { addChannelMessage } from '../../modules/Chat/actions'
-import useShallowEqualSelector from '../../hooks/useShallowEqualSelector'
-import useActions from '../../hooks/useActions'
-import WS from '../../services/socket'
+import { PrivateContainer } from 'containers/Private'
+import {
+  sendChannelMessage,
+  sendContactMessage,
+  initChannelsData,
+  initContactsData,
+  addContact,
+  setActiveChannel,
+  removeContact,
+  addChannel,
+  removeChannelMember
+} from 'modules/Chat/actions'
+import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
+import { useActions } from 'hooks/useActions'
+import { socketService } from 'services/socket'
+import { notify } from 'services/notification'
+import { Header } from './Header'
+import { Sidebar } from './Sidebar'
+import { Routes } from '../Routes'
 
 const { Content } = Layout
 
 const App: FC = () => {
-  const [needRecreateRef, setNeedRecreateRef] = useState(0)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const [onlineUsers, setOnlineUsers] = useState([])
-  const SR = useRef(null)
-  const [dispatchAddChannelMessage] = useActions([addChannelMessage], null)
-  const activeChannel = useShallowEqualSelector(
-    (state) => state.chat.activeChannel
-  ) as any
+  const [
+    dispatchSendChannelMessage,
+    dispatchSendContactMessage,
+    dispatchInitChannelsData,
+    dispatchInitContactsData,
+    dispatchAddContact,
+    dispatchActiveChannel,
+    dispatchRemoveContact,
+    dispatchAddChannel,
+    dispatchRemoveChannelMember
+  ] = useActions(
+    [
+      sendChannelMessage,
+      sendContactMessage,
+      initChannelsData,
+      initContactsData,
+      addContact,
+      setActiveChannel,
+      removeContact,
+      addChannel,
+      removeChannelMember
+    ],
+    null
+  )
+
   const user = useShallowEqualSelector((state) => state.auth.user) as UserDTO
 
   const onSidebarToggle = (isCollapsed: boolean) => {
@@ -27,58 +57,116 @@ const App: FC = () => {
   }
 
   useEffect(() => {
-    if (!WS.socket) return null
-    SR.current = WS.socket
+    if (!user) return () => {}
 
-    // Correct reconnection after server emits disconnected event
-    WS.socket.on('disconnect', (reason: string) => {
-      if (reason === 'transport error' || reason === 'ping timeout') {
-        if (!user) return
-        WS.disconnect()
-        WS.connect(user)
-        setNeedRecreateRef((state) => state + 1)
-      }
-    })
+    const subscribeToSocketEvents = async () => {
+      await socketService.connect(user)
+      const {
+        channels: channelsData,
+        contacts: contactsData
+      } = await socketService.subscribeToChannels(user)
 
-    WS.socket.on('users', (users) => {
-      // users.forEach((user) => {
-      // user.self = user.userId === WS.socket.id
-      // initReactiveProperties(user)
-      // dispatchUpdateUsersOnline(users)
-      // })
-      // put the current user first, and then sort by username
-      setOnlineUsers(
-        users.sort((a, b) => {
-          if (a.self) return -1
-          if (b.self) return 1
-          if (a.username < b.username) return -1
-          return a.username > b.username ? 1 : 0
-        })
+      dispatchInitChannelsData(channelsData)
+      dispatchInitContactsData(contactsData)
+
+      socketService.subscribeToDisconnect(user)
+
+      socketService.subscribeToChannelMessageBroadcast(
+        ({ activeChannelId, message }) => {
+          dispatchSendChannelMessage({ activeChannelId, message })
+        }
       )
-      // dispatchUpdateUsersOnline(users)
 
-      // eslint-disable-next-line no-console
-      console.log(onlineUsers)
-    })
+      socketService.subscribeToContactMessagePrivate((message, from) => {
+        dispatchSendContactMessage({
+          activeChannelId: from,
+          message
+        })
+      })
 
-    SR.current.on(
-      'channel:message:broadcast',
-      ({ activeChannelId: channelId, message, from }) => {
-        dispatchAddChannelMessage({ activeChannelId: channelId, message, from })
-      }
-    )
+      socketService.subscribeToInviteContact((payload) => {
+        dispatchAddContact(payload)
+      })
+
+      socketService.subscribeToAddContact((payload) => {
+        const { id, name, type } = payload
+        dispatchAddContact(payload)
+        dispatchActiveChannel({
+          id,
+          name,
+          type
+        })
+        notify.success(
+          'Добавление в контакты',
+          `Пользователь ${name} добавил(а) Вас в свой список контактов`
+        )
+      })
+
+      socketService.subscribeToRemoveInvite((payload) => {
+        const { id, name } = payload
+        dispatchRemoveContact(id)
+        dispatchActiveChannel(null)
+
+        notify.error(
+          'Отказ добавления в контакты',
+          `Пользователь ${name} не стал(а) добавлять Вас в свой список контактов`
+        )
+      })
+
+      socketService.subscribeToCancelInvite((payload) => {
+        const { id, name } = payload
+        dispatchRemoveContact(id)
+        dispatchActiveChannel(null)
+
+        notify.error(
+          'Отмена добавления в контакты',
+          `Пользователь ${name} отменил запрос на добавление в контакты`
+        )
+      })
+
+      socketService.subscribeToAddToChannel((payload) => {
+        const { inviterName, channel } = payload
+        socketService.subscribeToChannel(channel.id)
+        dispatchAddChannel(channel)
+
+        const { id, name, type } = channel
+        dispatchActiveChannel({ id, name, type })
+
+        notify.success(
+          'Добавление в канал',
+          `Пользователь ${inviterName} добавил(а) Вас в канал ${name}`
+        )
+      })
+
+      socketService.subscribeToChannelMemberLeave(
+        ({ channelId, channelName, userId, userName }) => {
+          dispatchRemoveChannelMember({ channelId, userId })
+
+          notify.info(
+            'Изменение в канале',
+            `Пользователь ${userName} покинул(а) канал ${channelName}`
+          )
+        }
+      )
+    }
+
+    subscribeToSocketEvents()
 
     return () => {
-      SR.current.off('channel:message:broadcast')
+      socketService.unsubscribeFromSocketEvents()
     }
-  }, [user, activeChannel, dispatchAddChannelMessage, needRecreateRef])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user])
 
   return (
     <Layout className="wrap-layout">
-      <Sidebar
-        sidebarCollapsed={sidebarCollapsed}
-        onSidebarToggle={onSidebarToggle}
-      />
+      <PrivateContainer>
+        <Sidebar
+          sidebarCollapsed={sidebarCollapsed}
+          onSidebarToggle={onSidebarToggle}
+        />
+      </PrivateContainer>
+
       <Layout className="site-layout">
         <Header
           sidebarCollapsed={sidebarCollapsed}
@@ -92,4 +180,4 @@ const App: FC = () => {
   )
 }
 
-export default App
+export { App }

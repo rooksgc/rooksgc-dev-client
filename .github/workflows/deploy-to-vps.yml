@@ -1,0 +1,31 @@
+name: deploy-to-vps
+
+on:
+  push:
+    branches: [main]
+
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2.3.1
+
+      - name: Install and Build
+        run: |
+          npm install
+          npm run build
+
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: 'i--ll-be-anything-you-want'
+
+      - name: Adding Known Hosts
+        run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy with rsync
+        run: rsync -avz --delete ./build/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/rooksgc.ru/client/build/
