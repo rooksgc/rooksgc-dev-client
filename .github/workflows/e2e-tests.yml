@@ -16,7 +16,9 @@ jobs:
         with:
           repository: rooksgc/rooksgc-dev-server
           ref: 'main'
-      - run: npm start
+      - run: |
+          npm install
+          npm start
 
       - name: Cypress run
         uses: cypress-io/github-action@v2
