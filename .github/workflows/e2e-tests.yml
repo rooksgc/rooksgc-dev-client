@@ -13,9 +13,9 @@ jobs:
 
       - name: Checkout backend (API)
         uses: actions/checkout@v2
-        repository: '${{ secrets.BACKEND_REPOSITORY_URL }}'
-        ref: 'main'
         with:
+          repository: rooksgc-dev-server
+          ref: 'main'
           start: npm start
           wait-on: http://localhost:5000
 
