@@ -11,8 +11,8 @@ jobs:
     docker:
       - image: cimg/node:15.1
     steps:
-       - checkout
-       - node/install-packages
+      - checkout
+      - node/install-packages
       - run:
           name: run unit tests
           command: npm test
