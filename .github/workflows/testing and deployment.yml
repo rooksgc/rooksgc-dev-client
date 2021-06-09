@@ -1,8 +1,5 @@
 name: testing and deployment
 
-orbs:
-  node: circleci/node@4.1
-
 on:
   push:
     branches: [main]
@@ -10,23 +7,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  unit-tests:
-    docker:
-      - image: cimg/node:15.1
-    steps:
-      - checkout
-      - node/install-packages
-      - run:
-          name: run unit tests
-          command: npm test
-  e2e-tests:
-    needs: unit-tests
+  tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout frontend
         uses: actions/checkout@v2
 
-      - name: run cypress tests
+      - name: run unit tests
+        run: npm test
+
+      - name: run e2e tests
         uses: cypress-io/github-action@v2
         with:
           start: npm start
