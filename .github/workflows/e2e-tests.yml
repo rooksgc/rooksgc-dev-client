@@ -15,7 +15,7 @@ jobs:
         run: |
           mkdir backend
           cd backend
-          git clone "$BACKEND_REPOSITORY_URL" --branch "main"
+          git clone "${{ secrets.BACKEND_REPOSITORY_URL }}" --branch "main"
           npm install
           npm start
 
