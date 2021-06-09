@@ -17,9 +17,7 @@ jobs:
           cd backend
           git clone "$BACKEND_REPOSITORY_URL" --branch "main"
           npm install
-        with:
-          start: npm start
-          wait-on: http://localhost:5000
+          npm start
 
       - name: Cypress run
         uses: cypress-io/github-action@v2
