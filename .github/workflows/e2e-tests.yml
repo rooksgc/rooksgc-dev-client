@@ -19,13 +19,6 @@ jobs:
           start: npm start
           wait-on: http://localhost:5000
 
-        run: |
-          mkdir backend
-          cd backend
-          git clone "" --branch "main"
-          npm install
-          npm start
-
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
