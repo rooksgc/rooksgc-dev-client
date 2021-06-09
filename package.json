@@ -20,8 +20,7 @@
   "proxy": "http://127.0.0.1:5000",
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint",
-      "pre-push": "npm test"
+      "pre-commit": "npm run lint"
     }
   },
   "browserslist": {
