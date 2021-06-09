@@ -14,10 +14,9 @@ jobs:
       - name: Checkout backend (API)
         uses: actions/checkout@v2
         with:
-          repository: rooksgc-dev-server
+          repository: rooksgc/rooksgc-dev-server
           ref: 'main'
-          start: npm start
-          wait-on: http://localhost:5000
+      - run: npm start
 
       - name: Cypress run
         uses: cypress-io/github-action@v2
