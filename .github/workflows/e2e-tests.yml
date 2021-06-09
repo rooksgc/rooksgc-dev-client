@@ -12,10 +12,17 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Checkout backend (API)
+        uses: actions/checkout@v2
+        repository: '${{ secrets.BACKEND_REPOSITORY_URL }}'
+        ref: 'main'
+        with:
+          start: npm start
+          wait-on: http://localhost:5000
+
         run: |
           mkdir backend
           cd backend
-          git clone "${{ secrets.BACKEND_REPOSITORY_URL }}" --branch "main"
+          git clone "" --branch "main"
           npm install
           npm start
 
