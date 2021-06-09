@@ -2,14 +2,13 @@ import { userFetchSuccess, userFetchFailure } from './Auth/actions'
 import { authService } from 'services/auth'
 import { launchSaga } from './launchSaga'
 import { runSaga } from 'redux-saga'
-import { socketService } from 'services/socket'
 
 beforeEach(() => {
   jest.resetAllMocks()
 })
 
 describe('Launch saga', () => {
-  test('Test flow if token not provided', async () => {
+  it('Test flow if token not provided', async () => {
     const dispatchedActions = []
     const fakeStore = {
       dispatch: (action) => dispatchedActions.push(action)
@@ -25,7 +24,7 @@ describe('Launch saga', () => {
     expect(dispatchedActions[0].type).toBe(userFetchFailure().type)
   })
 
-  test('Test flow if token can not be fetched (null)', async () => {
+  it('Test flow if token can not be fetched (null)', async () => {
     const dispatchedActions = []
     const fakeToken = '1d23d.2vse3d.23d5v'
     const fakeStore = {
@@ -53,7 +52,7 @@ describe('Launch saga', () => {
     expect(dispatchedActions[0].type).toBe(userFetchFailure().type)
   })
 
-  test('Test flow if token is provided', async () => {
+  it('Test flow if token is provided', async () => {
     const dispatchedActions = []
     const fakeToken = '1d23d.2vse3d.23d5v'
     const fakeStore = {
@@ -89,7 +88,7 @@ describe('Launch saga', () => {
     expect(dispatchedActions[0].type).toBe(userFetchSuccess().type)
   })
 
-  test('Test flow if token wrong or expired', async () => {
+  it('Test flow if token wrong or expired', async () => {
     const dispatchedActions = []
     const expiredToken = '1d23d.2vse3d.23d5v'
     const fakeStore = {

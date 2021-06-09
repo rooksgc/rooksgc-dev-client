@@ -21,27 +21,27 @@ beforeEach(() => {
 })
 
 describe('Auth saga', () => {
-  test('authSagas', async () => {
+  it('authSagas', async () => {
     const generator = authSagas()
     expect(generator.next().value).toEqual(fork(userLoginWatcher))
     expect(generator.next().value).toEqual(fork(userLogoutWatcher))
   })
 
-  test('userLogoutWatcher', async () => {
+  it('userLogoutWatcher', async () => {
     const generator = userLogoutWatcher()
     expect(generator.next().value).toEqual(
       takeEvery(userLogoutRequest, userLogoutRequestFlow)
     )
   })
 
-  test('userLoginWatcher', async () => {
+  it('userLoginWatcher', async () => {
     const generator = userLoginWatcher()
     expect(generator.next().value).toEqual(
       takeEvery(userLoginRequest, userLoginRequestFlow)
     )
   })
 
-  test('userLoginRequestFlow', async () => {
+  it('userLoginRequestFlow', async () => {
     const dispatchedActions = []
     const fakeStore = {
       dispatch: (action) => dispatchedActions.push(action)
@@ -66,7 +66,7 @@ describe('Auth saga', () => {
     expect(setToken).toHaveBeenCalledWith(fakeToken)
   })
 
-  test('userLogoutRequestFlow', async () => {
+  it('userLogoutRequestFlow', async () => {
     const dispatchedActions = []
     const fakeStore = {
       dispatch: (action) => dispatchedActions.push(action)

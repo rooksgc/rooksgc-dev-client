@@ -6,24 +6,12 @@ import {
   userLogoutRequest,
   userFetchSuccess
 } from './actions'
-import {
-  // initChannelsData,
-  // initContactsData,
-  setActiveChannel
-} from '../Chat/actions'
+import { setActiveChannel } from '../Chat/actions'
 
 /** login */
 export function* userLoginRequestFlow({ payload: { data: user, token } }) {
   yield put(userFetchSuccess(user))
   yield call([authService, authService.setToken], token)
-
-  // const { channels, contacts } = yield call(
-  //   [socketService, socketService.connect],
-  //   user
-  // )
-
-  // yield put(initChannelsData(channels))
-  // yield put(initContactsData(contacts))
 }
 export function* userLoginWatcher() {
   yield takeEvery(userLoginRequest, userLoginRequestFlow)
