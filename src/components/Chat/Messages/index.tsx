@@ -26,7 +26,7 @@ export interface IContactData {
 interface IMessage {
   id: string
   text: string
-  from: string | number // todo userId
+  from: string | number // @todo userId
   type?: string
 }
 

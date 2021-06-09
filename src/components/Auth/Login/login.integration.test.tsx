@@ -20,7 +20,7 @@ afterEach(() => {
 afterAll(() => server.close())
 
 describe('Login form', () => {
-  test('Should show error message if wrong credentials given', async () => {
+  it('Should show error message if wrong credentials given', async () => {
     render(<Login />)
 
     const emailField = screen.getByPlaceholderText('Email')
@@ -36,7 +36,7 @@ describe('Login form', () => {
     expect(localStorage.getItem('auth')).toBeNull()
   })
 
-  test('Should login success with correct credentials', async () => {
+  it('Should login success with correct credentials', async () => {
     const fakeToken = 'H7R2G3D.XC0232C.C3MN98Y'
     const fakeUser = {
       id: 1,
@@ -72,7 +72,7 @@ describe('Login form', () => {
     expect(localStorage.getItem('auth')).toBe(fakeToken)
   })
 
-  test('Should show alert if throws some Uncaught exception', async () => {
+  it('Should show alert if throws some Uncaught exception', async () => {
     server.use(
       rest.post('/api/v1/auth/login', () => {
         throw new Error('Uncaught error from server')

@@ -7,7 +7,7 @@ describe('Auth service', () => {
     jest.clearAllMocks(), (localStorage.setItem as any).mockClear()
   })
 
-  test('getToken should return token from localStorage', () => {
+  it('getToken should return token from localStorage', () => {
     const fakeToken = '123213.2132312.3123'
     localStorage.setItem('auth', fakeToken)
 
@@ -16,7 +16,7 @@ describe('Auth service', () => {
     expect(localStorage.__STORE__['auth']).toBe(fakeToken)
   })
 
-  test('setToken should set token to localStorage', () => {
+  it('setToken should set token to localStorage', () => {
     const fakeToken = '123213.2132312.3123'
     authService.setToken(fakeToken)
     expect(authService.getToken()).toBe(fakeToken)
@@ -28,7 +28,7 @@ describe('Auth service', () => {
     expect(localStorage.__STORE__['auth']).not.toBeDefined()
   })
 
-  test('removeToken should delete token from localStorage', () => {
+  it('removeToken should delete token from localStorage', () => {
     const fakeToken = '123213.2132312.3123'
     authService.setToken(fakeToken)
 
@@ -38,7 +38,7 @@ describe('Auth service', () => {
 })
 
 describe('Make Error helper', () => {
-  test('Should return concatenated string from error(s) message(s)', () => {
+  it('Should return concatenated string from error(s) message(s)', () => {
     const commonError = {
       response: {
         data: 'Unauthorized',
@@ -67,12 +67,13 @@ describe('Make Error helper', () => {
     expect(makeError(error502)).toEqual(expectedError)
   })
 
-  // todo move to api service test
-  test('Should return error if server responded with incorrect token', () => {
+  /** @todo move to api service test */
+  it('Should return error if server responded with incorrect token', () => {
     const incorrectTokenError = {
       response: {
         type: 'error',
-        data: { message: 'No authorization token was found' }
+        data: { message: 'No authorization token was found' },
+        status: 401
       }
     }
     const expectedError = {

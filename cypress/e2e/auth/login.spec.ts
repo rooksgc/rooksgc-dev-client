@@ -5,8 +5,8 @@ context('Auth', () => {
     cy.visit('http://localhost:3000/auth/login')
   })
 
-  describe('Login test', () => {
-    it('Login with correct credentials', () => {
+  describe('Login', () => {
+    it('Should login with correct credentials', () => {
       const fakeUser = {
         id: 1,
         name: 'fakeuser',
@@ -46,7 +46,7 @@ context('Auth', () => {
       cy.get('.contacts-menu-title').should('have.text', 'Контакты')
     })
 
-    it('Login with wrong email', () => {
+    it('Prevent login with wrong email', () => {
       const message = 'Пользователя с таким email не существует'
 
       cy.intercept('/api/v1/auth/login', (req) => {
@@ -62,27 +62,33 @@ context('Auth', () => {
       cy.get('.ant-alert-message').should('have.text', message)
     })
 
-    it('Login with invalid password', () => {
-      cy.get('#login_email').type('demo@gmail.com')
-      cy.get('#login_password').type('00000')
-
-      cy.get('.ant-form-item-explain').should('have.text', 'Минимум 6 символов')
-    })
-
-    it('Login with wrong password', () => {
+    it('Prevent login with wrong password', () => {
       const message = 'Неверный пароль'
 
       cy.intercept('/api/v1/auth/login', (req) => {
         req.continue((res) => {
-          res.send(401, {
-            message,
-            type: 'error'
-          })
+          res.send(401, { type: 'error', message })
         })
       })
 
       cy.get('#login_email').type('demo@gmail.com')
       cy.get('#login_password').type('fakePassword')
+      cy.get('button[type="submit"]').click()
+
+      cy.get('.ant-alert-message').should('have.text', message)
+    })
+
+    it('Should display message when server not responding', () => {
+      const message = 'Service not responding'
+
+      cy.intercept('/api/v1/auth/login', (req) => {
+        req.continue((res) => {
+          res.send(500, { type: 'error', message })
+        })
+      })
+
+      cy.get('#login_email').type('demo@gmail.com')
+      cy.get('#login_password').type('1212qQ')
       cy.get('button[type="submit"]').click()
 
       cy.get('.ant-alert-message').should('have.text', message)

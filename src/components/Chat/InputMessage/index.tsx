@@ -14,7 +14,7 @@ interface IChatInputProps {
 const InputMessage: FC<IChatInputProps> = memo(({ sendMessage }) => {
   const [form] = Form.useForm()
 
-  const onFinish = async (values: IFormValues) => {
+  const sendMessageHandler = (values: IFormValues) => {
     try {
       const { text } = values
       sendMessage(text)
@@ -25,7 +25,12 @@ const InputMessage: FC<IChatInputProps> = memo(({ sendMessage }) => {
   }
   return (
     <div className="chat-input">
-      <Form size="large" className="input-form" form={form} onFinish={onFinish}>
+      <Form
+        size="large"
+        className="input-form"
+        form={form}
+        onFinish={sendMessageHandler}
+      >
         <Form.Item className="input-messaage" required name="text">
           <Input autoFocus placeholder="Введите сообщение" />
         </Form.Item>
