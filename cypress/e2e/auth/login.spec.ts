@@ -1,12 +1,33 @@
 /// <reference types="cypress" />
 
-context('Auth/chat', () => {
+context('Auth', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000/auth/login')
   })
 
   describe('Login test', () => {
     it('Login with correct credentials', () => {
+      const fakeUser = {
+        id: 1,
+        name: 'fakeuser',
+        photo: '',
+        role: 'USER',
+        channels: '[1]',
+        contacts: '[2]',
+        email: 'fakeuser@gmail.com'
+      }
+
+      cy.intercept('/api/v1/auth/login', (req) => {
+        req.continue((res) => {
+          res.send(201, {
+            type: 'success',
+            message: 'Успешный вход в систему!',
+            token: 'fake-token',
+            data: fakeUser
+          })
+        })
+      })
+
       cy.get('#login_email').type('demo@gmail.com')
       cy.get('#login_password').type('1212qQ')
       cy.get('button[type="submit"]').click()
@@ -26,14 +47,19 @@ context('Auth/chat', () => {
     })
 
     it('Login with wrong email', () => {
+      const message = 'Пользователя с таким email не существует'
+
+      cy.intercept('/api/v1/auth/login', (req) => {
+        req.continue((res) => {
+          res.send(409, { type: 'error', message })
+        })
+      })
+
       cy.get('#login_email').type('wronglogin@gmail.com')
-      cy.get('#login_password').type('112233QQ')
+      cy.get('#login_password').type('11F23xP')
       cy.get('button[type="submit"]').click()
 
-      cy.get('.ant-alert-message').should(
-        'have.text',
-        'Пользователя с таким email не существует'
-      )
+      cy.get('.ant-alert-message').should('have.text', message)
     })
 
     it('Login with invalid password', () => {
@@ -44,11 +70,22 @@ context('Auth/chat', () => {
     })
 
     it('Login with wrong password', () => {
+      const message = 'Неверный пароль'
+
+      cy.intercept('/api/v1/auth/login', (req) => {
+        req.continue((res) => {
+          res.send(401, {
+            message,
+            type: 'error'
+          })
+        })
+      })
+
       cy.get('#login_email').type('demo@gmail.com')
       cy.get('#login_password').type('fakePassword')
       cy.get('button[type="submit"]').click()
 
-      cy.get('.ant-alert-message').should('have.text', 'Неверный пароль')
+      cy.get('.ant-alert-message').should('have.text', message)
     })
   })
 })

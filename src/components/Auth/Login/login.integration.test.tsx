@@ -31,6 +31,7 @@ describe('Login form', () => {
     userEvent.click(screen.getByRole('button'))
 
     const alertMessage = await screen.findByRole('alert')
+
     expect(alertMessage).toHaveTextContent('Invalid credentials')
     expect(localStorage.getItem('auth')).toBeNull()
   })
