@@ -12,7 +12,6 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Checkout backend (API)
-        uses: actions/checkout@v2
         run: |
           mkdir backend
           cd backend
