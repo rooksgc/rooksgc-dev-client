@@ -11,9 +11,6 @@
 # testing
 /coverage
 
-# cypress
-/cypress/integration/examples
-
 # production
 #/build
 
