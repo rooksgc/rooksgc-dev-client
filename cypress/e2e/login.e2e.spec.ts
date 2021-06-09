@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-context('Chat', () => {
+context('Auth', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000/auth/login')
   })
