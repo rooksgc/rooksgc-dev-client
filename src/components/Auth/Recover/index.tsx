@@ -13,7 +13,7 @@ const Recover: FC = () => {
   const [alert, setAlert] = useState(emptyMessage)
   const [loading, setLoading] = useState(false)
 
-  const onFinish = async (values: IFormValues) => {
+  const recoverPasswordHandler = async (values: IFormValues) => {
     try {
       setAlert(emptyMessage)
       setLoading(true)
@@ -58,7 +58,7 @@ const Recover: FC = () => {
               name="recover"
               className="login-form"
               initialValues={{ remember: true }}
-              onFinish={onFinish}
+              onFinish={recoverPasswordHandler}
               validateTrigger="onBlur"
             >
               <Form.Item

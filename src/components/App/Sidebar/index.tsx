@@ -6,6 +6,7 @@ import {
   ClockCircleTwoTone,
   PlusCircleOutlined
 } from '@ant-design/icons'
+import { useHistory } from 'react-router-dom'
 import { useEscape } from 'hooks/useEscape'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
 import { setActiveChannel } from 'modules/Chat/actions'
@@ -42,6 +43,7 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
   )
   const chat = useShallowEqualSelector((state) => state.chat) as any
   const { activeChannel, channels, contacts } = chat
+  const history = useHistory()
 
   useEscape(() => {
     if (!activeChannel) return
@@ -52,6 +54,10 @@ const Sidebar: FC<ISidebarProps> = (props: ISidebarProps) => {
     if (activeChannel) {
       const { id, type } = activeChannel
       if (key === `${type}-${id}`) return
+    }
+
+    if (history.location.pathname !== '/') {
+      history.push('/')
     }
 
     const [channelType, channelId] = key.split('-')

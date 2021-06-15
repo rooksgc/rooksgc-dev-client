@@ -88,6 +88,17 @@
     ],
     "resetMocks": false
   },
+  "babel": {
+    "plugins": [
+      "import",
+      {
+        "libraryName": "antd",
+        "libraryDirectory": "es",
+        "style": true
+      },
+      "antd"
+    ]
+  },
   "dependencies": {
     "@ant-design/icons": "^4.5.0",
     "@testing-library/jest-dom": "^5.11.4",
@@ -124,6 +135,7 @@
     "@types/react-router-dom": "^5.1.7",
     "@typescript-eslint/eslint-plugin": "^4.17.0",
     "babel-plugin-import": "^1.13.3",
+    "cra-bundle-analyzer": "^0.1.0",
     "cypress": "^7.4.0",
     "eslint": "^7.19.0",
     "eslint-config-airbnb-typescript": "^12.3.1",

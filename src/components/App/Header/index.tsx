@@ -2,8 +2,8 @@ import { FC, KeyboardEvent, useRef } from 'react'
 import { Layout, Typography } from 'antd'
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons'
 import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
-import { MainMenu } from 'components/MainMenu'
-import { UserMenu } from 'components/UserMenu'
+import { MainMenu } from 'components/App/Header/MainMenu'
+import { UserMenu } from 'components/App/Header/UserMenu'
 import { PrivateContainer } from 'containers/Private'
 import { UserDTO } from 'services/user'
 import { ContactInfo } from 'components/Modals/ContactInfo'
@@ -121,7 +121,7 @@ const Header: FC<IHeaderProps> = (props: IHeaderProps) => {
       </PrivateContainer>
 
       <div className="header-menu">
-        <MainMenu />
+        {!user && <MainMenu />}
         <PrivateContainer>
           <span className="header-username">{user?.name}</span>
           <UserMenu />
