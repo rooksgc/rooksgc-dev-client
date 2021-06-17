@@ -1,10 +1,14 @@
 import { FC, useState } from 'react'
-import { Form, Input, Button, Card, Alert, Spin } from 'antd'
+import { Form, Input, Button, Card, Alert, Spin, Typography } from 'antd'
 import { MailOutlined, LockOutlined, LoadingOutlined } from '@ant-design/icons'
 import { Link, useHistory } from 'react-router-dom'
 import { useActions } from 'hooks/useActions'
 import { authService } from 'services/auth'
 import { userLoginRequest } from 'modules/Auth/actions'
+import { useShallowEqualSelector } from 'hooks/useShallowEqualSelector'
+import { UserDTO } from 'services/user'
+
+const { Paragraph } = Typography
 
 interface IFormValues {
   email: string
@@ -18,8 +22,13 @@ const Login: FC = () => {
   const [loading, setLoading] = useState(false)
   const [dispatchUserLoginRequest] = useActions([userLoginRequest], null)
   const history = useHistory()
+  const user = useShallowEqualSelector((state) => state.auth.user) as UserDTO
 
-  const onFinish = async (values: IFormValues) => {
+  if (user) {
+    return <Paragraph className="flex-center">Вы уже зашли в чат</Paragraph>
+  }
+
+  const loginHandler = async (values: IFormValues) => {
     try {
       setAlert(emptyMessage)
       setLoading(true)
@@ -61,7 +70,7 @@ const Login: FC = () => {
           name="login"
           className="login-form"
           initialValues={{ remember: true }}
-          onFinish={onFinish}
+          onFinish={loginHandler}
         >
           <Form.Item
             name="email"

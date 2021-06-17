@@ -45,7 +45,7 @@ const ChangePassword: FC = () => {
     }
   }, [code])
 
-  const onFinish = async (values: IFormValues) => {
+  const changePasswordHandler = async (values: IFormValues) => {
     try {
       setAlert(emptyMessage)
       setLoading(true)
@@ -93,7 +93,7 @@ const ChangePassword: FC = () => {
             <Form
               name="change-password-request"
               initialValues={{ remember: true }}
-              onFinish={onFinish}
+              onFinish={changePasswordHandler}
             >
               <Form.Item
                 name="password"

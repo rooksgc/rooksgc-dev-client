@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, store } from 'testWrapper'
-import { App } from 'components/App'
 import { userFetchSuccess } from 'modules/Auth/actions'
+import { App } from './index'
 
 describe('App', () => {
   it('Should have correct layout structure when unauthorized', () => {

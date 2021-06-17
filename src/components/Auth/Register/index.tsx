@@ -20,7 +20,7 @@ const Register: FC = () => {
   const [alert, setAlert] = useState(emptyMessage)
   const [loading, setLoading] = useState(false)
 
-  const onFinish = async (values: IFormValues) => {
+  const registerHandler = async (values: IFormValues) => {
     try {
       setAlert(emptyMessage)
       setLoading(true)
@@ -60,7 +60,7 @@ const Register: FC = () => {
           form={form}
           name="register"
           initialValues={{ remember: true }}
-          onFinish={onFinish}
+          onFinish={registerHandler}
           validateTrigger="onBlur"
         >
           <Form.Item
