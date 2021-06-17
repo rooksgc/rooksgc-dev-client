@@ -21,7 +21,10 @@ describe('App', () => {
         id: 1,
         name: 'test',
         email: 'testmail@gmail.com',
-        role: 'USER'
+        role: 'USER',
+        photo: null,
+        channels: null,
+        contacts: null
       })
     )
 
@@ -49,7 +52,10 @@ describe('App', () => {
         id: 1,
         name: 'test',
         email: 'testmail@gmail.com',
-        role: 'USER'
+        role: 'USER',
+        photo: null,
+        channels: null,
+        contacts: null
       })
     )
 
