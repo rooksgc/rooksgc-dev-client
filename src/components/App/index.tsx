@@ -19,7 +19,7 @@ import { socketService } from 'services/socket'
 import { notify } from 'services/notification'
 import { Header } from './Header'
 import { Sidebar } from './Sidebar'
-import { Routes } from '../Routes'
+import { Routes } from './Routes'
 
 const { Content } = Layout
 

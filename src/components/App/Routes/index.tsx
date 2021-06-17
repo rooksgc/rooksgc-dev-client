@@ -7,7 +7,7 @@ import { ChangePassword } from 'components/Auth/ChangePassword'
 import { Activation } from 'components/Auth/Activation'
 import { Register } from 'components/Auth/Register'
 import { Recover } from 'components/Auth/Recover'
-import { Chat } from '../Chat'
+import { Chat } from 'components/Chat'
 
 const Routes: FC = () => (
   <Switch>

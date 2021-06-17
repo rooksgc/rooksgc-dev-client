@@ -21,24 +21,21 @@ describe('App', () => {
         id: 1,
         name: 'test',
         email: 'testmail@gmail.com',
-        role: 'USER'
+        role: 'USER',
+        photo: null,
+        channels: null,
+        contacts: null
       })
     )
-
-    expect(screen.getByRole('complementary')).toBeInTheDocument()
-    expect(screen.getByRole('complementary')).toHaveClass('sider')
 
     expect(screen.getByRole('banner')).toBeInTheDocument()
     expect(screen.getByRole('banner')).toHaveClass('header')
 
+    expect(screen.getByRole('complementary')).toBeInTheDocument()
+    expect(screen.getByRole('complementary')).toHaveClass('sider')
+
     expect(screen.getByRole('main')).toBeInTheDocument()
     expect(screen.getByRole('main')).toHaveClass('content')
-
-    const collapseMenu = screen.getByRole('img', { name: 'menu-fold' })
-    expect(collapseMenu).toBeInTheDocument()
-
-    const userMenu = screen.getByRole('img', { name: 'user' })
-    expect(userMenu).toBeInTheDocument()
   })
 
   it('Trigger button should collapse sidebar', () => {
@@ -49,7 +46,10 @@ describe('App', () => {
         id: 1,
         name: 'test',
         email: 'testmail@gmail.com',
-        role: 'USER'
+        role: 'USER',
+        photo: null,
+        channels: null,
+        contacts: null
       })
     )
 

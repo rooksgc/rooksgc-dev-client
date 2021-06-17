@@ -1,6 +1,6 @@
 {
   "name": "rooksgc-dev-client",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Client scripts",
   "repository": {
     "type": "git",
@@ -10,12 +10,14 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:nomap": "cross-env GENERATE_SOURCEMAP=false react-scripts build",
     "test": "react-scripts test --watchAll=false",
     "eject": "react-scripts eject",
     "lint": "eslint . --ext .jsx,.ts,.tsx",
     "lint:fix": "eslint . --fix --ext .jsx,.ts,.tsx",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "analyze": "cra-bundle-analyzer"
   },
   "proxy": "http://127.0.0.1:5000",
   "husky": {
@@ -90,13 +92,15 @@
   },
   "babel": {
     "plugins": [
-      "import",
-      {
-        "libraryName": "antd",
-        "libraryDirectory": "es",
-        "style": true
-      },
-      "antd"
+      [
+        "import",
+        {
+          "libraryName": "antd",
+          "libraryDirectory": "es",
+          "style": true
+        },
+        "antd"
+      ]
     ]
   },
   "dependencies": {
@@ -136,6 +140,7 @@
     "@typescript-eslint/eslint-plugin": "^4.17.0",
     "babel-plugin-import": "^1.13.3",
     "cra-bundle-analyzer": "^0.1.0",
+    "cross-env": "^7.0.3",
     "cypress": "^7.4.0",
     "eslint": "^7.19.0",
     "eslint-config-airbnb-typescript": "^12.3.1",
