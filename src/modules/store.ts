@@ -5,10 +5,13 @@ import { rootReducer, rootSaga } from 'modules'
 
 const createAppStore = () => {
   const sagaMiddleware = createSagaMiddleware()
-  const store = createStore(
-    rootReducer,
-    compose(composeWithDevTools(applyMiddleware(sagaMiddleware)))
-  )
+
+  const enhancer =
+    process.env.NODE_ENV === 'development'
+      ? compose(composeWithDevTools(applyMiddleware(sagaMiddleware)))
+      : compose(applyMiddleware(sagaMiddleware))
+
+  const store = createStore(rootReducer, enhancer)
 
   sagaMiddleware.run(rootSaga)
   return store
