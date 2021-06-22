@@ -3,10 +3,6 @@ import { authService } from 'services/auth'
 import { launchSaga } from './launchSaga'
 import { runSaga } from 'redux-saga'
 
-beforeEach(() => {
-  jest.resetAllMocks()
-})
-
 describe('Launch saga', () => {
   it('Test flow if token not provided', async () => {
     const dispatchedActions = []

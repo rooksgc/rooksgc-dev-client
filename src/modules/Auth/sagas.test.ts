@@ -16,10 +16,6 @@ import { socketService } from 'services/socket'
 import { runSaga } from 'redux-saga'
 import { setActiveChannel } from '../Chat/actions'
 
-beforeEach(() => {
-  jest.resetAllMocks()
-})
-
 describe('Auth saga', () => {
   it('authSagas', async () => {
     const generator = authSagas()

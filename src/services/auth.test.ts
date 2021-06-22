@@ -4,36 +4,36 @@ import { authService } from './auth'
 describe('Auth service', () => {
   beforeEach(() => {
     localStorage.clear()
-    jest.clearAllMocks(), (localStorage.setItem as any).mockClear()
   })
 
   it('getToken should return token from localStorage', () => {
     const fakeToken = '123213.2132312.3123'
     localStorage.setItem('auth', fakeToken)
 
-    expect(authService.getToken()).toBe(fakeToken)
+    const token = authService.getToken()
+
     expect(localStorage.setItem).toHaveBeenLastCalledWith('auth', fakeToken)
-    expect(localStorage.__STORE__['auth']).toBe(fakeToken)
+    expect(token).toBe(fakeToken)
+    expect(localStorage.__STORE__['auth']).toBe(token)
   })
 
   it('setToken should set token to localStorage', () => {
     const fakeToken = '123213.2132312.3123'
+
     authService.setToken(fakeToken)
-    expect(authService.getToken()).toBe(fakeToken)
 
-    authService.removeToken()
-    expect(authService.getToken()).toBeNull()
-
-    expect(localStorage.removeItem).toHaveBeenCalled()
-    expect(localStorage.__STORE__['auth']).not.toBeDefined()
+    expect(localStorage.setItem).toHaveBeenCalledWith('auth', fakeToken)
+    expect(localStorage.__STORE__['auth']).toBe(fakeToken)
   })
 
   it('removeToken should delete token from localStorage', () => {
     const fakeToken = '123213.2132312.3123'
-    authService.setToken(fakeToken)
+    localStorage.setItem('auth', fakeToken)
 
-    expect(localStorage.setItem).toHaveBeenLastCalledWith('auth', fakeToken)
-    expect(localStorage.__STORE__['auth']).toBe(fakeToken)
+    authService.removeToken()
+
+    expect(localStorage.removeItem).toHaveBeenCalled()
+    expect(localStorage.__STORE__['auth']).not.toBeDefined()
   })
 })
 
